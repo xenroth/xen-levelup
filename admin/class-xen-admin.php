@@ -236,6 +236,7 @@ class Xen_Admin {
 			'xen_levelup_onboarding_page'  => 'absint',
 			'xen_levelup_shop_page'        => 'absint',
 			'xen_levelup_rankings_page'    => 'absint',
+			'xen_levelup_feed_page'        => 'absint',
 			'xen_levelup_enable_notifications' => 'absint',
 			'xen_levelup_enable_random_quests' => 'absint',
 			'xen_levelup_legendary_count'  => 'absint',
@@ -247,6 +248,8 @@ class Xen_Admin {
 				update_option( $key, $sanitizer( $_POST[ $key ] ) ); // phpcs:ignore
 			}
 		}
+		// Checkbox fields that default to 0 when unchecked
+		update_option( 'xen_disable_wp_dashboard', isset( $_POST['xen_disable_wp_dashboard'] ) ? 1 : 0 ); // phpcs:ignore
 		add_settings_error( 'xen_settings', 'saved', __( 'Settings saved.', 'xen-levelup' ), 'updated' );
 	}
 

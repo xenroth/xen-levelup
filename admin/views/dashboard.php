@@ -34,10 +34,9 @@ $total_coins    = (int) $wpdb->get_var( "SELECT SUM(coins) FROM {$wpdb->prefix}x
 			</div>
 		</div>
 		<div class="xen-plugin-meta">
-			<span>
+			<span class="xen-credit-full">
 				<?php esc_html_e( 'Developed by', 'xen-levelup' ); ?>
-				<strong>Richard C. Cupal, LPT (<span class="xen-author-xenroth">Xenroth</span>)</strong>
-				— Xenroth Digital Innovations
+				Richard C. Cupal, LPT (Xenroth) — Xenroth Digital Innovations
 			</span>
 			<span class="xen-plugin-links">
 				<a href="https://xenroth.com" target="_blank" rel="noopener">xenroth.com</a>

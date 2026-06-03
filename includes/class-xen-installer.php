@@ -409,6 +409,58 @@ class Xen_Installer {
 			KEY user_id      (user_id),
 			KEY checkin_date (checkin_date)
 		) $charset;" );
+
+		// ── 19. Activity Feed ─────────────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}activity_feed (
+			id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			user_id    BIGINT(20) UNSIGNED NOT NULL,
+			type       VARCHAR(50)         NOT NULL,
+			content    TEXT                         DEFAULT NULL,
+			meta_data  LONGTEXT                     DEFAULT NULL,
+			created_at DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY user_id    (user_id),
+			KEY type       (type),
+			KEY created_at (created_at)
+		) $charset;" );
+
+		// ── 20. Activity Reactions (Likes) ────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}activity_reactions (
+			id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			activity_id BIGINT(20) UNSIGNED NOT NULL,
+			user_id     BIGINT(20) UNSIGNED NOT NULL,
+			reaction    VARCHAR(20)         NOT NULL DEFAULT 'like',
+			created_at  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_activity (user_id, activity_id),
+			KEY activity_id (activity_id)
+		) $charset;" );
+
+		// ── 21. Activity Comments ─────────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}activity_comments (
+			id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			activity_id BIGINT(20) UNSIGNED NOT NULL,
+			user_id     BIGINT(20) UNSIGNED NOT NULL,
+			content     TEXT                NOT NULL,
+			created_at  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY activity_id (activity_id),
+			KEY user_id     (user_id)
+		) $charset;" );
+
+		// ── 22. Friends ───────────────────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}friends (
+			id         BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			user_id    BIGINT(20) UNSIGNED NOT NULL,
+			friend_id  BIGINT(20) UNSIGNED NOT NULL,
+			status     VARCHAR(20)         NOT NULL DEFAULT 'pending',
+			created_at DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY pair (user_id, friend_id),
+			KEY user_id   (user_id),
+			KEY friend_id (friend_id),
+			KEY status    (status)
+		) $charset;" );
 	}
 
 	// ─── Default Options ─────────────────────────────────────────────────

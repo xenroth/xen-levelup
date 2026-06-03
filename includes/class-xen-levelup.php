@@ -42,6 +42,7 @@ final class Xen_LevelUp {
 	public $rest_api;
 	public $daily_checkin;
 	public $overview;
+	public $social;
 
 	/**
 	 * Get or create the singleton instance.
@@ -101,6 +102,7 @@ final class Xen_LevelUp {
 			'includes/class-xen-rest-api.php',
 			'includes/class-xen-daily-checkin.php',
 			'includes/class-xen-overview.php',
+			'includes/class-xen-social.php',
 		);
 
 		foreach ( $includes as $file ) {
@@ -147,6 +149,7 @@ final class Xen_LevelUp {
 		$this->rest_api          = new Xen_Rest_Api();
 		$this->daily_checkin     = new Xen_Daily_Checkin();
 		$this->overview          = new Xen_Overview();
+		$this->social            = new Xen_Social();
 
 		if ( is_admin() ) {
 			new Xen_Admin();
@@ -164,8 +167,17 @@ final class Xen_LevelUp {
 		add_action( 'admin_enqueue_scripts',  array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'wp_head',                array( $this, 'output_inline_vars' ) );
 
-		// Redirect new users to onboarding
+		// Redirect new users to onboarding on login
 		add_action( 'wp_login', array( $this->onboarding, 'maybe_redirect_to_onboarding' ), 10, 2 );
+
+		// Create profile for newly registered users
+		add_action( 'user_register', array( $this->user, 'create_profile' ) );
+
+		// Block WP admin for non-admins when the option is enabled
+		add_action( 'admin_init', array( $this, 'maybe_block_wp_admin' ) );
+
+		// Custom avatar override
+		add_filter( 'get_avatar_url', array( $this, 'custom_avatar_url' ), 10, 3 );
 
 		// Award achievements after XP/quest/task events
 		add_action( 'xen_xp_added',             array( $this->achievements, 'check_level_achievements' ), 10, 2 );
@@ -175,6 +187,57 @@ final class Xen_LevelUp {
 
 		// Update rankings after profile change
 		add_action( 'xen_xp_added',             array( $this->rankings, 'schedule_update' ), 20, 2 );
+
+		// Post to activity feed on key game events
+		add_action( 'xen_daily_checkin',   array( $this->social, 'on_checkin' ),        10, 4 );
+		add_action( 'xen_task_completed',  array( $this->social, 'on_task_complete' ),  10, 2 );
+		add_action( 'xen_quest_completed', array( $this->social, 'on_quest_complete' ), 10, 2 );
+		add_action( 'xen_onboarding_complete', array( $this->social, 'on_onboarding_complete' ), 10, 1 );
+	}
+
+	/**
+	 * Block access to WP admin for non-administrator users.
+	 * Allows AJAX requests through unconditionally.
+	 */
+	public function maybe_block_wp_admin() {
+		if ( wp_doing_ajax() ) {
+			return;
+		}
+		if ( ! get_option( 'xen_disable_wp_dashboard', 0 ) ) {
+			return;
+		}
+		if ( current_user_can( 'manage_options' ) ) {
+			return;
+		}
+		$redirect = (int) get_option( 'xen_levelup_dashboard_page', 0 )
+			? get_permalink( (int) get_option( 'xen_levelup_dashboard_page' ) )
+			: home_url( '/' );
+		wp_safe_redirect( esc_url_raw( $redirect ) );
+		exit;
+	}
+
+	/**
+	 * Return the user's custom avatar URL when one has been uploaded.
+	 *
+	 * @param string $url     Gravatar/default avatar URL.
+	 * @param mixed  $id_or_email
+	 * @param array  $args
+	 * @return string
+	 */
+	public function custom_avatar_url( $url, $id_or_email, $args ) {
+		$user_id = 0;
+		if ( is_numeric( $id_or_email ) ) {
+			$user_id = (int) $id_or_email;
+		} elseif ( $id_or_email instanceof \WP_User ) {
+			$user_id = (int) $id_or_email->ID;
+		} elseif ( $id_or_email instanceof \WP_Comment ) {
+			$user_id = (int) $id_or_email->user_id;
+		}
+		if ( ! $user_id ) {
+			return $url;
+		}
+		$custom = get_user_meta( $user_id, 'xen_avatar_url', true );
+		return $custom ? esc_url( $custom ) : $url;
 	}
 
 	// ─── i18n ─────────────────────────────────────────────────────────────
@@ -215,6 +278,7 @@ final class Xen_LevelUp {
 		wp_enqueue_script( 'xen-shop',           $url . 'public/js/xen-shop.js',           array( 'jquery', 'xen-main' ), $ver, true );
 		wp_enqueue_script( 'xen-quest-hub',      $url . 'public/js/xen-quest-hub.js',      array( 'jquery', 'xen-main' ), $ver, true );
 		wp_enqueue_script( 'xen-profile-wallet', $url . 'public/js/xen-profile-wallet.js', array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-social',         $url . 'public/js/xen-social.js',         array( 'jquery', 'xen-main' ), $ver, true );
 
 		// Localise AJAX data
 		wp_localize_script( 'xen-main', 'xenData', array(

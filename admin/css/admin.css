@@ -98,8 +98,9 @@
   border-radius:6px; background:#1e2536; color:var(--xen-text); text-decoration:none; }
 .xen-shop-pagination .page-numbers.current { background:var(--xen-primary); color:#0b1020; font-weight:700; }
 
-/* ─── Author Highlight ───────────────────────────────────────────────────── */
+/* ─── Author / Credit Highlight ─────────────────────────────────────────── */
 .xen-author-xenroth { color: #FFD700; font-weight: 700; }
+.xen-credit-full { color: #FFD700; font-weight: 600; }
 
 /* ─── Admin What's New Card ──────────────────────────────────────────────── */
 .xen-whats-new-admin-card {

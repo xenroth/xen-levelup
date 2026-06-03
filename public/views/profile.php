@@ -177,6 +177,17 @@ $rpg_icons = array(
 					   maxlength="80"
 					   placeholder="<?php esc_attr_e( 'Your title (e.g. Shadow Monarch)', 'xen-levelup' ); ?>" />
 			</div>
+			<div class="xen-form-row xen-avatar-upload-row">
+				<label><?php esc_html_e( 'Profile Photo', 'xen-levelup' ); ?></label>
+				<div class="xen-avatar-preview-wrap">
+					<?php echo get_avatar( $uid, 80, '', '', array( 'class' => 'xen-avatar-preview', 'id' => 'xen-avatar-preview-img' ) ); ?>
+				</div>
+				<input type="file" id="xen-avatar-file" accept="image/jpeg,image/png,image/gif,image/webp" class="xen-input-file">
+				<button type="button" class="xen-btn xen-btn-outline xen-btn-sm" id="xen-upload-avatar-btn">
+					📷 <?php esc_html_e( 'Upload Photo', 'xen-levelup' ); ?>
+				</button>
+				<span class="xen-avatar-upload-status" id="xen-avatar-upload-status"></span>
+			</div>
 			<div class="xen-form-actions">
 				<button class="xen-btn xen-btn-primary" id="xen-profile-save-btn">
 					<?php esc_html_e( 'Save Changes', 'xen-levelup' ); ?>

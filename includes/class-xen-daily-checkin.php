@@ -40,7 +40,7 @@ class Xen_Daily_Checkin extends Xen_Database {
 	 */
 	public function can_checkin( $user_id ) {
 		$last = $this->last_checkin_date( $user_id );
-		return $last !== date( 'Y-m-d' );
+		return $last !== current_time( 'Y-m-d' );
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Xen_Daily_Checkin extends Xen_Database {
 
 		global $wpdb;
 		$table = $this->table( 'checkins' );
-		$today = date( 'Y-m-d' );
+		$today = current_time( 'Y-m-d' );
 
 		// Calculate new streak
 		$streak = $this->calculate_new_streak( $user_id );
@@ -202,7 +202,7 @@ class Xen_Daily_Checkin extends Xen_Database {
 			return 1; // first ever check-in
 		}
 
-		$yesterday = date( 'Y-m-d', strtotime( '-1 day' ) );
+		$yesterday = wp_date( 'Y-m-d', strtotime( '-1 day', current_time( 'timestamp' ) ) );
 
 		if ( $last === $yesterday ) {
 			return $this->get_streak( $user_id ) + 1;

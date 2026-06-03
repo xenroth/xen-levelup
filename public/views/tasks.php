@@ -59,6 +59,7 @@ $remaining = xen_levelup()->tasks->get_remaining_today( $user_id );
 			</div>
 			<?php if ( 'completed' !== $task->status ) : ?>
 			<button class="xen-delete-btn xen-delete-task" data-id="<?php echo esc_attr( $task->id ); ?>" aria-label="<?php esc_attr_e( 'Delete', 'xen-levelup' ); ?>">✕</button>
+			<button class="xen-btn xen-btn-xs xen-convert-task-btn" data-id="<?php echo esc_attr( $task->id ); ?>" title="<?php esc_attr_e( 'Convert to Side Quest', 'xen-levelup' ); ?>">⚔️</button>
 			<?php endif; ?>
 		</div>
 	<?php endforeach; else : ?>

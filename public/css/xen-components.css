@@ -339,3 +339,91 @@ color: var(--xen-muted);
 
 /* currency label next to coin display */
 .xen-coin-label { font-size: .72rem; color: var(--xen-muted); margin-left: .3rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* ======================================================================
+   SOCIAL FEED — Activity Feed, Friends, Likes, Comments
+   ====================================================================== */
+
+/* Feed wrapper */
+.xen-feed-wrap { display: grid; grid-template-columns: 1fr 280px; gap: 1.5rem; align-items: start; }
+@media (max-width: 700px) { .xen-feed-wrap { grid-template-columns: 1fr; } }
+
+.xen-feed-main { display: flex; flex-direction: column; gap: 1rem; }
+.xen-feed-sidebar { display: flex; flex-direction: column; gap: 1rem; }
+
+/* Post box */
+.xen-feed-post-box { padding: 1rem; }
+.xen-feed-post-box .xen-textarea { width: 100%; min-height: 60px; resize: vertical; }
+.xen-feed-post-actions { display: flex; justify-content: flex-end; margin-top: .6rem; }
+
+/* Feed list */
+.xen-feed-list { display: flex; flex-direction: column; gap: .85rem; }
+
+/* Feed item */
+.xen-feed-item { padding: 1rem; }
+.xen-feed-header { display: flex; align-items: center; gap: .75rem; margin-bottom: .6rem; }
+.xen-feed-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--xen-border); flex-shrink: 0; }
+.xen-feed-meta { display: flex; flex-direction: column; gap: .1rem; }
+.xen-feed-name { font-weight: 700; font-size: .9rem; color: var(--xen-primary); text-decoration: none; }
+.xen-feed-name:hover { text-decoration: underline; }
+.xen-feed-time { font-size: .72rem; color: var(--xen-muted); }
+.xen-feed-content { font-size: .9rem; line-height: 1.55; white-space: pre-wrap; margin-bottom: .6rem; }
+
+/* Rewards pills */
+.xen-feed-rewards { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .6rem; }
+.xen-feed-xp  { background: var(--xen-primary-dim, rgba(139,92,246,.15)); color: var(--xen-primary); font-size: .72rem; padding: .15rem .55rem; border-radius: 999px; font-weight: 700; }
+.xen-feed-coins { background: rgba(251,191,36,.15); color: #d97706; font-size: .72rem; padding: .15rem .55rem; border-radius: 999px; font-weight: 700; }
+.xen-feed-streak { background: rgba(239,68,68,.1); color: #ef4444; font-size: .72rem; padding: .15rem .55rem; border-radius: 999px; font-weight: 700; }
+
+/* Footer (like / comment buttons) */
+.xen-feed-footer { display: flex; gap: .75rem; margin-top: .5rem; }
+.xen-like-btn {
+  background: none; border: 1px solid var(--xen-border); border-radius: 999px;
+  padding: .2rem .75rem; font-size: .82rem; cursor: pointer; display: flex; align-items: center;
+  gap: .3rem; color: var(--xen-text); transition: border-color .15s, color .15s;
+}
+.xen-like-btn:hover { border-color: #ef4444; color: #ef4444; }
+.xen-like-btn.xen-liked { border-color: #ef4444; color: #ef4444; }
+.xen-like-count { font-weight: 600; }
+.xen-comment-toggle-btn { font-size: .82rem; }
+.xen-comment-count { font-weight: 600; }
+
+/* Comments area */
+.xen-comments-area { margin-top: .75rem; border-top: 1px solid var(--xen-border); padding-top: .75rem; }
+.xen-comments-list { display: flex; flex-direction: column; gap: .5rem; margin-bottom: .65rem; }
+.xen-comment-row { display: flex; align-items: flex-start; gap: .5rem; }
+.xen-comment-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.xen-comment-body { background: var(--xen-surface-2, rgba(255,255,255,.04)); border-radius: .5rem; padding: .3rem .65rem; font-size: .82rem; flex: 1; }
+.xen-comment-author { font-weight: 700; margin-right: .35rem; color: var(--xen-primary); }
+.xen-comment-text { color: var(--xen-text); }
+.xen-add-comment-row { display: flex; gap: .5rem; }
+.xen-add-comment-row .xen-input { flex: 1; font-size: .85rem; }
+.xen-empty-sm { font-size: .82rem; color: var(--xen-muted); padding: .25rem 0; }
+
+/* Load More */
+.xen-feed-loadmore { text-align: center; padding: .5rem 0; }
+
+/* Friend Requests sidebar panel */
+.xen-feed-friend-requests { padding: 1rem; }
+.xen-feed-friend-requests h3 { font-size: .9rem; font-weight: 700; margin-bottom: .75rem; color: var(--xen-primary); }
+.xen-friend-request-row { display: flex; align-items: center; justify-content: space-between; gap: .5rem; padding: .4rem 0; border-bottom: 1px solid var(--xen-border); }
+.xen-friend-request-row:last-child { border-bottom: none; }
+.xen-friend-name { font-size: .85rem; font-weight: 600; }
+.xen-accept-friend-btn { font-size: .75rem; padding: .2rem .6rem; }
+.xen-no-requests { font-size: .82rem; color: var(--xen-muted); }
+
+/* Add friend button in feed items */
+.xen-add-friend-btn { font-size: .75rem; padding: .2rem .65rem; border: 1px solid var(--xen-primary); color: var(--xen-primary); background: none; border-radius: 999px; cursor: pointer; transition: background .15s; margin-left: auto; }
+.xen-add-friend-btn:hover { background: var(--xen-primary-dim, rgba(139,92,246,.12)); }
+.xen-add-friend-btn:disabled, .xen-btn-muted { opacity: .55; cursor: default; }
+
+/* Avatar upload row */
+.xen-avatar-upload-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin: .75rem 0; }
+.xen-avatar-preview-wrap img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 3px solid var(--xen-primary); }
+.xen-avatar-upload-row .xen-btn { flex-shrink: 0; }
+#xen-avatar-upload-status { font-size: .8rem; }
+
+/* Convert task to quest button */
+.xen-convert-task-btn { font-size: .75rem; padding: .2rem .65rem; border: 1px solid var(--xen-accent, #f59e0b); color: var(--xen-accent, #f59e0b); background: none; border-radius: 999px; cursor: pointer; transition: background .15s; }
+.xen-convert-task-btn:hover:not(:disabled) { background: rgba(245,158,11,.12); }
+.xen-convert-task-btn:disabled { opacity: .5; cursor: not-allowed; }

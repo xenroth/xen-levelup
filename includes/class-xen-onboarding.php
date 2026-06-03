@@ -176,6 +176,8 @@ class Xen_Onboarding extends Xen_Database {
 		// Award initial coins
 		xen_levelup()->currency->add( $user_id, 100, 'welcome', __( 'Welcome bonus', 'xen-levelup' ) );
 
+		do_action( 'xen_onboarding_complete', $user_id );
+
 		return $stats;
 	}
 

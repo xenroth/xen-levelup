@@ -63,6 +63,33 @@ $fields = array(
 				<th><label for="xen_levelup_legendary_count"><?php esc_html_e( 'Legendary Quest Recipients / Week', 'xen-levelup' ); ?></label></th>
 				<td><input type="number" id="xen_levelup_legendary_count" name="xen_levelup_legendary_count" min="1" max="100" value="<?php echo esc_attr( get_option( 'xen_levelup_legendary_count', 10 ) ); ?>"></td>
 			</tr>
+			<tr>
+				<th><?php esc_html_e( 'Disable WP Dashboard for Non-Admins', 'xen-levelup' ); ?></th>
+				<td>
+					<label>
+						<input type="checkbox" name="xen_disable_wp_dashboard" value="1" <?php checked( get_option( 'xen_disable_wp_dashboard', 0 ) ); ?>>
+						<?php esc_html_e( 'Redirect non-administrator users away from the WP Admin dashboard to the front-end.', 'xen-levelup' ); ?>
+					</label>
+				</td>
+			</tr>
+		</table>
+
+		<h2><?php esc_html_e( 'Pages (Social)', 'xen-levelup' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Select the page that contains the activity feed shortcode.', 'xen-levelup' ); ?></p>
+		<table class="form-table">
+			<tr>
+				<th><label for="xen_levelup_feed_page"><?php esc_html_e( 'Activity Feed Page', 'xen-levelup' ); ?></label></th>
+				<td>
+					<select name="xen_levelup_feed_page" id="xen_levelup_feed_page">
+					<?php foreach ( $page_options as $id => $title ) : ?>
+						<option value="<?php echo esc_attr( $id ); ?>" <?php selected( get_option( 'xen_levelup_feed_page' ), $id ); ?>>
+							<?php echo esc_html( $title ); ?>
+						</option>
+					<?php endforeach; ?>
+					</select>
+					<p class="description"><?php esc_html_e( 'Place [gamified_feed] on this page.', 'xen-levelup' ); ?></p>
+				</td>
+			</tr>
 		</table>
 
 		<h2><?php esc_html_e( 'Currency', 'xen-levelup' ); ?></h2>

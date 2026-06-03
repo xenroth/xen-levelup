@@ -43,6 +43,16 @@ class Xen_Ajax {
 			'xen_transfer_currency',
 			'xen_get_wallet',
 			'xen_get_quest_hub',
+			// v1.4.1
+			'xen_upload_avatar',
+			'xen_convert_task_to_quest',
+			'xen_post_activity',
+			'xen_get_feed',
+			'xen_like_activity',
+			'xen_add_comment',
+			'xen_get_comments',
+			'xen_send_friend_request',
+			'xen_accept_friend_request',
 		);
 
 		// Public-safe (read-only)
@@ -469,4 +479,172 @@ class Xen_Ajax {
 			'transactions' => xen_levelup()->currency->get_transactions( $user_id, 20 ),
 			'transfers'    => xen_levelup()->currency->get_transfer_history( $user_id, 20 ),
 		) );
-	}}
+	}
+
+	// ─── Avatar Upload ────────────────────────────────────────────────────
+
+	public function xen_upload_avatar() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+
+		if ( empty( $_FILES['avatar'] ) || UPLOAD_ERR_OK !== $_FILES['avatar']['error'] ) {
+			wp_send_json_error( array( 'message' => __( 'No file uploaded or upload error.', 'xen-levelup' ) ) );
+		}
+
+		// Validate mime type
+		$allowed = array( 'image/jpeg', 'image/png', 'image/gif', 'image/webp' );
+		$finfo   = new \finfo( FILEINFO_MIME_TYPE );
+		$mime    = $finfo->file( $_FILES['avatar']['tmp_name'] ); // phpcs:ignore
+		if ( ! in_array( $mime, $allowed, true ) ) {
+			wp_send_json_error( array( 'message' => __( 'Only JPEG, PNG, GIF, and WebP images are allowed.', 'xen-levelup' ) ) );
+		}
+
+		// Max 2 MB
+		if ( $_FILES['avatar']['size'] > 2 * 1024 * 1024 ) { // phpcs:ignore
+			wp_send_json_error( array( 'message' => __( 'Image must be 2 MB or smaller.', 'xen-levelup' ) ) );
+		}
+
+		if ( ! function_exists( 'wp_handle_upload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
+		$overrides = array( 'test_form' => false );
+		$uploaded  = wp_handle_upload( $_FILES['avatar'], $overrides ); // phpcs:ignore
+
+		if ( isset( $uploaded['error'] ) ) {
+			wp_send_json_error( array( 'message' => $uploaded['error'] ) );
+		}
+
+		$url = esc_url_raw( $uploaded['url'] );
+		update_user_meta( $user_id, 'xen_avatar_url', $url );
+
+		wp_send_json_success( array( 'url' => $url ) );
+	}
+
+	// ─── Task → Side Quest ────────────────────────────────────────────────
+
+	public function xen_convert_task_to_quest() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		$task_id = $this->post_int( 'task_id' );
+
+		$task = xen_levelup()->tasks->get_tasks( $user_id, 'pending' );
+		$task = array_values( array_filter( $task, function ( $t ) use ( $task_id ) {
+			return (int) $t->id === $task_id;
+		} ) );
+
+		if ( empty( $task ) ) {
+			wp_send_json_error( array( 'message' => __( 'Task not found or already completed.', 'xen-levelup' ) ) );
+		}
+		$task = $task[0];
+
+		// Create side quest from task
+		$quest_id = xen_levelup()->quests->assign_quest( $user_id, array(
+			'title'       => $task->title,
+			'description' => $task->description ?: '',
+			'category'    => $task->category ?: 'general',
+			'difficulty'  => 'medium',
+			'quest_type'  => 'special',
+			'xp_reward'   => 150,
+			'coin_reward' => 30,
+			'quest_date'  => current_time( 'Y-m-d' ),
+			'expires_at'  => null,
+		) );
+
+		if ( is_wp_error( $quest_id ) ) {
+			wp_send_json_error( array( 'message' => $quest_id->get_error_message() ) );
+		}
+
+		// Mark the original task as converted (completed)
+		xen_levelup()->tasks->complete( $task_id, $user_id );
+
+		wp_send_json_success( array(
+			'quest_id' => $quest_id,
+			'message'  => __( 'Task converted to a Side Quest!', 'xen-levelup' ),
+		) );
+	}
+
+	// ─── Social: Activity Feed ────────────────────────────────────────────
+
+	public function xen_post_activity() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		$content = $this->post_textarea( 'content' );
+		if ( ! $content ) {
+			wp_send_json_error( array( 'message' => __( 'Post content cannot be empty.', 'xen-levelup' ) ) );
+		}
+		$id = xen_levelup()->social->post( $user_id, 'custom', $content );
+		if ( ! $id ) {
+			wp_send_json_error( array( 'message' => __( 'Could not post activity.', 'xen-levelup' ) ) );
+		}
+		// Return rendered HTML for the new post
+		$feed = xen_levelup()->social->get_global_feed( 1, 0 );
+		wp_send_json_success( array( 'activity_id' => $id ) );
+	}
+
+	public function xen_get_feed() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		$mode    = $this->post_text( 'mode', 'friends' );
+		$offset  = max( 0, $this->post_int( 'offset', 0 ) );
+		$limit   = min( 20, max( 1, $this->post_int( 'limit', 20 ) ) );
+
+		$feed = 'global' === $mode
+			? xen_levelup()->social->get_global_feed( $limit, $offset )
+			: xen_levelup()->social->get_feed( $user_id, $limit, $offset );
+
+		wp_send_json_success( array(
+			'items'    => $feed,
+			'has_more' => count( $feed ) >= $limit,
+		) );
+	}
+
+	public function xen_like_activity() {
+		$this->require_auth();
+		$user_id     = get_current_user_id();
+		$activity_id = $this->post_int( 'activity_id' );
+		$result      = xen_levelup()->social->toggle_like( $activity_id, $user_id );
+		wp_send_json_success( $result );
+	}
+
+	public function xen_add_comment() {
+		$this->require_auth();
+		$user_id     = get_current_user_id();
+		$activity_id = $this->post_int( 'activity_id' );
+		$content     = $this->post_textarea( 'content' );
+		$result      = xen_levelup()->social->add_comment( $activity_id, $user_id, $content );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+		wp_send_json_success( array( 'comment_id' => $result ) );
+	}
+
+	public function xen_get_comments() {
+		$this->require_auth();
+		$activity_id = $this->post_int( 'activity_id' );
+		$comments    = xen_levelup()->social->get_comments( $activity_id );
+		wp_send_json_success( array( 'comments' => $comments ) );
+	}
+
+	public function xen_send_friend_request() {
+		$this->require_auth();
+		$from   = get_current_user_id();
+		$to     = $this->post_int( 'user_id' );
+		$result = xen_levelup()->social->send_friend_request( $from, $to );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+		wp_send_json_success();
+	}
+
+	public function xen_accept_friend_request() {
+		$this->require_auth();
+		$acceptor    = get_current_user_id();
+		$requester   = $this->post_int( 'user_id' );
+		$result      = xen_levelup()->social->accept_friend_request( $requester, $acceptor );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+		wp_send_json_success();
+	}
+}

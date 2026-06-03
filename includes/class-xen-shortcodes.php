@@ -33,6 +33,7 @@ class Xen_Shortcodes {
 			'gamified_legendary_quests' => 'render_legendary_quests',
 			'gamified_leaderboard'      => 'render_leaderboard',
 			'gamified_wallet'           => 'render_wallet',
+			'gamified_feed'             => 'render_feed',
 		);
 
 		foreach ( $tags as $tag => $method ) {
@@ -254,6 +255,10 @@ class Xen_Shortcodes {
 			'transfers'    => xen_levelup()->currency->get_transfer_history( $user_id, 20 ),
 			'users'        => $users,
 		) );
+	}
+
+	public function render_feed( $atts ) {
+		return xen_levelup()->social->shortcode( $atts );
 	}
 
 	/** @param array $atts @return string */

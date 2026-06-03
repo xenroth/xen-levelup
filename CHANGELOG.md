@@ -5,6 +5,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.1] - 2026-06-04
+
+### What's New
+- 🐛 **Daily Check-In Fix** — Check-in now uses WordPress timezone (`current_time()` / `wp_date()`) instead of PHP server time, preventing incorrect "already checked in" errors on sites where the WP timezone differs from the server's PHP timezone.
+- 📸 **Profile Photo Upload** — Players can now upload a custom profile photo directly from the Edit Profile panel on the public profile page. Photos are stored via `wp_handle_upload` and override Gravatar site-wide via the `get_avatar_url` filter.
+- ⚔️ **Tasks → Side Quests** — Every pending task now has a "⚔️ Convert to Quest" button. Clicking it creates a Side Quest (Special type, Medium difficulty, 150 XP / 30 coins) from the task and marks the original task complete.
+- 📢 **Social Activity Feed** — New `[gamified_feed]` shortcode renders a live activity feed. Posts are created automatically when players check in, complete tasks/quests, or finish onboarding. Players can like, comment, and follow friends.
+- 👥 **Friends System** — Send, accept friend requests, and filter the activity feed to show only friends' activity.
+- 🔔 **System-wide Activity Stream** — Game events (check-in, task complete, quest complete, onboarding complete) automatically post to the global activity feed so the whole community sees achievements.
+- 🚪 **Disable WP Dashboard for Non-Admins** — New toggle in Settings blocks non-administrator users from accessing `/wp-admin`, redirecting them to the front-end dashboard instead.
+- 🏁 **Auto-Onboarding on Registration** — User profiles are now created immediately on `user_register`, ensuring every new user is captured for onboarding on their first login.
+- 🥇 **Gold Full Credit Line** — The entire "Developed by Richard C. Cupal, LPT (Xenroth) — Xenroth Digital Innovations" credit is now displayed in gold on the Admin Dashboard.
+
+### Added
+- `includes/class-xen-social.php` — Full social module: activity feed posts, reactions (likes), comments, friends (send/accept requests), event hooks.
+- `public/views/feed.php` — Activity feed view template: post box, feed items, like/comment, friend requests panel.
+- `public/js/xen-social.js` — Social JavaScript: post, like, comment, load more, add friend, accept friend.
+- New DB tables (via `dbDelta`, `XEN_LEVELUP_DB_VERSION` bumped to `1.4.1`): `xen_activity_feed`, `xen_activity_reactions`, `xen_activity_comments`, `xen_friends`.
+- `[gamified_feed]` shortcode with `mode` (friends/global) and `limit` attributes.
+- AJAX actions: `xen_upload_avatar`, `xen_convert_task_to_quest`, `xen_post_activity`, `xen_get_feed`, `xen_like_activity`, `xen_add_comment`, `xen_get_comments`, `xen_send_friend_request`, `xen_accept_friend_request`.
+- Admin Setting: "Disable WP Dashboard for Non-Admins" checkbox.
+- Admin Setting: "Activity Feed Page" page selector.
+- `Xen_LevelUp::maybe_block_wp_admin()` — `admin_init` hook for WP dashboard blocking.
+- `Xen_LevelUp::custom_avatar_url()` — `get_avatar_url` filter for custom uploaded photos.
+- `user_register` hook → `Xen_User::create_profile()` for immediate profile creation on signup.
+- `do_action('xen_onboarding_complete', $user_id)` fired at end of `Xen_Onboarding::complete()`.
+
+### Changed
+- `includes/class-xen-daily-checkin.php` — All `date('Y-m-d')` calls replaced with `current_time('Y-m-d')` / `wp_date()` for WP-timezone consistency.
+- `admin/views/dashboard.php` — Full credit line wrapped in `<span class="xen-credit-full">` (gold).
+- `admin/css/admin.css` — Added `.xen-credit-full { color: #FFD700; font-weight: 600; }`.
+- `admin/views/settings.php` — Added "Disable WP Dashboard" toggle and "Activity Feed Page" selector.
+- `admin/class-xen-admin.php` — `save_settings()` persists `xen_disable_wp_dashboard` and `xen_levelup_feed_page`.
+- `public/views/profile.php` — Profile photo upload input added to Edit Profile panel.
+- `public/views/tasks.php` — "⚔️ Convert to Quest" button added per pending task.
+- `includes/class-xen-levelup.php` — Registers `Xen_Social`, enqueues `xen-social.js`, adds hooks for all social events.
+- `includes/class-xen-shortcodes.php` — Added `gamified_feed` → `render_feed()`.
+- `includes/class-xen-installer.php` — Added 4 new social tables (19–22).
+
+---
+
 ## [1.4.0] - 2026-06-03
 
 ### What's New
