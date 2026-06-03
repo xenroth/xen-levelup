@@ -36,6 +36,8 @@ class Xen_Ajax {
 			'xen_get_leaderboard',
 			'xen_get_shop_items',
 			'xen_get_daily_quests',
+			'xen_daily_checkin',
+			'xen_dismiss_whats_new',
 		);
 
 		// Public-safe (read-only)
@@ -315,5 +317,29 @@ class Xen_Ajax {
 		$limit  = max( 1, min( 100, $this->post_int( 'limit', 50 ) ) );
 		$data   = xen_levelup()->rankings->get_leaderboard( $period, 'all', $limit );
 		wp_send_json_success( array( 'rankings' => $data ) );
+	}
+
+	// ─── Daily Check-In Handler ────────────────────────────────────────────
+
+	public function xen_daily_checkin() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		$result  = xen_levelup()->daily_checkin->checkin( $user_id );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		// Include updated balance in the response
+		$result['balance'] = xen_levelup()->currency->get_balance( $user_id );
+		wp_send_json_success( $result );
+	}
+
+	// ─── What’s New Dismiss Handler ────────────────────────────────────────
+
+	public function xen_dismiss_whats_new() {
+		$this->require_auth();
+		xen_levelup()->overview->dismiss( get_current_user_id(), XEN_LEVELUP_VERSION );
+		wp_send_json_success();
 	}
 }

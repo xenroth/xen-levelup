@@ -112,6 +112,8 @@ class Xen_Admin {
 			'xen_levelup_enable_notifications' => 'absint',
 			'xen_levelup_enable_random_quests' => 'absint',
 			'xen_levelup_legendary_count'  => 'absint',
+			'xen_levelup_currency_name'    => 'sanitize_text_field',
+			'xen_levelup_currency_symbol'  => 'sanitize_text_field',
 		);
 		foreach ( $fields as $key => $sanitizer ) {
 			if ( isset( $_POST[ $key ] ) ) {

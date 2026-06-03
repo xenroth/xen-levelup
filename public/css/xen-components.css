@@ -207,3 +207,135 @@
    QUEST TYPE ICONS (inline)
    ===================================================== */
 .xen-type-icon { font-size: .85rem; margin-right: 2px; }
+
+/* =====================================================
+   WHAT'S NEW CARD  (v1.1.0)
+   ===================================================== */
+.xen-whats-new-card {
+background: linear-gradient(135deg, rgba(0,212,255,.08) 0%, rgba(123,97,255,.08) 100%);
+border: 1px solid var(--xen-primary);
+border-radius: var(--xen-radius);
+padding: 1.25rem 1.5rem;
+margin-bottom: 1.5rem;
+position: relative;
+}
+.xen-whats-new-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 1rem;
+}
+.xen-whats-new-title {
+font-size: 1rem;
+font-weight: 700;
+color: var(--xen-primary);
+letter-spacing: .04em;
+text-transform: uppercase;
+}
+.xen-whats-new-dismiss {
+background: transparent;
+border: none;
+color: var(--xen-muted);
+cursor: pointer;
+font-size: 1rem;
+padding: .25rem .5rem;
+border-radius: var(--xen-radius-sm);
+transition: color .2s, background .2s;
+line-height: 1;
+}
+.xen-whats-new-dismiss:hover { color: #fff; background: rgba(255,255,255,.08); }
+.xen-whats-new-items { display: flex; flex-wrap: wrap; gap: .75rem; }
+.xen-whats-new-item {
+display: flex;
+align-items: flex-start;
+gap: .75rem;
+flex: 1 1 260px;
+background: rgba(0,0,0,.2);
+border-radius: var(--xen-radius-sm);
+padding: .75rem 1rem;
+}
+.xen-whats-new-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.xen-whats-new-text strong { display: block; color: #fff; margin-bottom: .2rem; }
+.xen-whats-new-text p { margin: 0; color: var(--xen-muted); font-size: .85rem; line-height: 1.5; }
+
+/* =====================================================
+   OVERVIEW STATS STRIP  (v1.1.0)
+   ===================================================== */
+.xen-overview-stats {
+display: flex;
+flex-wrap: wrap;
+gap: .75rem;
+margin-bottom: 1.5rem;
+}
+.xen-stat-item {
+flex: 1 1 100px;
+display: flex;
+flex-direction: column;
+align-items: center;
+background: var(--xen-card);
+border: 1px solid var(--xen-border);
+border-radius: var(--xen-radius);
+padding: .875rem .5rem;
+text-align: center;
+}
+.xen-stat-icon  { font-size: 1.5rem; line-height: 1; margin-bottom: .35rem; }
+.xen-stat-value { font-size: 1.15rem; font-weight: 700; color: var(--xen-primary); margin-bottom: .2rem; }
+.xen-stat-label { font-size: .72rem; color: var(--xen-muted); text-transform: uppercase; letter-spacing: .05em; }
+.xen-stat-name  { font-size: .9rem; }
+.xen-stat-top   { border-color: gold; }
+
+/* =====================================================
+   DAILY CHECK-IN CARD  (v1.1.0)
+   ===================================================== */
+.xen-checkin-card {
+background: var(--xen-card);
+border: 1px solid var(--xen-border);
+border-radius: var(--xen-radius);
+padding: 1.25rem 1.5rem;
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 1rem;
+}
+.xen-checkin-streak {
+display: flex;
+align-items: baseline;
+gap: .35rem;
+}
+.xen-streak-icon  { font-size: 1.6rem; }
+.xen-streak-count { font-size: 2rem; font-weight: 800; color: var(--xen-primary); line-height: 1; }
+.xen-streak-label { font-size: .75rem; color: var(--xen-muted); text-transform: uppercase; }
+.xen-checkin-reward-preview {
+display: flex;
+flex-direction: column;
+gap: .2rem;
+font-size: .85rem;
+color: var(--xen-muted);
+}
+.xen-checkin-reward-preview span { color: #aee8ff; font-weight: 600; }
+.xen-btn-checkin {
+background: linear-gradient(135deg, var(--xen-primary) 0%, var(--xen-accent) 100%);
+border: none;
+border-radius: var(--xen-radius-sm);
+color: #fff;
+cursor: pointer;
+font-size: .9rem;
+font-weight: 700;
+padding: .6rem 1.4rem;
+transition: opacity .2s, transform .1s;
+}
+.xen-btn-checkin:hover:not(:disabled) { opacity: .85; transform: translateY(-1px); }
+.xen-btn-checkin:disabled { opacity: .5; cursor: not-allowed; }
+.xen-checkin-done {
+color: #4ade80;
+font-weight: 600;
+font-size: .9rem;
+}
+.xen-checkin-total {
+margin-left: auto;
+font-size: .78rem;
+color: var(--xen-muted);
+}
+
+/* currency label next to coin display */
+.xen-coin-label { font-size: .72rem; color: var(--xen-muted); margin-left: .3rem; text-transform: uppercase; letter-spacing: .04em; }

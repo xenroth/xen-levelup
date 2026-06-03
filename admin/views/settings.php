@@ -65,6 +65,29 @@ $fields = array(
 			</tr>
 		</table>
 
+		<h2><?php esc_html_e( 'Currency', 'xen-levelup' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Customise the name and symbol used for the in-game currency.', 'xen-levelup' ); ?></p>
+		<table class="form-table">
+			<tr>
+				<th><label for="xen_levelup_currency_name"><?php esc_html_e( 'Currency Name', 'xen-levelup' ); ?></label></th>
+				<td>
+					<input type="text" id="xen_levelup_currency_name" name="xen_levelup_currency_name"
+						value="<?php echo esc_attr( get_option( 'xen_levelup_currency_name', 'System Coins' ) ); ?>"
+						class="regular-text">
+					<p class="description"><?php esc_html_e( 'E.g. System Coins, Gold, Credits', 'xen-levelup' ); ?></p>
+				</td>
+			</tr>
+			<tr>
+				<th><label for="xen_levelup_currency_symbol"><?php esc_html_e( 'Currency Symbol', 'xen-levelup' ); ?></label></th>
+				<td>
+					<input type="text" id="xen_levelup_currency_symbol" name="xen_levelup_currency_symbol"
+						value="<?php echo esc_attr( get_option( 'xen_levelup_currency_symbol', '💎' ) ); ?>"
+						class="small-text">
+					<p class="description"><?php esc_html_e( 'An emoji or short text, e.g. 💎 🪙 G $', 'xen-levelup' ); ?></p>
+				</td>
+			</tr>
+		</table>
+
 		<?php submit_button( __( 'Save Settings', 'xen-levelup' ) ); ?>
 	</form>
 </div>

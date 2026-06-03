@@ -379,6 +379,21 @@ class Xen_Installer {
 			KEY source_type (source_type),
 			KEY created_at  (created_at)
 		) $charset;" );
+
+		// ── 18. Daily Check-Ins ───────────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}checkins (
+			id           BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			user_id      BIGINT(20) UNSIGNED NOT NULL,
+			checkin_date DATE                NOT NULL,
+			streak       INT(11)             NOT NULL DEFAULT 1,
+			xp_earned    INT(11)             NOT NULL DEFAULT 0,
+			coins_earned INT(11)             NOT NULL DEFAULT 0,
+			created_at   DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			UNIQUE KEY user_date (user_id, checkin_date),
+			KEY user_id      (user_id),
+			KEY checkin_date (checkin_date)
+		) $charset;" );
 	}
 
 	// ─── Default Options ─────────────────────────────────────────────────
@@ -394,6 +409,8 @@ class Xen_Installer {
 			'xen_levelup_legendary_user_count'  => 10,
 			'xen_levelup_currency_name'         => 'System Coins',
 			'xen_levelup_currency_symbol'       => '💎',
+			'xen_levelup_checkin_base_xp'       => 50,
+			'xen_levelup_checkin_base_coins'    => 10,
 			'xen_levelup_max_level'             => 100,
 			'xen_levelup_login_page'            => '',
 			'xen_levelup_dashboard_page'        => '',

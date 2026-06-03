@@ -8,7 +8,7 @@ Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, 
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,16 @@ Go to **XEN LevelUp → Settings** and assign an existing WordPress page to each
 7. Level-up modal — particle burst effect
 
 == Changelog ==
+
+= 1.1.0 — 2026-06-10 =
+* **New: Daily Check-In Rewards** — Users can check in once per calendar day to earn XP and coins. Consecutive streaks increase rewards every 7 days (Day 7+: bonus XP and coins, scaling with each milestone).
+* **New: Dashboard What's New Card** — A dismissible card at the top of the public dashboard shows feature highlights for the current version. Dismissed state is saved per user.
+* **New: Dashboard Overview Stats Strip** — System-wide totals (total hunters, total XP, quests completed, tasks done, active today, top hunter) now display on the dashboard, cached for 15 minutes.
+* **New: Custom Currency Name & Symbol** — Administrators can now rename the in-game currency and choose any symbol via Settings → Currency. Defaults: 'System Coins' / '💎'. The name and symbol propagate to the dashboard, quest rewards, and front-end JS (`xenData.currencyName` / `xenData.currencySymbol`).
+* Added `xen_checkins` (18th DB table). `XEN_LEVELUP_DB_VERSION` bumped to `1.1.0`; dbDelta runs automatically on update.
+* Added `Xen_Currency::name()` and `Xen_Currency::symbol()` static helpers.
+* Added `Xen_Daily_Checkin` and `Xen_Overview` module classes.
+* Added AJAX actions: `xen_daily_checkin`, `xen_dismiss_whats_new`.
 
 = 1.0.1 — 2026-06-03 =
 * Updated plugin author to Richard C. Cupal, LPT (Xenroth) — Xenroth Digital Innovations

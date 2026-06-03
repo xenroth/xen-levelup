@@ -142,4 +142,24 @@ class Xen_Currency extends Xen_Database {
 			array( (int) $user_id, (int) $limit )
 		);
 	}
+
+	// ─── Currency Identity ────────────────────────────────────────────────
+
+	/**
+	 * The configured currency name (admin-customisable).
+	 *
+	 * @return string
+	 */
+	public static function name() {
+		return get_option( 'xen_levelup_currency_name', 'Coins' );
+	}
+
+	/**
+	 * The configured currency symbol (admin-customisable).
+	 *
+	 * @return string
+	 */
+	public static function symbol() {
+		return get_option( 'xen_levelup_currency_symbol', '🪙' );
+	}
 }

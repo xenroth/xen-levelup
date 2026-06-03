@@ -40,6 +40,8 @@ final class Xen_LevelUp {
 	public $shortcodes;
 	public $ajax;
 	public $rest_api;
+	public $daily_checkin;
+	public $overview;
 
 	/**
 	 * Get or create the singleton instance.
@@ -97,6 +99,8 @@ final class Xen_LevelUp {
 			'includes/class-xen-shortcodes.php',
 			'includes/class-xen-ajax.php',
 			'includes/class-xen-rest-api.php',
+			'includes/class-xen-daily-checkin.php',
+			'includes/class-xen-overview.php',
 		);
 
 		foreach ( $includes as $file ) {
@@ -141,6 +145,8 @@ final class Xen_LevelUp {
 		$this->shortcodes        = new Xen_Shortcodes();
 		$this->ajax              = new Xen_Ajax();
 		$this->rest_api          = new Xen_Rest_Api();
+		$this->daily_checkin     = new Xen_Daily_Checkin();
+		$this->overview          = new Xen_Overview();
 
 		if ( is_admin() ) {
 			new Xen_Admin();
@@ -210,13 +216,16 @@ final class Xen_LevelUp {
 
 		// Localise AJAX data
 		wp_localize_script( 'xen-main', 'xenData', array(
-			'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-			'restUrl'  => esc_url_raw( rest_url( 'xen/v1' ) ),
-			'nonce'    => wp_create_nonce( 'xen_nonce' ),
-			'restNonce'=> wp_create_nonce( 'wp_rest' ),
-			'userId'   => get_current_user_id(),
-			'isLoggedIn' => is_user_logged_in() ? 'yes' : 'no',
-			'i18n'     => array(
+			'ajaxUrl'       => admin_url( 'admin-ajax.php' ),
+			'restUrl'       => esc_url_raw( rest_url( 'xen/v1' ) ),
+			'nonce'         => wp_create_nonce( 'xen_nonce' ),
+			'restNonce'     => wp_create_nonce( 'wp_rest' ),
+			'userId'        => get_current_user_id(),
+			'isLoggedIn'    => is_user_logged_in() ? 'yes' : 'no',
+			'currencyName'  => Xen_Currency::name(),
+			'currencySymbol'=> Xen_Currency::symbol(),
+			'whatsNewVersion' => XEN_LEVELUP_VERSION,
+			'i18n'          => array(
 				'levelUp'        => esc_html__( 'LEVEL UP!', 'xen-levelup' ),
 				'questComplete'  => esc_html__( 'Quest Complete!', 'xen-levelup' ),
 				'achievementUnlocked' => esc_html__( 'Achievement Unlocked!', 'xen-levelup' ),

@@ -19,6 +19,7 @@ global $wpdb;
 // 1. Drop all custom tables (in dependency order — children first).
 // -----------------------------------------------------------------------
 $tables = array(
+	'xen_checkins',
 	'xen_xp_log',
 	'xen_notifications',
 	'xen_user_inventory',

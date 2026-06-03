@@ -68,4 +68,73 @@
 			});
 	});
 
-})(jQuery);
+        /* ── What's New Dismiss ───────────────────────────────────────── */
+        $(document).on('click', '#xen-dismiss-whats-new', function () {
+                var $card = $('#xen-whats-new');
+                $.post(xenData.ajaxUrl, {
+                        action : 'xen_dismiss_whats_new',
+                        nonce  : xenData.nonce
+                }).always(function () {
+                        $card.slideUp(300, function () { $card.remove(); });
+                });
+        });
+
+        /* ── Daily Check-In ───────────────────────────────────────────── */
+        $(document).on('click', '#xen-checkin-btn', function () {
+                var $btn = $(this);
+                $btn.prop('disabled', true).text(xenData.i18n.processing || 'Processing…');
+
+                $.post(xenData.ajaxUrl, {
+                        action : 'xen_daily_checkin',
+                        nonce  : xenData.nonce
+                }, function (res) {
+                        if (!res.success) {
+                                $btn.prop('disabled', false).text('📅 Check In Today');
+                                xenToast(
+                                        (res.data && res.data.message) || (xenData.i18n.error || 'Error.'),
+                                        'error'
+                                );
+                                return;
+                        }
+
+                        var d = res.data;
+
+                        /* Update streak display */
+                        $('#xen-streak-count').text(d.streak);
+
+                        /* Replace button with done message */
+                        $btn.replaceWith('<div class="xen-checkin-done">✅ Checked in today!</div>');
+
+                        /* Toast reward */
+                        var sym = xenData.currencySymbol || '🪙';
+                        xenToast(
+                                '📅 Day ' + d.streak + ' streak! +' + d.xp + ' XP  ' + sym + ' +' + d.coins,
+                                'xp',
+                                'Check-In!'
+                        );
+
+                        /* Level-up check */
+                        if (d.leveled_up) {
+                                $(document).trigger('xen:levelUp', [{
+                                        level : d.new_level,
+                                        rank  : d.rank_title || ''
+                                }]);
+                                $('.xen-level-number').text(d.new_level);
+                        }
+
+                        /* Particle burst */
+                        if (typeof XenAnimations !== 'undefined') {
+                                var $checkin = $('#xen-checkin-card');
+                                var offset   = $checkin.offset();
+                                XenAnimations.particleBurst(
+                                        offset.left + $checkin.outerWidth() / 2,
+                                        offset.top,
+                                        '#7B61FF', 30
+                                );
+                        }
+                }).fail(function () {
+                        $btn.prop('disabled', false).text('📅 Check In Today');
+                        xenToast(xenData.i18n.error || 'Something went wrong.', 'error');
+                });
+        });
+
