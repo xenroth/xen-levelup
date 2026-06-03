@@ -3,7 +3,8 @@
  * "What's New" card + game-wide Overview Stats.
  *
  * What's New:
- *   - Static per-version array of feature announcements.
+ *   - Parses CHANGELOG.md (plugin root) to extract the "### What's New" bullet
+ *     items for the current plugin version.
  *   - Shown once per user per version; dismissed via AJAX (stored in user meta).
  *
  * Overview Stats:
@@ -29,34 +30,69 @@ class Xen_Overview extends Xen_Database {
 	// ─── What's New ───────────────────────────────────────────────────────
 
 	/**
-	 * Returns an array of "What's New" items for a given version.
-	 * Each item: [ icon, title, description ]
+	 * Returns "What's New" items for a given version by parsing CHANGELOG.md.
+	 *
+	 * Expected CHANGELOG.md format under each `## [x.x.x]` section:
+	 *   ### What's New
+	 *   - ICON **Title** — Description
+	 *
+	 * Results are cached in a static variable for the duration of the request.
 	 *
 	 * @param  string $version  Semantic version string, e.g. '1.1.0'.
-	 * @return array
+	 * @return array  Each item: [ 'icon' => string, 'title' => string, 'desc' => string ]
 	 */
 	public static function whats_new( $version = XEN_LEVELUP_VERSION ) {
-		$all = array(
-			'1.1.0' => array(
-				array(
-					'icon'  => '📅',
-					'title' => __( 'Daily Check-In Rewards', 'xen-levelup' ),
-					'desc'  => __( 'Check in every day to earn XP and coins. Build streaks to unlock bigger rewards every 7 days.', 'xen-levelup' ),
-				),
-				array(
-					'icon'  => '📊',
-					'title' => __( 'Dashboard Overview Stats', 'xen-levelup' ),
-					'desc'  => __( 'See system-wide stats — total hunters, quests completed, XP earned, and more — right on your dashboard.', 'xen-levelup' ),
-				),
-				array(
-					'icon'  => '💎',
-					'title' => __( 'Custom Currency Name & Symbol', 'xen-levelup' ),
-					'desc'  => __( 'Administrators can now rename the in-game currency and choose any symbol (emoji or text).', 'xen-levelup' ),
-				),
-			),
-		);
+		static $cache = array();
 
-		return $all[ $version ] ?? array();
+		if ( isset( $cache[ $version ] ) ) {
+			return $cache[ $version ];
+		}
+
+		$file = XEN_LEVELUP_PLUGIN_DIR . 'CHANGELOG.md';
+		if ( ! file_exists( $file ) ) {
+			$cache[ $version ] = array();
+			return array();
+		}
+
+		$content = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( false === $content ) {
+			$cache[ $version ] = array();
+			return array();
+		}
+
+		// Isolate the block for this version: ## [x.x.x] ... next ## heading or end of file.
+		$ver_esc = preg_quote( $version, '/' );
+		if ( ! preg_match( '/^## \[' . $ver_esc . '\][^\n]*\n(.*?)(?=^## \[|\z)/ms', $content, $section_match ) ) {
+			$cache[ $version ] = array();
+			return array();
+		}
+
+		// Within that block, isolate the "### What's New" sub-section.
+		$section = $section_match[1];
+		if ( ! preg_match( "/^### What's New\n(.*?)(?=^###|\z)/ms", $section, $subsec_match ) ) {
+			$cache[ $version ] = array();
+			return array();
+		}
+
+		// Parse bullet lines: - ICON **Title** — Description
+		$items = array();
+		foreach ( explode( "\n", $subsec_match[1] ) as $line ) {
+			$line = trim( $line );
+			if ( '' === $line || '-' !== $line[0] ) {
+				continue;
+			}
+			// Captures: icon (first non-space token), bold title, text after — or - separator.
+			if ( preg_match( '/^-\s+(\S+)\s+\*\*(.+?)\*\*\s*[—–\-]+\s*(.+)$/u', $line, $m ) ) {
+				$items[] = array(
+					'icon'  => $m[1],
+					'title' => $m[2],
+					'desc'  => $m[3],
+				);
+			}
+		}
+
+		$cache[ $version ] = $items;
+		return $items;
 	}
 
 	/**
