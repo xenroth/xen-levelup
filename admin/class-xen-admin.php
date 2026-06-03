@@ -1,0 +1,162 @@
+<?php
+/**
+ * Admin controller – menu, page routing, user list columns.
+ *
+ * @package XEN_LevelUp
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class Xen_Admin
+ */
+class Xen_Admin {
+
+	public function __construct() {
+		add_action( 'admin_menu',            array( $this, 'register_menu'         ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets'        ) );
+		add_filter( 'manage_users_columns',           array( $this, 'add_user_columns'      ) );
+		add_filter( 'manage_users_custom_column',     array( $this, 'user_column_content'   ), 10, 3 );
+	}
+
+	// ─── Menu ─────────────────────────────────────────────────────────────
+
+	public function register_menu() {
+		add_menu_page(
+			__( 'XEN LevelUp', 'xen-levelup' ),
+			__( 'XEN LevelUp', 'xen-levelup' ),
+			'manage_options',
+			'xen-levelup',
+			array( $this, 'page_dashboard' ),
+			'dashicons-superhero',
+			30
+		);
+
+		$sub = array(
+			array( 'xen-levelup',          __( 'Dashboard', 'xen-levelup' ),       'page_dashboard'       ),
+			array( 'xen-levelup-users',    __( 'Users',     'xen-levelup' ),       'page_users'           ),
+			array( 'xen-levelup-quests',   __( 'Quests',    'xen-levelup' ),       'page_quests'          ),
+			array( 'xen-levelup-legendary',__( 'Legendary', 'xen-levelup' ),       'page_legendary'       ),
+			array( 'xen-levelup-achievements', __( 'Achievements', 'xen-levelup' ),'page_achievements'    ),
+			array( 'xen-levelup-shop',     __( 'Shop',      'xen-levelup' ),       'page_shop'            ),
+			array( 'xen-levelup-rankings', __( 'Rankings',  'xen-levelup' ),       'page_rankings'        ),
+			array( 'xen-levelup-analytics',__( 'Analytics', 'xen-levelup' ),       'page_analytics'       ),
+			array( 'xen-levelup-settings', __( 'Settings',  'xen-levelup' ),       'page_settings'        ),
+		);
+
+		foreach ( $sub as $item ) {
+			add_submenu_page( 'xen-levelup', $item[1], $item[1], 'manage_options', $item[0], array( $this, $item[2] ) );
+		}
+	}
+
+	// ─── Assets ───────────────────────────────────────────────────────────
+
+	public function enqueue_assets( $hook ) {
+		if ( strpos( $hook, 'xen-levelup' ) === false ) {
+			return;
+		}
+		wp_enqueue_style(
+			'xen-admin',
+			XEN_LEVELUP_PLUGIN_URL . 'admin/css/admin.css',
+			array(),
+			XEN_LEVELUP_VERSION
+		);
+		wp_enqueue_script(
+			'xen-admin-js',
+			XEN_LEVELUP_PLUGIN_URL . 'admin/js/admin.js',
+			array( 'jquery', 'wp-util' ),
+			XEN_LEVELUP_VERSION,
+			true
+		);
+		wp_localize_script( 'xen-admin-js', 'xenAdmin', array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'xen_admin_nonce' ),
+			'i18n'    => array(
+				'confirmReset'  => __( 'Are you sure? This cannot be undone.', 'xen-levelup' ),
+				'saving'        => __( 'Saving…', 'xen-levelup' ),
+				'saved'         => __( 'Saved!', 'xen-levelup' ),
+			),
+		) );
+	}
+
+	// ─── Page Callbacks ───────────────────────────────────────────────────
+
+	public function page_dashboard()    { $this->load_view( 'dashboard'    ); }
+	public function page_users()        { $this->load_view( 'users'        ); }
+	public function page_quests()       { $this->load_view( 'quests'       ); }
+	public function page_legendary()    { $this->load_view( 'legendary'    ); }
+	public function page_achievements() { $this->load_view( 'achievements' ); }
+	public function page_shop()         { $this->load_view( 'shop'         ); }
+	public function page_rankings()     { $this->load_view( 'rankings'     ); }
+	public function page_analytics()    { $this->load_view( 'analytics'    ); }
+	public function page_settings()     {
+		// Handle settings save
+		if ( isset( $_POST['xen_settings_nonce'] )
+			&& wp_verify_nonce( sanitize_key( $_POST['xen_settings_nonce'] ), 'xen_save_settings' ) ) {
+			$this->save_settings();
+		}
+		$this->load_view( 'settings' );
+	}
+
+	// ─── Settings Save ────────────────────────────────────────────────────
+
+	private function save_settings() {
+		$fields = array(
+			'xen_levelup_dashboard_page'   => 'absint',
+			'xen_levelup_profile_page'     => 'absint',
+			'xen_levelup_onboarding_page'  => 'absint',
+			'xen_levelup_shop_page'        => 'absint',
+			'xen_levelup_rankings_page'    => 'absint',
+			'xen_levelup_enable_notifications' => 'absint',
+			'xen_levelup_enable_random_quests' => 'absint',
+			'xen_levelup_legendary_count'  => 'absint',
+		);
+		foreach ( $fields as $key => $sanitizer ) {
+			if ( isset( $_POST[ $key ] ) ) {
+				update_option( $key, $sanitizer( $_POST[ $key ] ) ); // phpcs:ignore
+			}
+		}
+		add_settings_error( 'xen_settings', 'saved', __( 'Settings saved.', 'xen-levelup' ), 'updated' );
+	}
+
+	// ─── User List ───────────────────────────────────────────────────────
+
+	public function add_user_columns( $columns ) {
+		$columns['xen_level']     = __( 'Level',  'xen-levelup' );
+		$columns['xen_rank']      = __( 'Rank',   'xen-levelup' );
+		$columns['xen_xp']        = __( 'XP',     'xen-levelup' );
+		return $columns;
+	}
+
+	public function user_column_content( $output, $column_name, $user_id ) {
+		$profile = xen_levelup()->user->get_profile( $user_id );
+		if ( ! $profile ) {
+			return '—';
+		}
+		switch ( $column_name ) {
+			case 'xen_level':
+				return esc_html( $profile->level );
+			case 'xen_rank':
+				return '<span class="xen-admin-rank">' . esc_html( $profile->rank_title ) . '</span>';
+			case 'xen_xp':
+				return number_format( (int) $profile->experience );
+		}
+		return $output;
+	}
+
+	// ─── View Loader ─────────────────────────────────────────────────────
+
+	/**
+	 * Include an admin view from admin/views/.
+	 *
+	 * @param string $view View filename (without .php).
+	 */
+	private function load_view( $view ) {
+		$file = XEN_LEVELUP_PLUGIN_DIR . 'admin/views/' . sanitize_file_name( $view ) . '.php';
+		if ( file_exists( $file ) ) {
+			require $file;
+		}
+	}
+}

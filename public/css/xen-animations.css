@@ -1,0 +1,226 @@
+/* =====================================================
+   XEN LevelUp — Animations CSS
+   ===================================================== */
+
+/* =====================================================
+   KEYFRAMES
+   ===================================================== */
+
+/* XP bar fill */
+@keyframes xen-xp-fill {
+	from { width: 0; }
+	to   { width: var(--xen-target-width, 100%); }
+}
+
+/* Level-up burst */
+@keyframes xen-level-up-scale {
+	0%   { transform: scale(1); }
+	30%  { transform: scale(1.15); }
+	60%  { transform: scale(.97); }
+	100% { transform: scale(1); }
+}
+
+@keyframes xen-level-up-glow {
+	0%   { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+	40%  { box-shadow: 0 0 40px 20px rgba(0, 212, 255, .6); }
+	100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+}
+
+/* Achievement pop */
+@keyframes xen-achievement-pop {
+	0%   { opacity: 0; transform: translateY(30px) scale(.8); }
+	60%  { opacity: 1; transform: translateY(-6px) scale(1.04); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes xen-achievement-dismiss {
+	0%   { opacity: 1; transform: translateY(0); }
+	100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Neon pulse (used on rank badges, legendary cards) */
+@keyframes xen-neon-pulse {
+	0%, 100% { opacity: 1; filter: brightness(1); }
+	50%       { opacity: .75; filter: brightness(1.35); }
+}
+
+/* Particle drift (JS canvas, but CSS fade for non-canvas fallback) */
+@keyframes xen-particle-drift {
+	0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+	100% { opacity: 0; transform: translate(var(--dx, 30px), var(--dy, -60px)) scale(.4); }
+}
+
+/* Awakening ceremony (onboarding complete) */
+@keyframes xen-awaken-burst {
+	0%   { transform: scale(0);   opacity: 0; }
+	50%  { transform: scale(1.3); opacity: 1; }
+	100% { transform: scale(1);   opacity: 1; }
+}
+
+/* Slide-in from right (toasts) */
+@keyframes xen-slide-in-right {
+	from { transform: translateX(110%); opacity: 0; }
+	to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* Slide-out to right (toasts dismiss) */
+@keyframes xen-slide-out-right {
+	from { transform: translateX(0);    opacity: 1; }
+	to   { transform: translateX(110%); opacity: 0; }
+}
+
+/* Fade in */
+@keyframes xen-fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+/* Shake (error feedback) */
+@keyframes xen-shake {
+	0%, 100% { transform: translateX(0); }
+	20%      { transform: translateX(-6px); }
+	40%      { transform: translateX(6px); }
+	60%      { transform: translateX(-4px); }
+	80%      { transform: translateX(4px); }
+}
+
+/* =====================================================
+   UTILITY ANIMATION CLASSES
+   ===================================================== */
+
+.xen-animate-xp .xen-xp-fill,
+.xen-animate-xp .xen-stat-fill,
+.xen-animate-xp .xen-tree-fill,
+.xen-animate-xp .xen-rpg-fill {
+	animation: xen-xp-fill 1.2s cubic-bezier(.25, 0, .2, 1) forwards;
+}
+
+.xen-level-up-flash {
+	animation:
+		xen-level-up-scale 0.6s ease-out,
+		xen-level-up-glow 0.8s ease-out;
+}
+
+.xen-achievement-popup {
+	animation: xen-achievement-pop .45s cubic-bezier(.175, .885, .32, 1.275) forwards;
+}
+
+.xen-achievement-popup.xen-dismiss {
+	animation: xen-achievement-dismiss .3s ease-in forwards;
+}
+
+.xen-neon-pulse {
+	animation: xen-neon-pulse 2.5s ease-in-out infinite;
+}
+
+.xen-neon-pulse-fast {
+	animation: xen-neon-pulse 1.2s ease-in-out infinite;
+}
+
+.xen-fade-in {
+	animation: xen-fade-in .3s ease forwards;
+}
+
+.xen-shake {
+	animation: xen-shake .35s ease-in-out;
+}
+
+/* =====================================================
+   LEVEL-UP MODAL (created by JS)
+   ===================================================== */
+.xen-level-modal-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, .75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100000;
+	animation: xen-fade-in .25s ease;
+}
+
+.xen-level-modal {
+	background: var(--xen-card, #111827);
+	border: 1px solid var(--xen-primary, #00D4FF);
+	border-radius: 16px;
+	padding: 2.5rem;
+	text-align: center;
+	position: relative;
+	max-width: 360px;
+	width: 90%;
+	animation: xen-awaken-burst .55s cubic-bezier(.175, .885, .32, 1.275) forwards;
+	box-shadow: 0 0 60px rgba(0, 212, 255, .4);
+}
+
+.xen-level-modal-close {
+	position: absolute;
+	top: .75rem;
+	right: 1rem;
+	background: none;
+	border: none;
+	color: var(--xen-muted, #6B7280);
+	font-size: 1.2rem;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.xen-level-modal-icon  { font-size: 3.5rem; display: block; margin-bottom: .75rem; }
+.xen-level-modal-title { font-size: 1.6rem; font-weight: 900; color: var(--xen-primary, #00D4FF); margin: 0 0 .25rem; }
+.xen-level-modal-level { font-size: 4rem; font-weight: 900; color: #fff; line-height: 1; margin: .25rem 0; }
+.xen-level-modal-rank  { display: inline-block; margin: .5rem 0 1rem; font-size: 1rem; padding: 4px 18px; border-radius: 99px; border: 1px solid var(--xen-primary, #00D4FF); color: var(--xen-primary, #00D4FF); }
+.xen-level-modal-msg   { color: var(--xen-muted, #6B7280); font-size: .9rem; }
+
+/* =====================================================
+   PARTICLES CANVAS
+   ===================================================== */
+#xen-particles-canvas {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 99998;
+}
+
+/* =====================================================
+   QUEST CARD COMPLETE FLASH
+   ===================================================== */
+.xen-quest-complete-flash {
+	animation: xen-level-up-glow .8s ease-out, xen-fade-in .3s ease;
+}
+
+/* =====================================================
+   PROGRESS BAR SHIMMER (loading state)
+   ===================================================== */
+@keyframes xen-shimmer {
+	0%   { background-position: -200% 0; }
+	100% { background-position: 200% 0; }
+}
+
+.xen-loading .xen-xp-fill {
+	background: linear-gradient(
+		90deg,
+		rgba(0, 212, 255, .15) 25%,
+		rgba(0, 212, 255, .35) 50%,
+		rgba(0, 212, 255, .15) 75%
+	);
+	background-size: 200%;
+	animation: xen-shimmer 1.5s infinite;
+}
+
+/* =====================================================
+   SPINNING LOADER
+   ===================================================== */
+@keyframes xen-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
+}
+
+.xen-spinner {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border: 2px solid var(--xen-border, #1F2D45);
+	border-top-color: var(--xen-primary, #00D4FF);
+	border-radius: 50%;
+	animation: xen-spin .7s linear infinite;
+	vertical-align: middle;
+}

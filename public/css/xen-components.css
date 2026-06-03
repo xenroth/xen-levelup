@@ -1,0 +1,209 @@
+/* =====================================================
+   XEN LevelUp — Components CSS
+   ===================================================== */
+
+/* =====================================================
+   COLLAPSIBLE ADD FORMS
+   ===================================================== */
+.xen-add-form-wrap { margin-bottom: 1.5rem; }
+.xen-toggle-form-btn { margin-bottom: .75rem; }
+.xen-form-collapse { display: none; }
+.xen-form-collapse.xen-open { display: block; }
+
+/* =====================================================
+   NOTIFICATIONS DROPDOWN
+   ===================================================== */
+.xen-notif-wrap    { position: relative; display: inline-block; }
+.xen-notif-btn     { background: none; border: none; cursor: pointer; font-size: .88rem; color: var(--xen-text); padding: 4px 8px; position: relative; }
+.xen-notif-count   { position: absolute; top: -4px; right: -6px; background: var(--xen-danger); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: .65rem; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.xen-notif-dropdown {
+	position: absolute;
+	top: calc(100% + 6px);
+	right: 0;
+	min-width: 300px;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	box-shadow: 0 12px 32px rgba(0,0,0,.4);
+	z-index: 9999;
+	display: none;
+}
+.xen-notif-dropdown.xen-open { display: block; }
+.xen-notif-dropdown-header { display: flex; justify-content: space-between; align-items: center; padding: .75rem 1rem; border-bottom: 1px solid var(--xen-border); }
+.xen-notif-dropdown-title  { font-size: .85rem; font-weight: 700; color: var(--xen-primary); }
+.xen-mark-all-read { background: none; border: none; font-size: .75rem; color: var(--xen-muted); cursor: pointer; }
+.xen-mark-all-read:hover { color: var(--xen-primary); }
+.xen-notif-list  { max-height: 280px; overflow-y: auto; }
+.xen-notif-item  { padding: .7rem 1rem; border-bottom: 1px solid var(--xen-border); cursor: pointer; transition: background .15s; }
+.xen-notif-item:hover { background: rgba(0,212,255,.04); }
+.xen-notif-item.xen-unread { border-left: 3px solid var(--xen-primary); }
+.xen-notif-title { font-size: .82rem; font-weight: 700; margin-bottom: 2px; }
+.xen-notif-msg   { font-size: .75rem; color: var(--xen-muted); }
+.xen-notif-time  { font-size: .7rem; color: var(--xen-muted); margin-top: 3px; }
+.xen-notif-empty { padding: 1.25rem 1rem; text-align: center; color: var(--xen-muted); font-size: .82rem; }
+
+/* =====================================================
+   SPECIAL QUEST CARDS (weekly)
+   ===================================================== */
+.xen-special-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.xen-special-meta   { display: flex; align-items: center; gap: 1rem; }
+.xen-special-badge  { background: rgba(255,215,0,.12); border: 1px solid var(--xen-gold); color: var(--xen-gold); border-radius: 99px; font-size: .75rem; padding: 3px 12px; }
+.xen-weekly-tag     { font-size: .75rem; color: var(--xen-muted); }
+.xen-special-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+.xen-special-card   {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-top: 3px solid var(--xen-gold);
+	border-radius: var(--xen-radius);
+	padding: 1.25rem;
+}
+.xen-special-card-done { opacity: .55; border-top-color: var(--xen-success); }
+.xen-special-card-header { display: flex; justify-content: space-between; margin-bottom: .6rem; }
+.xen-special-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; flex-wrap: wrap; gap: .5rem; }
+
+/* =====================================================
+   LEGENDARY QUEST CARDS
+   ===================================================== */
+.xen-legendary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.xen-legendary-badge  { background: rgba(255,107,53,.12); border: 1px solid var(--xen-legendary); color: var(--xen-legendary); border-radius: 99px; font-size: .75rem; padding: 3px 14px; animation: xen-neon-pulse 2.5s ease-in-out infinite; }
+.xen-legendary-grid   { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
+.xen-legendary-card   {
+	background: linear-gradient(135deg, var(--xen-card), rgba(255,107,53,.06));
+	border: 1px solid rgba(255,107,53,.3);
+	border-radius: var(--xen-radius);
+	padding: 1.5rem;
+	position: relative;
+	overflow: hidden;
+}
+.xen-legendary-card::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	height: 3px;
+	background: linear-gradient(90deg, var(--xen-legendary), var(--xen-accent));
+}
+.xen-legendary-card-done { border-color: rgba(34,197,94,.3); }
+.xen-legendary-card-done::before { background: linear-gradient(90deg, var(--xen-success), var(--xen-primary)); }
+.xen-legendary-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+.xen-legendary-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; flex-wrap: wrap; gap: .5rem; }
+.xen-legendary-sparkle { font-size: .9rem; animation: xen-neon-pulse-fast 1s ease-in-out infinite; }
+
+/* =====================================================
+   DAILY QUESTS
+   ===================================================== */
+.xen-daily-header  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: .5rem; }
+.xen-daily-date    { font-size: .82rem; color: var(--xen-muted); }
+.xen-daily-counter { font-size: .82rem; color: var(--xen-primary); font-weight: 700; }
+.xen-daily-grid    { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+.xen-daily-card    {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-left: 4px solid var(--xen-primary);
+	border-radius: var(--xen-radius);
+	padding: 1rem 1.25rem;
+	transition: transform .15s, box-shadow .15s;
+}
+.xen-daily-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,212,255,.1); }
+.xen-daily-card.xen-quest-done { opacity: .55; border-left-color: var(--xen-success); transform: none; }
+.xen-daily-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: .85rem; flex-wrap: wrap; gap: .5rem; }
+.xen-secondary-tag { background: rgba(123,97,255,.1); border: 1px solid rgba(123,97,255,.3); color: var(--xen-accent); border-radius: 99px; font-size: .7rem; padding: 2px 10px; }
+
+/* =====================================================
+   STATS SECTION HEADERS
+   ===================================================== */
+.xen-stats-header   { margin-bottom: 1.5rem; }
+.xen-stats-subtitle { font-size: .85rem; color: var(--xen-muted); margin-top: .25rem; }
+
+/* =====================================================
+   CHARACTER SHEET
+   ===================================================== */
+.xen-char-section   { display: flex; flex-direction: column; gap: 1.5rem; }
+.xen-char-overview  { display: flex; flex-direction: column; align-items: center; gap: .75rem; }
+.xen-char-badges    { display: flex; flex-direction: column; gap: .5rem; align-items: center; text-align: center; }
+.xen-char-badge-row { display: flex; gap: .5rem; flex-wrap: wrap; justify-content: center; }
+.xen-char-stats     { flex: 1; display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* =====================================================
+   TOGGLE / SWITCH
+   ===================================================== */
+.xen-toggle-wrap { display: flex; align-items: center; gap: .75rem; }
+.xen-toggle-label { font-size: .85rem; }
+/* Basic switch using checkbox */
+.xen-toggle-input { display: none; }
+.xen-toggle-slider {
+	width: 40px; height: 22px;
+	background: var(--xen-border);
+	border-radius: 99px;
+	position: relative;
+	cursor: pointer;
+	transition: background .2s;
+	flex-shrink: 0;
+}
+.xen-toggle-slider::after {
+	content: '';
+	position: absolute;
+	top: 3px; left: 3px;
+	width: 16px; height: 16px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform .2s;
+}
+.xen-toggle-input:checked + .xen-toggle-slider { background: var(--xen-primary); }
+.xen-toggle-input:checked + .xen-toggle-slider::after { transform: translateX(18px); }
+
+/* =====================================================
+   INFO BOXES / ALERTS
+   ===================================================== */
+.xen-alert {
+	padding: .75rem 1rem;
+	border-radius: var(--xen-radius-sm);
+	font-size: .85rem;
+	margin-bottom: 1rem;
+}
+.xen-alert-info    { background: rgba(0,212,255,.08);  border: 1px solid rgba(0,212,255,.2);  color: var(--xen-primary); }
+.xen-alert-success { background: rgba(34,197,94,.08);  border: 1px solid rgba(34,197,94,.2);  color: var(--xen-success); }
+.xen-alert-warning { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2); color: var(--xen-warning); }
+.xen-alert-error   { background: rgba(239,68,68,.08);  border: 1px solid rgba(239,68,68,.2);  color: var(--xen-danger); }
+
+/* =====================================================
+   PAGINATION
+   ===================================================== */
+.xen-pagination { display: flex; justify-content: center; gap: .5rem; margin-top: 1.5rem; }
+.xen-page-btn {
+	padding: 5px 12px;
+	border-radius: var(--xen-radius-sm);
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	color: var(--xen-muted);
+	font-size: .82rem;
+	text-decoration: none;
+	transition: all .15s;
+}
+.xen-page-btn:hover,
+.xen-page-btn.xen-active { background: rgba(0,212,255,.1); border-color: var(--xen-primary); color: var(--xen-primary); }
+
+/* =====================================================
+   SKELETON / PLACEHOLDER (loading state)
+   ===================================================== */
+@keyframes xen-skeleton-pulse {
+	0%, 100% { opacity: .4; }
+	50%       { opacity: .7; }
+}
+.xen-skeleton {
+	background: var(--xen-card2);
+	border-radius: var(--xen-radius-sm);
+	animation: xen-skeleton-pulse 1.5s ease-in-out infinite;
+}
+.xen-skeleton-text  { height: 14px; margin-bottom: 8px; }
+.xen-skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+.xen-skeleton-bar   { height: 8px; border-radius: 99px; }
+
+/* =====================================================
+   SEPARATOR
+   ===================================================== */
+.xen-divider { border: none; border-top: 1px solid var(--xen-border); margin: 1.5rem 0; }
+
+/* =====================================================
+   QUEST TYPE ICONS (inline)
+   ===================================================== */
+.xen-type-icon { font-size: .85rem; margin-right: 2px; }

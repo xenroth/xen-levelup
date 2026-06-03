@@ -1,0 +1,630 @@
+/* =====================================================
+   XEN LevelUp — Main CSS (Solo Leveling Inspired)
+   ===================================================== */
+
+/* --- CSS Variables --- */
+:root {
+	--xen-primary:    #00D4FF;
+	--xen-secondary:  #007BFF;
+	--xen-accent:     #7B61FF;
+	--xen-gold:       #FFD700;
+	--xen-legendary:  #FF6B35;
+	--xen-bg:         #0B1020;
+	--xen-bg2:        #0F172A;
+	--xen-card:       #111827;
+	--xen-card2:      #1E2536;
+	--xen-border:     #1F2D45;
+	--xen-text:       #E5E7EB;
+	--xen-muted:      #6B7280;
+	--xen-success:    #22C55E;
+	--xen-warning:    #F59E0B;
+	--xen-danger:     #EF4444;
+	--xen-radius:     12px;
+	--xen-radius-sm:  6px;
+	--xen-shadow:     0 4px 24px rgba(0, 212, 255, 0.08);
+	--xen-glow:       0 0 20px rgba(0, 212, 255, 0.35);
+	--xen-glow-lg:    0 0 40px rgba(0, 212, 255, 0.55);
+	--xen-font:       'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* --- Base Wrapper --- */
+.xen-wrap {
+	font-family: var(--xen-font);
+	color: var(--xen-text);
+	background: var(--xen-bg);
+	min-height: 100px;
+	padding: 1.5rem;
+	box-sizing: border-box;
+}
+
+/* =====================================================
+   XP BAR
+   ===================================================== */
+.xen-xp-bar-wrap { margin: .5rem 0; }
+.xen-xp-bar {
+	width: 100%;
+	height: 12px;
+	background: var(--xen-card2);
+	border-radius: 99px;
+	overflow: hidden;
+	position: relative;
+}
+.xen-xp-fill {
+	height: 100%;
+	background: linear-gradient(90deg, var(--xen-secondary), var(--xen-primary));
+	border-radius: 99px;
+	transition: width 0.6s cubic-bezier(.4,0,.2,1);
+	position: relative;
+}
+.xen-xp-fill::after {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: linear-gradient(90deg, transparent 60%, rgba(255,255,255,.25));
+	border-radius: inherit;
+}
+.xen-xp-bar-mini { width: 100%; height: 6px; background: var(--xen-card2); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+.xen-xp-text { font-size: .75rem; color: var(--xen-muted); text-align: right; margin-top: 3px; }
+.xen-xp-label { font-size: .85rem; color: var(--xen-primary); margin-bottom: 4px; }
+
+/* =====================================================
+   HERO CARD (Dashboard top)
+   ===================================================== */
+.xen-hero-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 1.5rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+	box-shadow: var(--xen-shadow);
+	position: relative;
+	overflow: hidden;
+}
+.xen-hero-card::before {
+	content: '';
+	position: absolute;
+	top: 0; left: 0; right: 0;
+	height: 2px;
+	background: linear-gradient(90deg, var(--xen-accent), var(--xen-primary));
+}
+.xen-avatar { border-radius: 50%; border: 2px solid var(--xen-primary); }
+.xen-hero-info { flex: 1; }
+.xen-hero-name { margin: 0 0 .25rem; font-size: 1.4rem; color: var(--xen-text); }
+.xen-title-badge {
+	font-size: .75rem;
+	background: rgba(123,97,255,.2);
+	color: var(--xen-accent);
+	border: 1px solid var(--xen-accent);
+	border-radius: 99px;
+	padding: 2px 10px;
+	margin-left: .5rem;
+	vertical-align: middle;
+}
+.xen-level-display {
+	display: inline-flex;
+	align-items: center;
+	gap: .35rem;
+	margin: .3rem 0;
+}
+.xen-level-label { font-size: .7rem; color: var(--xen-muted); text-transform: uppercase; letter-spacing: 1px; }
+.xen-level-number { font-size: 2rem; font-weight: 800; color: var(--xen-primary); line-height: 1; }
+.xen-hero-stats { display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; }
+.xen-coin-display { font-size: 1.1rem; color: var(--xen-gold); }
+.xen-notif-badge {
+	background: rgba(239,68,68,.15);
+	border: 1px solid var(--xen-danger);
+	color: var(--xen-danger);
+	border-radius: 99px;
+	padding: 2px 10px;
+	font-size: .8rem;
+}
+
+/* =====================================================
+   RANK BADGES
+   ===================================================== */
+.xen-rank-badge {
+	display: inline-block;
+	padding: 3px 12px;
+	border-radius: 99px;
+	font-size: .75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .5px;
+}
+.xen-rank-e-rank   { background: rgba(107,114,128,.2); color: #9CA3AF; border: 1px solid #4B5563; }
+.xen-rank-d-rank   { background: rgba(34,197,94,.15);  color: #86EFAC; border: 1px solid #22C55E; }
+.xen-rank-c-rank   { background: rgba(59,130,246,.15); color: #93C5FD; border: 1px solid #3B82F6; }
+.xen-rank-b-rank   { background: rgba(0,212,255,.15);  color: var(--xen-primary); border: 1px solid var(--xen-primary); }
+.xen-rank-a-rank   { background: rgba(245,158,11,.15); color: #FCD34D; border: 1px solid #F59E0B; }
+.xen-rank-s-rank   { background: rgba(255,107,53,.2);  color: #FB923C; border: 1px solid #FF6B35; box-shadow: 0 0 10px rgba(255,107,53,.3); }
+.xen-rank-national-level { background: rgba(123,97,255,.2); color: #A78BFA; border: 1px solid var(--xen-accent); box-shadow: 0 0 12px rgba(123,97,255,.4); }
+.xen-rank-shadow-monarch  { background: rgba(0,0,0,.5); color: var(--xen-primary); border: 1px solid var(--xen-primary); box-shadow: var(--xen-glow); }
+
+/* =====================================================
+   SECTIONS
+   ===================================================== */
+.xen-section { margin: 2rem 0; }
+.xen-section-title {
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--xen-primary);
+	margin: 0 0 1rem;
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+}
+.xen-section-title::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: linear-gradient(90deg, var(--xen-border), transparent);
+}
+.xen-subsection-title { font-size: 1rem; color: var(--xen-text); margin: 1rem 0 .75rem; font-weight: 600; }
+
+/* =====================================================
+   LIFE TREES GRID
+   ===================================================== */
+.xen-life-trees-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 1rem;
+}
+.xen-tree-item {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: .75rem;
+	text-align: center;
+	transition: border-color .2s, box-shadow .2s;
+}
+.xen-tree-item:hover { border-color: var(--xen-primary); box-shadow: 0 0 12px rgba(0,212,255,.12); }
+.xen-tree-icon  { font-size: 1.6rem; display: block; margin-bottom: .25rem; }
+.xen-tree-label { font-size: .75rem; color: var(--xen-muted); margin-bottom: .4rem; }
+.xen-tree-bar   { width: 100%; height: 6px; background: var(--xen-card2); border-radius: 99px; overflow: hidden; }
+.xen-tree-fill  { height: 100%; border-radius: 99px; background: var(--xen-primary); transition: width .4s ease; }
+.xen-tree-value { font-size: .85rem; font-weight: 700; color: var(--xen-primary); margin-top: .25rem; }
+
+/* Tree colour tints */
+.xen-tree-physique      { background: #EF4444; }
+.xen-tree-intelligence  { background: #3B82F6; }
+.xen-tree-knowledge     { background: #8B5CF6; }
+.xen-tree-discipline    { background: #F59E0B; }
+.xen-tree-wealth        { background: #10B981; }
+.xen-tree-communication { background: #06B6D4; }
+.xen-tree-leadership    { background: #F97316; }
+.xen-tree-relationships { background: #EC4899; }
+.xen-tree-spirituality  { background: #A855F7; }
+.xen-tree-longevity     { background: #14B8A6; }
+
+/* =====================================================
+   QUEST CARDS
+   ===================================================== */
+.xen-quest-list  { display: flex; flex-direction: column; gap: .75rem; }
+.xen-quest-card  {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-left: 4px solid var(--xen-primary);
+	border-radius: var(--xen-radius);
+	padding: 1rem 1.25rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	transition: transform .15s, box-shadow .15s;
+}
+.xen-quest-card:hover { transform: translateX(2px); box-shadow: -4px 0 12px rgba(0,212,255,.15); }
+.xen-quest-done  { opacity: .55; border-left-color: var(--xen-success); }
+.xen-quest-special    { border-left-color: var(--xen-gold); }
+.xen-quest-legendary  { border-left-color: var(--xen-legendary); background: linear-gradient(135deg, var(--xen-card), rgba(255,107,53,.05)); }
+.xen-quest-header { display: flex; align-items: center; gap: .5rem; flex: 1; flex-wrap: wrap; }
+.xen-quest-title  { font-weight: 600; font-size: .95rem; }
+.xen-quest-desc   { font-size: .82rem; color: var(--xen-muted); margin: .25rem 0 0; }
+.xen-quest-footer { display: flex; align-items: center; gap: .75rem; margin-top: .5rem; flex-wrap: wrap; }
+.xen-quest-reward { font-size: .82rem; color: var(--xen-muted); }
+.xen-quest-date   { font-size: .8rem; color: var(--xen-muted); }
+.xen-done-tag     { font-size: .8rem; color: var(--xen-success); font-weight: 700; }
+.xen-done-badge   { font-size: .82rem; color: var(--xen-success); font-weight: 700; }
+.xen-expires      { font-size: .75rem; color: var(--xen-warning); }
+.xen-legendary-glow { position: absolute; top: 0; right: 0; bottom: 0; width: 40px; background: radial-gradient(ellipse at right, rgba(255,107,53,.12), transparent); border-radius: inherit; }
+
+/* Difficulty border tints */
+.xen-diff-very_easy  { border-left-color: #86EFAC; }
+.xen-diff-easy       { border-left-color: #4ADE80; }
+.xen-diff-medium     { border-left-color: #FACC15; }
+.xen-diff-hard       { border-left-color: #F97316; }
+.xen-diff-very_hard  { border-left-color: #EF4444; }
+.xen-diff-extreme    { border-left-color: #DC2626; }
+.xen-diff-legendary  { border-left-color: var(--xen-accent); }
+
+.xen-diff-badge {
+	font-size: .7rem;
+	padding: 2px 8px;
+	border-radius: 99px;
+	background: rgba(255,255,255,.06);
+	border: 1px solid var(--xen-border);
+	color: var(--xen-muted);
+}
+
+/* =====================================================
+   TASKS
+   ===================================================== */
+.xen-tasks-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.xen-tasks-remaining { font-size: .8rem; color: var(--xen-muted); }
+.xen-task-list   { display: flex; flex-direction: column; gap: .5rem; }
+.xen-task-item   {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius-sm);
+	padding: .7rem 1rem;
+	transition: opacity .2s;
+}
+.xen-task-item.xen-done { opacity: .45; text-decoration: line-through; }
+.xen-task-body   { flex: 1; }
+.xen-task-title  { font-size: .9rem; }
+.xen-task-due    { font-size: .75rem; color: var(--xen-muted); display: block; }
+.xen-check-btn   { background: none; border: 2px solid var(--xen-border); color: var(--xen-muted); border-radius: 50%; width: 26px; height: 26px; cursor: pointer; font-size: .85rem; transition: border-color .15s, color .15s; display: flex; align-items: center; justify-content: center; }
+.xen-check-btn:hover { border-color: var(--xen-primary); color: var(--xen-primary); }
+.xen-check-done  { color: var(--xen-success); font-size: 1rem; }
+.xen-delete-btn  { background: none; border: none; color: var(--xen-muted); cursor: pointer; font-size: .8rem; padding: 4px 8px; border-radius: var(--xen-radius-sm); }
+.xen-delete-btn:hover { color: var(--xen-danger); background: rgba(239,68,68,.1); }
+.xen-task-priority-badge { font-size: .7rem; padding: 2px 8px; border-radius: 99px; }
+.xen-priority-critical { background: rgba(239,68,68,.15); color: #FCA5A5; border: 1px solid #EF4444; }
+.xen-priority-high     { background: rgba(249,115,22,.15); color: #FDBA74; border: 1px solid #F97316; }
+.xen-priority-medium   { background: rgba(234,179,8,.12);  color: #FDE68A; border: 1px solid #EAB308; }
+.xen-priority-low      { background: rgba(107,114,128,.1); color: #9CA3AF; border: 1px solid #6B7280; }
+
+/* =====================================================
+   HABITS
+   ===================================================== */
+.xen-habits-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.xen-habit-list  { display: flex; flex-direction: column; gap: .75rem; }
+.xen-habit-card  {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: .9rem 1.2rem;
+}
+.xen-habit-logged { border-color: var(--xen-success); background: rgba(34,197,94,.04); }
+.xen-habit-streak { text-align: center; min-width: 60px; }
+.xen-streak-label { font-size: .7rem; color: var(--xen-muted); display: block; }
+.xen-habit-info   { flex: 1; }
+.xen-habit-title  { font-weight: 600; display: block; }
+.xen-habit-category { font-size: .75rem; color: var(--xen-muted); }
+.xen-habit-done   { font-size: .82rem; color: var(--xen-success); font-weight: 700; }
+
+/* =====================================================
+   RANKINGS
+   ===================================================== */
+.xen-rankings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: .5rem; }
+.xen-period-tabs { display: flex; gap: .5rem; }
+.xen-tab { padding: 5px 14px; border-radius: 99px; background: var(--xen-card2); border: 1px solid var(--xen-border); color: var(--xen-muted); font-size: .82rem; text-decoration: none; transition: all .15s; }
+.xen-tab-active,
+.xen-tab:hover { background: rgba(0,212,255,.12); border-color: var(--xen-primary); color: var(--xen-primary); }
+.xen-my-rank-banner { background: rgba(0,212,255,.06); border: 1px solid rgba(0,212,255,.2); color: var(--xen-primary); border-radius: var(--xen-radius-sm); padding: .5rem 1rem; font-size: .85rem; margin-bottom: 1rem; }
+.xen-leaderboard { display: flex; flex-direction: column; gap: .5rem; }
+.xen-leaderboard-row {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius-sm);
+	padding: .7rem 1rem;
+}
+.xen-leaderboard-me { border-color: var(--xen-primary); background: rgba(0,212,255,.04); }
+.xen-lb-rank  { min-width: 40px; font-weight: 700; font-size: 1rem; }
+.xen-lb-name  { flex: 1; font-weight: 600; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.xen-lb-level { font-size: .8rem; color: var(--xen-muted); }
+.xen-lb-score { font-size: .85rem; color: var(--xen-primary); font-weight: 700; min-width: 90px; text-align: right; }
+.xen-lb-quests { font-size: .75rem; color: var(--xen-muted); min-width: 80px; text-align: right; }
+.xen-avatar-sm  { border-radius: 50%; }
+
+/* =====================================================
+   SHOP
+   ===================================================== */
+.xen-shop-header   { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.xen-shop-balance  { font-size: 1.1rem; color: var(--xen-gold); }
+.xen-shop-filters  { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.xen-filter-btn    { padding: 5px 14px; border-radius: 99px; background: var(--xen-card2); border: 1px solid var(--xen-border); color: var(--xen-muted); font-size: .82rem; cursor: pointer; transition: all .15s; }
+.xen-filter-btn.xen-filter-active,
+.xen-filter-btn:hover { background: rgba(0,212,255,.1); border-color: var(--xen-primary); color: var(--xen-primary); }
+.xen-shop-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: 1.25rem;
+}
+.xen-shop-item {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	overflow: hidden;
+	transition: transform .2s, box-shadow .2s;
+}
+.xen-shop-item:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.xen-item-icon       { height: 100px; display: flex; align-items: center; justify-content: center; background: var(--xen-card2); font-size: 2.5rem; }
+.xen-item-icon img   { max-height: 80px; object-fit: contain; }
+.xen-item-info       { padding: .75rem; }
+.xen-item-title      { font-weight: 700; font-size: .9rem; }
+.xen-item-type       { font-size: .72rem; color: var(--xen-muted); margin-top: 2px; }
+.xen-item-desc       { font-size: .78rem; color: var(--xen-muted); margin-top: .25rem; }
+.xen-item-footer     { padding: .75rem; border-top: 1px solid var(--xen-border); display: flex; justify-content: space-between; align-items: center; }
+.xen-item-price      { color: var(--xen-gold); font-weight: 700; }
+.xen-btn-equipped    { background: rgba(34,197,94,.12); border-color: var(--xen-success); color: var(--xen-success); }
+.xen-btn-owned       { background: rgba(0,212,255,.1); border-color: var(--xen-primary); color: var(--xen-primary); }
+.xen-btn-buy         { background: rgba(255,215,0,.1); border-color: var(--xen-gold); color: var(--xen-gold); }
+
+/* =====================================================
+   ACHIEVEMENTS
+   ===================================================== */
+.xen-ach-header  { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.xen-ach-counter { font-size: .85rem; color: var(--xen-muted); }
+.xen-ach-grid    { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.xen-ach-card    {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: 1rem;
+	position: relative;
+	transition: border-color .2s;
+}
+.xen-ach-unlocked { border-color: rgba(255,215,0,.3); }
+.xen-ach-locked   { opacity: .55; filter: grayscale(.5); }
+.xen-ach-icon     { font-size: 2rem; min-width: 44px; text-align: center; }
+.xen-ach-title    { font-weight: 700; font-size: .9rem; }
+.xen-ach-desc     { font-size: .78rem; color: var(--xen-muted); margin-top: 2px; }
+.xen-ach-date     { font-size: .72rem; color: var(--xen-success); margin-top: 4px; }
+.xen-ach-rewards  { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 4px; font-size: .78rem; color: var(--xen-muted); }
+.xen-ach-lock     { position: absolute; top: .75rem; right: .75rem; font-size: .9rem; opacity: .6; }
+
+/* =====================================================
+   PROFILE
+   ===================================================== */
+.xen-profile-header {
+	display: flex;
+	align-items: flex-start;
+	gap: 1.5rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+}
+.xen-profile-avatar { border-radius: 50%; border: 3px solid var(--xen-primary); }
+.xen-profile-meta   { flex: 1; }
+.xen-profile-name   { margin: 0 0 .4rem; font-size: 1.5rem; }
+.xen-profile-title  { font-size: .82rem; color: var(--xen-accent); margin-bottom: .4rem; }
+.xen-profile-rank-pos { font-size: .82rem; color: var(--xen-muted); margin-top: .4rem; }
+.xen-profile-numbers { display: flex; flex-wrap: wrap; gap: .75rem; }
+.xen-stat-pill { background: var(--xen-card2); border: 1px solid var(--xen-border); border-radius: var(--xen-radius-sm); padding: .4rem .75rem; display: flex; flex-direction: column; align-items: center; }
+.xen-stat-pill span { font-size: .7rem; color: var(--xen-muted); }
+.xen-stat-pill strong { font-size: 1rem; color: var(--xen-primary); }
+.xen-xp-section { margin-bottom: 2rem; }
+
+/* =====================================================
+   STATS
+   ===================================================== */
+.xen-life-trees-list { display: flex; flex-direction: column; gap: .6rem; }
+.xen-stat-row        { display: flex; align-items: center; gap: .75rem; }
+.xen-stat-label      { min-width: 160px; font-size: .85rem; color: var(--xen-text); }
+.xen-stat-icon       { margin-right: .25rem; }
+.xen-stat-bar-wrap   { display: flex; align-items: center; gap: .5rem; flex: 1; }
+.xen-stat-bar        { flex: 1; height: 8px; background: var(--xen-card2); border-radius: 99px; overflow: hidden; }
+.xen-stat-fill       { height: 100%; border-radius: 99px; transition: width .4s ease; }
+.xen-stat-val        { min-width: 34px; text-align: right; font-size: .82rem; color: var(--xen-primary); font-weight: 700; }
+.xen-rpg-grid        { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .75rem; }
+.xen-rpg-stat        { background: var(--xen-card); border: 1px solid var(--xen-border); border-radius: var(--xen-radius-sm); padding: .6rem .8rem; }
+.xen-rpg-label       { font-size: .75rem; color: var(--xen-muted); margin-bottom: .3rem; }
+.xen-rpg-bar         { height: 6px; background: var(--xen-card2); border-radius: 99px; overflow: hidden; margin-bottom: .25rem; }
+.xen-rpg-fill        { height: 100%; background: linear-gradient(90deg, var(--xen-accent), var(--xen-primary)); border-radius: 99px; transition: width .4s ease; }
+.xen-rpg-val         { font-size: .82rem; color: var(--xen-accent); font-weight: 700; text-align: right; }
+
+/* =====================================================
+   CHARACTER SHEET
+   ===================================================== */
+.xen-character-sheet {
+	display: grid;
+	grid-template-columns: 240px 1fr;
+	gap: 2rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: 2rem;
+}
+.xen-char-identity { text-align: center; }
+.xen-char-avatar   { border-radius: 50%; border: 3px solid var(--xen-primary); box-shadow: var(--xen-glow); margin-bottom: .75rem; }
+.xen-char-name     { margin: 0 0 .25rem; }
+.xen-char-title    { font-size: .82rem; color: var(--xen-accent); margin-bottom: .4rem; }
+.xen-char-level    { font-size: 2rem; font-weight: 900; color: var(--xen-primary); letter-spacing: -1px; }
+.xen-char-level span { display: inline-block; }
+.xen-rank-lg       { font-size: .9rem; padding: 5px 18px; }
+
+/* =====================================================
+   FORMS (tasks, habits, onboarding)
+   ===================================================== */
+.xen-form {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius);
+	padding: 1rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .75rem;
+	margin-bottom: 1.5rem;
+	align-items: flex-end;
+}
+.xen-form h4 { width: 100%; margin: 0 0 .5rem; color: var(--xen-primary); }
+.xen-form input[type=text],
+.xen-form input[type=date],
+.xen-form select,
+.xen-form textarea {
+	background: var(--xen-card2);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius-sm);
+	color: var(--xen-text);
+	padding: .5rem .75rem;
+	font-size: .88rem;
+	outline: none;
+	transition: border-color .15s;
+}
+.xen-form input[type=text]:focus,
+.xen-form select:focus { border-color: var(--xen-primary); }
+.xen-form input[type=text] { flex: 1; min-width: 160px; }
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+.xen-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .35rem;
+	padding: .45rem 1rem;
+	border-radius: var(--xen-radius-sm);
+	font-size: .85rem;
+	font-weight: 600;
+	cursor: pointer;
+	border: 1px solid transparent;
+	text-decoration: none;
+	transition: all .15s;
+	white-space: nowrap;
+}
+.xen-btn-primary {
+	background: linear-gradient(135deg, var(--xen-secondary), var(--xen-primary));
+	color: #fff;
+	border-color: transparent;
+}
+.xen-btn-primary:hover { opacity: .88; box-shadow: 0 0 14px rgba(0,212,255,.3); }
+.xen-btn-complete {
+	background: rgba(0,212,255,.1);
+	border-color: var(--xen-primary);
+	color: var(--xen-primary);
+}
+.xen-btn-complete:hover { background: rgba(0,212,255,.2); }
+.xen-btn-legendary {
+	background: rgba(255,107,53,.1);
+	border-color: var(--xen-legendary);
+	color: var(--xen-legendary);
+}
+.xen-btn-log {
+	background: rgba(34,197,94,.1);
+	border-color: var(--xen-success);
+	color: var(--xen-success);
+}
+.xen-btn-log:hover { background: rgba(34,197,94,.2); }
+.xen-btn-ghost {
+	background: transparent;
+	border-color: var(--xen-border);
+	color: var(--xen-muted);
+}
+.xen-btn-ghost:hover { color: var(--xen-text); border-color: var(--xen-text); }
+.xen-btn-secondary {
+	background: transparent;
+	border-color: var(--xen-secondary);
+	color: var(--xen-secondary);
+}
+.xen-btn-lg { padding: .7rem 1.8rem; font-size: 1rem; }
+
+/* =====================================================
+   ACHIEVEMENTS GRID (profile mini)
+   ===================================================== */
+.xen-achievements-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+.xen-achievement-badge {
+	background: rgba(255,215,0,.1);
+	border: 1px solid rgba(255,215,0,.2);
+	border-radius: var(--xen-radius-sm);
+	padding: 4px 10px;
+	font-size: .8rem;
+	cursor: help;
+	transition: background .15s;
+}
+.xen-achievement-badge:hover { background: rgba(255,215,0,.2); }
+.xen-ach-icon { margin-right: 4px; }
+
+/* =====================================================
+   ONBOARDING
+   ===================================================== */
+.xen-onboarding { max-width: 700px; margin: 0 auto; }
+.xen-onboarding-hero  { text-align: center; margin-bottom: 2.5rem; }
+.xen-onboarding-title { font-size: 2rem; font-weight: 900; color: var(--xen-primary); }
+.xen-onboarding-subtitle { color: var(--xen-muted); font-size: .95rem; }
+.xen-step-dots { display: flex; justify-content: center; gap: 8px; margin-top: 1rem; }
+.xen-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--xen-border); transition: background .3s; }
+.xen-dot.active { background: var(--xen-primary); box-shadow: 0 0 8px var(--xen-primary); }
+.xen-step h3 { color: var(--xen-primary); margin-bottom: 1rem; }
+.xen-onboarding-form { display: flex; flex-direction: column; gap: 1.25rem; }
+.xen-trait-list { display: flex; flex-direction: column; gap: 1rem; }
+.xen-trait-row { display: flex; align-items: center; gap: 1rem; }
+.xen-trait-left,
+.xen-trait-right { min-width: 100px; font-size: .85rem; color: var(--xen-muted); }
+.xen-trait-right { text-align: right; }
+.xen-range { flex: 1; accent-color: var(--xen-primary); }
+.xen-interest-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: .75rem; }
+.xen-interest-item { display: flex; flex-direction: column; gap: .25rem; background: var(--xen-card); border: 1px solid var(--xen-border); border-radius: var(--xen-radius-sm); padding: .6rem .8rem; }
+.xen-interest-item label { font-size: .82rem; color: var(--xen-text); }
+.xen-range-val { font-size: .75rem; color: var(--xen-primary); text-align: right; }
+.xen-priority-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .5rem; }
+.xen-priority-item {
+	display: flex;
+	align-items: center;
+	gap: .75rem;
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-radius: var(--xen-radius-sm);
+	padding: .6rem 1rem;
+	cursor: grab;
+	font-size: .9rem;
+	user-select: none;
+}
+.xen-priority-item.xen-dragging { opacity: .5; }
+.xen-drag-handle { color: var(--xen-muted); font-size: .85rem; }
+.xen-step-nav { display: flex; justify-content: space-between; margin-top: .5rem; }
+.xen-awaken-complete { text-align: center; padding: 3rem 1rem; }
+.xen-awaken-anim { font-size: 5rem; animation: xen-awaken 1s ease-in-out infinite alternate; }
+@keyframes xen-awaken { from { transform: scale(1); filter: drop-shadow(0 0 15px var(--xen-primary)); } to { transform: scale(1.08); filter: drop-shadow(0 0 30px var(--xen-primary)); } }
+
+/* =====================================================
+   LOGIN PROMPT
+   ===================================================== */
+.xen-login-prompt { text-align: center; padding: 2rem; background: var(--xen-card); border-radius: var(--xen-radius); border: 1px solid var(--xen-border); }
+.xen-empty-state  { text-align: center; padding: 2rem; color: var(--xen-muted); }
+.xen-empty        { color: var(--xen-muted); font-size: .88rem; }
+
+/* =====================================================
+   LEVEL BADGE INLINE (shortcode [gamified_level])
+   ===================================================== */
+.xen-level-badge { display: inline-flex; align-items: center; gap: .3rem; font-weight: 700; color: var(--xen-primary); font-size: .9rem; }
+
+/* =====================================================
+   NOTIFICATION TOAST (injected by JS)
+   ===================================================== */
+#xen-toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 99999; display: flex; flex-direction: column-reverse; gap: .75rem; pointer-events: none; }
+.xen-toast {
+	background: var(--xen-card);
+	border: 1px solid var(--xen-border);
+	border-left: 4px solid var(--xen-primary);
+	border-radius: var(--xen-radius);
+	padding: .85rem 1.25rem;
+	min-width: 260px;
+	max-width: 360px;
+	box-shadow: var(--xen-shadow);
+	pointer-events: all;
+	animation: xen-slide-in .3s ease;
+}
+.xen-toast-title   { font-weight: 700; font-size: .9rem; margin-bottom: 2px; }
+.xen-toast-message { font-size: .8rem; color: var(--xen-muted); }
+.xen-toast-success { border-left-color: var(--xen-success); }
+.xen-toast-error   { border-left-color: var(--xen-danger); }
+.xen-toast-xp      { border-left-color: var(--xen-primary); }
+.xen-toast-achievement { border-left-color: var(--xen-gold); }
+@keyframes xen-slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
