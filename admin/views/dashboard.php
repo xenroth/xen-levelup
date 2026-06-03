@@ -36,7 +36,7 @@ $total_coins    = (int) $wpdb->get_var( "SELECT SUM(coins) FROM {$wpdb->prefix}x
 		<div class="xen-plugin-meta">
 			<span>
 				<?php esc_html_e( 'Developed by', 'xen-levelup' ); ?>
-				<strong>Richard C. Cupal, LPT (Xenroth)</strong>
+				<strong>Richard C. Cupal, LPT (<span class="xen-author-xenroth">Xenroth</span>)</strong>
 				— Xenroth Digital Innovations
 			</span>
 			<span class="xen-plugin-links">
@@ -54,6 +54,36 @@ $total_coins    = (int) $wpdb->get_var( "SELECT SUM(coins) FROM {$wpdb->prefix}x
 			</a>
 		</div>
 	</div>
+
+	<!-- ── What's New ──────────────────────────────────────────────────── -->
+	<?php
+	$whats_new         = Xen_Overview::whats_new();
+	$admin_dismissed   = get_option( 'xen_admin_whats_new_dismissed' ) === XEN_LEVELUP_VERSION;
+	$show_admin_new    = ! empty( $whats_new ) && ! $admin_dismissed;
+	?>
+	<?php if ( $show_admin_new ) : ?>
+	<div class="xen-whats-new-admin-card" id="xen-admin-whats-new">
+		<div class="xen-whats-new-header">
+			<span class="xen-whats-new-title">⚡ <?php esc_html_e( "What's New in v", 'xen-levelup' ); ?><?php echo esc_html( XEN_LEVELUP_VERSION ); ?></span>
+			<button class="xen-whats-new-dismiss button" id="xen-admin-dismiss-whats-new"
+				data-nonce="<?php echo esc_attr( wp_create_nonce( 'xen_admin_dismiss_whats_new' ) ); ?>"
+				aria-label="<?php esc_attr_e( 'Dismiss', 'xen-levelup' ); ?>">
+				✕ <?php esc_html_e( 'Dismiss', 'xen-levelup' ); ?>
+			</button>
+		</div>
+		<div class="xen-whats-new-items">
+			<?php foreach ( $whats_new as $item ) : ?>
+			<div class="xen-whats-new-item">
+				<span class="xen-whats-new-icon"><?php echo esc_html( $item['icon'] ); ?></span>
+				<div class="xen-whats-new-text">
+					<strong><?php echo esc_html( $item['title'] ); ?></strong>
+					<p><?php echo esc_html( $item['desc'] ); ?></p>
+				</div>
+			</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+	<?php endif; ?>
 
 	<!-- ── Stats ────────────────────────────────────────────────────────── -->
 	<div class="xen-admin-cards">
@@ -244,69 +274,3 @@ $total_coins    = (int) $wpdb->get_var( "SELECT SUM(coins) FROM {$wpdb->prefix}x
 	</div><!-- .xen-getting-started -->
 
 </div><!-- .xen-admin-wrap -->
-
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">👤</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $total_users ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Total Hunters', 'xen-levelup' ); ?></div>
-		</div>
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">📋</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $active_quests ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Active Quests', 'xen-levelup' ); ?></div>
-		</div>
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">✅</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $quests_done ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Quests Completed', 'xen-levelup' ); ?></div>
-		</div>
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">⚡</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $tasks_done ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Tasks Done', 'xen-levelup' ); ?></div>
-		</div>
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">🔥</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $habits_logged ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Habit Entries', 'xen-levelup' ); ?></div>
-		</div>
-		<div class="xen-admin-card">
-			<span class="xen-card-icon">🪙</span>
-			<div class="xen-card-value"><?php echo esc_html( number_format( $total_coins ) ); ?></div>
-			<div class="xen-card-label"><?php esc_html_e( 'Total Coins in Circulation', 'xen-levelup' ); ?></div>
-		</div>
-	</div>
-
-	<h2><?php esc_html_e( 'Top 10 Hunters', 'xen-levelup' ); ?></h2>
-	<?php
-	$top = xen_levelup()->rankings->get_leaderboard( 'global', 'all', 10 );
-	if ( $top ) :
-	?>
-	<table class="wp-list-table widefat striped xen-admin-table">
-		<thead>
-			<tr>
-				<th><?php esc_html_e( 'Rank', 'xen-levelup' ); ?></th>
-				<th><?php esc_html_e( 'Hunter', 'xen-levelup' ); ?></th>
-				<th><?php esc_html_e( 'Level', 'xen-levelup' ); ?></th>
-				<th><?php esc_html_e( 'Title', 'xen-levelup' ); ?></th>
-				<th><?php esc_html_e( 'XP', 'xen-levelup' ); ?></th>
-				<th><?php esc_html_e( 'Quests', 'xen-levelup' ); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-		<?php foreach ( $top as $row ) : ?>
-			<tr>
-				<td><strong>#<?php echo esc_html( $row->rank_position ); ?></strong></td>
-				<td><?php echo esc_html( $row->display_name ); ?></td>
-				<td><?php echo esc_html( $row->level ); ?></td>
-				<td><?php echo esc_html( $row->rank_title ); ?></td>
-				<td><?php echo esc_html( number_format( $row->score ) ); ?></td>
-				<td><?php echo esc_html( $row->quests_completed ); ?></td>
-			</tr>
-		<?php endforeach; ?>
-		</tbody>
-	</table>
-	<?php else : ?>
-	<p><?php esc_html_e( 'No rankings data yet. Rankings update twice daily.', 'xen-levelup' ); ?></p>
-	<?php endif; ?>
-</div>

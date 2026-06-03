@@ -19,6 +19,8 @@ class Xen_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets'        ) );
 		add_filter( 'manage_users_columns',           array( $this, 'add_user_columns'      ) );
 		add_filter( 'manage_users_custom_column',     array( $this, 'user_column_content'   ), 10, 3 );
+		add_action( 'wp_ajax_xen_admin_dismiss_whats_new', array( $this, 'ajax_dismiss_whats_new' ) );
+		add_action( 'admin_post_xen_admin_save_user_stats', array( $this, 'handle_save_user_stats' ) );
 	}
 
 	// ─── Menu ─────────────────────────────────────────────────────────────
@@ -84,7 +86,18 @@ class Xen_Admin {
 	// ─── Page Callbacks ───────────────────────────────────────────────────
 
 	public function page_dashboard()    { $this->load_view( 'dashboard'    ); }
-	public function page_users()        { $this->load_view( 'users'        ); }
+	public function page_users() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'xen-levelup' ) );
+		}
+		$action = isset( $_GET['action'] ) ? sanitize_key( $_GET['action'] ) : ''; // phpcs:ignore
+		if ( 'edit' === $action && ! empty( $_GET['uid'] ) ) { // phpcs:ignore
+			$edit_user_id = absint( $_GET['uid'] ); // phpcs:ignore
+			$this->load_view( 'user-edit' );
+			return;
+		}
+		$this->load_view( 'users' );
+	}
 	public function page_quests()       { $this->load_view( 'quests'       ); }
 	public function page_legendary()    { $this->load_view( 'legendary'    ); }
 	public function page_achievements() { $this->load_view( 'achievements' ); }
@@ -147,6 +160,62 @@ class Xen_Admin {
 				exit;
 		}
 	}
+	// ─── Admin: Save User Stats (admin-post handler) ─────────────────────
+
+	public function handle_save_user_stats() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'xen-levelup' ) );
+		}
+
+		$uid   = absint( $_POST['uid'] ?? 0 ); // phpcs:ignore
+		$nonce = sanitize_key( $_POST['xen_edit_nonce'] ?? '' ); // phpcs:ignore
+
+		if ( ! $uid || ! wp_verify_nonce( $nonce, 'xen_edit_user_' . $uid ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'xen-levelup' ) );
+		}
+
+		$level       = max( 1, min( 100, absint( $_POST['xen_level']       ?? 1  ) ) ); // phpcs:ignore
+		$xp          = max( 0, absint( $_POST['xen_xp']          ?? 0  ) ); // phpcs:ignore
+		$coins       = max( 0, absint( $_POST['xen_coins']        ?? 0  ) ); // phpcs:ignore
+		$bonus_xp    = max( 0, absint( $_POST['xen_bonus_xp']    ?? 0  ) ); // phpcs:ignore
+		$bonus_coins = max( 0, absint( $_POST['xen_bonus_coins'] ?? 0  ) ); // phpcs:ignore
+
+		$final_xp    = $xp    + $bonus_xp;
+		$final_coins = $coins + $bonus_coins;
+		$rank_title  = Xen_User::rank_title_for_level( $level );
+
+		$result = xen_levelup()->user->update_profile( $uid, array(
+			'level'      => $level,
+			'experience' => $final_xp,
+			'coins'      => $final_coins,
+			'rank_title' => $rank_title,
+		) );
+
+		$redirect = add_query_arg(
+			array(
+				'page'           => 'xen-levelup-users',
+				'action'         => 'edit',
+				'uid'            => $uid,
+				'xen_user_saved' => '1',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		wp_safe_redirect( $redirect );
+		exit;
+	}
+
+	// ─── Admin: Dismiss What's New (AJAX) ─────────────────────────────────
+
+	public function ajax_dismiss_whats_new() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( array( 'message' => 'Permission denied.' ), 403 );
+		}
+		check_ajax_referer( 'xen_admin_dismiss_whats_new', 'nonce' );
+		update_option( 'xen_admin_whats_new_dismissed', XEN_LEVELUP_VERSION );
+		wp_send_json_success();
+	}
+
 	public function page_rankings()     { $this->load_view( 'rankings'     ); }
 	public function page_analytics()    { $this->load_view( 'analytics'    ); }
 	public function page_settings()     {

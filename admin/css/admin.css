@@ -97,3 +97,67 @@
 .xen-shop-pagination .page-numbers { display:inline-block; padding:4px 10px; margin:2px;
   border-radius:6px; background:#1e2536; color:var(--xen-text); text-decoration:none; }
 .xen-shop-pagination .page-numbers.current { background:var(--xen-primary); color:#0b1020; font-weight:700; }
+
+/* ─── Author Highlight ───────────────────────────────────────────────────── */
+.xen-author-xenroth { color: #FFD700; font-weight: 700; }
+
+/* ─── Admin What's New Card ──────────────────────────────────────────────── */
+.xen-whats-new-admin-card {
+	background: linear-gradient(135deg, rgba(0,212,255,.06) 0%, rgba(123,97,255,.06) 100%);
+	border: 1px solid rgba(0,212,255,.35);
+	border-radius: 10px;
+	padding: 1.1rem 1.4rem;
+	margin-bottom: 1.75rem;
+}
+.xen-whats-new-admin-card .xen-whats-new-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: .75rem;
+}
+.xen-whats-new-admin-card .xen-whats-new-title {
+	font-size: .95rem;
+	font-weight: 700;
+	color: var(--xen-primary);
+}
+.xen-whats-new-admin-card .xen-whats-new-dismiss {
+	font-size: .78rem;
+	cursor: pointer;
+}
+.xen-whats-new-admin-card .xen-whats-new-items {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: .75rem;
+}
+.xen-whats-new-admin-card .xen-whats-new-item {
+	display: flex;
+	gap: .65rem;
+	align-items: flex-start;
+	background: rgba(0,0,0,.2);
+	border-radius: 8px;
+	padding: .7rem .9rem;
+}
+.xen-whats-new-admin-card .xen-whats-new-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1.3; }
+.xen-whats-new-admin-card .xen-whats-new-text strong { display: block; color: #fff; font-size: .88rem; }
+.xen-whats-new-admin-card .xen-whats-new-text p { margin: .15rem 0 0; color: var(--xen-muted); font-size: .8rem; line-height: 1.5; }
+
+/* ─── Edit User Stats ────────────────────────────────────────────────────── */
+.xen-user-edit-header {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	background: #1e2536;
+	border: 1px solid #2a3450;
+	border-radius: 10px;
+	padding: 1rem 1.25rem;
+	margin-bottom: 1.5rem;
+}
+.xen-user-edit-avatar { border-radius: 50%; border: 2px solid var(--xen-primary); }
+.xen-user-edit-info { display: flex; flex-direction: column; gap: .2rem; }
+.xen-user-edit-name { font-size: 1.1rem; color: #fff; }
+.xen-user-edit-email { font-size: .82rem; color: var(--xen-muted); }
+.xen-user-edit-rank { font-size: .82rem; color: var(--xen-accent); font-weight: 600; }
+.xen-user-edit-form .form-table th { width: 220px; color: #c9d1d9; }
+.xen-edit-table { background: #1e2536; border-radius: 10px; margin-top: 0; }
+.xen-edit-table th, .xen-edit-table td { padding: .85rem 1rem !important; border-bottom: 1px solid #2a3450; }
+.xen-edit-table tr:last-child th, .xen-edit-table tr:last-child td { border-bottom: none; }

@@ -5,6 +5,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.0] - 2026-06-03
+
+### What's New
+- 🛠️ **Admin: Edit Hunter Stats** — Admins can now manually edit any user's Level, XP, and Coin balance directly from the Users admin page via a dedicated "Edit Stats" form. Includes bonus XP and bonus Coins fields for quick rewards. Rank title syncs automatically on save.
+- 📰 **What's New moved to Admin** — The "What's New" release card is now displayed exclusively on the Admin Dashboard (not on the player-facing dashboard). Dismissible per-version by the admin.
+- ✏️ **Admin Users Table** — Added an "Edit Stats" action button per user row in the Hunters admin table.
+
+### Added
+- `admin/views/user-edit.php` — new admin form for editing a user's Level, XP, Coins, and awarding bonus amounts.
+- `Xen_Admin::handle_save_user_stats()` — `admin_post_xen_admin_save_user_stats` handler; validates nonce, clamps level 1–100, syncs rank title via `Xen_User::rank_title_for_level()`.
+- `Xen_Admin::ajax_dismiss_whats_new()` — `wp_ajax_xen_admin_dismiss_whats_new`; stores dismissed version in WP option `xen_admin_whats_new_dismissed`.
+- Admin CSS: `.xen-author-xenroth` (gold), `.xen-whats-new-admin-card`, `.xen-user-edit-*` styles.
+- Admin JS: dismiss handler for `#xen-admin-dismiss-whats-new`.
+
+### Changed
+- `admin/views/dashboard.php` — "What's New" card added at top; "Xenroth" name highlighted in gold; removed duplicate stat-card and leaderboard blocks that appeared after the closing wrap div.
+- `public/views/dashboard.php` — "What's New" card and its PHP variables removed (card now admin-only).
+- `admin/views/users.php` — added "Actions" column with "Edit Stats" link per row; colspan updated from 8 → 9.
+- `admin/class-xen-admin.php` — `page_users()` now routes to `user-edit.php` when `?action=edit&uid=X` is present.
+
+---
+
 ## [1.3.0] - 2026-06-05
 
 ### What's New

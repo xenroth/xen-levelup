@@ -37,6 +37,7 @@ $pages   = ceil( $total / $per );
 				<th><?php esc_html_e( 'Quests', 'xen-levelup' ); ?></th>
 				<th><?php esc_html_e( 'Tasks', 'xen-levelup' ); ?></th>
 				<th><?php esc_html_e( 'Joined', 'xen-levelup' ); ?></th>
+				<th><?php esc_html_e( 'Actions', 'xen-levelup' ); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -53,9 +54,14 @@ $pages   = ceil( $total / $per );
 				<td><?php echo esc_html( (int) ( $u->total_quests ?? 0 ) ); ?></td>
 				<td><?php echo esc_html( (int) ( $u->total_tasks ?? 0 ) ); ?></td>
 				<td><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $u->user_registered ) ) ); ?></td>
+				<td>
+					<a class="button button-small" href="<?php echo esc_url( add_query_arg( array( 'page' => 'xen-levelup-users', 'action' => 'edit', 'uid' => $u->ID ), admin_url( 'admin.php' ) ) ); ?>">
+						✏️ <?php esc_html_e( 'Edit Stats', 'xen-levelup' ); ?>
+					</a>
+				</td>
 			</tr>
 		<?php endforeach; else : ?>
-			<tr><td colspan="8"><?php esc_html_e( 'No users found.', 'xen-levelup' ); ?></td></tr>
+			<tr><td colspan="9"><?php esc_html_e( 'No users found.', 'xen-levelup' ); ?></td></tr>
 		<?php endif; ?>
 		</tbody>
 	</table>

@@ -25,8 +25,6 @@ $notif_count    = xen_levelup()->notifications->unread_count( get_current_user_i
 $user_id        = get_current_user_id();
 $curr_sym       = Xen_Currency::symbol();
 $curr_name      = Xen_Currency::name();
-$whats_new      = Xen_Overview::whats_new();
-$show_whats_new = ! empty( $whats_new ) && ! xen_levelup()->overview->is_dismissed( $user_id );
 $checkin_data   = array(
 	'can_checkin'   => xen_levelup()->daily_checkin->can_checkin( $user_id ),
 	'streak'        => xen_levelup()->daily_checkin->get_streak( $user_id ),
@@ -34,27 +32,6 @@ $checkin_data   = array(
 );
 ?>
 <div class="xen-wrap xen-dashboard" id="xen-dashboard">
-
-	<!-- What's New card -->
-	<?php if ( $show_whats_new ) : ?>
-	<div class="xen-whats-new-card" id="xen-whats-new">
-		<div class="xen-whats-new-header">
-			<span class="xen-whats-new-title">⚡ <?php esc_html_e( "What's New in v", 'xen-levelup' ); ?><?php echo esc_html( XEN_LEVELUP_VERSION ); ?></span>
-			<button class="xen-whats-new-dismiss" id="xen-dismiss-whats-new" aria-label="<?php esc_attr_e( 'Dismiss', 'xen-levelup' ); ?>">✕</button>
-		</div>
-		<div class="xen-whats-new-items">
-			<?php foreach ( $whats_new as $item ) : ?>
-			<div class="xen-whats-new-item">
-				<span class="xen-whats-new-icon"><?php echo esc_html( $item['icon'] ); ?></span>
-				<div class="xen-whats-new-text">
-					<strong><?php echo esc_html( $item['title'] ); ?></strong>
-					<p><?php echo esc_html( $item['desc'] ); ?></p>
-				</div>
-			</div>
-			<?php endforeach; ?>
-		</div>
-	</div>
-	<?php endif; ?>
 
 	<!-- Header -->
 	<div class="xen-hero-card">
