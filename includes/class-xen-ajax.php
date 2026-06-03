@@ -197,9 +197,36 @@ class Xen_Ajax {
 
 	public function xen_get_shop_items() {
 		$this->require_nonce();
-		$type  = sanitize_key( $this->post_text( 'type', 'all' ) );
-		$items = xen_levelup()->shop->get_items( $type );
-		wp_send_json_success( array( 'items' => $items ) );
+
+		$type     = sanitize_key( $this->post_text( 'type', 'all' ) );
+		$page     = max( 1, $this->post_int( 'page', 1 ) );
+		$per_page = min( 48, max( 4, $this->post_int( 'per_page', 12 ) ) );
+
+		$total = xen_levelup()->shop->count_items( $type, true );
+		$items = xen_levelup()->shop->get_items_paged( $type, $page, $per_page );
+
+		// Include user ownership info if logged in
+		$owned_ids   = array();
+		$equipped_ids = array();
+		if ( is_user_logged_in() ) {
+			$inventory = xen_levelup()->shop->get_inventory( get_current_user_id() );
+			foreach ( $inventory as $inv ) {
+				$owned_ids[] = (int) $inv->id;
+				if ( $inv->is_equipped ) {
+					$equipped_ids[] = (int) $inv->id;
+				}
+			}
+		}
+
+		wp_send_json_success( array(
+			'items'        => $items,
+			'owned_ids'    => $owned_ids,
+			'equipped_ids' => $equipped_ids,
+			'total'        => $total,
+			'page'         => $page,
+			'per_page'     => $per_page,
+			'pages'        => max( 1, (int) ceil( $total / $per_page ) ),
+		) );
 	}
 
 	public function xen_purchase_item() {

@@ -247,4 +247,193 @@ class Xen_Shop extends Xen_Database {
 				break;
 		}
 	}
+
+	// ─── Pagination & Count ──────────────────────────────────────────────
+
+	/**
+	 * Count shop items with optional filters.
+	 *
+	 * @param string    $type        Item type or 'all'.
+	 * @param bool|null $active_only true = active only, false = inactive only, null = all.
+	 * @param string    $search      Partial title search.
+	 * @return int
+	 */
+	public function count_items( $type = 'all', $active_only = true, $search = '' ) {
+		$table = $this->table( 'shop_items' );
+		$sql   = "SELECT COUNT(*) FROM {$table} WHERE 1=1";
+		$args  = array();
+
+		if ( null !== $active_only ) {
+			$sql .= $active_only ? ' AND is_active = 1' : ' AND is_active = 0';
+		}
+		if ( $type && 'all' !== $type ) {
+			$sql   .= ' AND item_type = %s';
+			$args[] = sanitize_key( $type );
+		}
+		if ( $search ) {
+			$sql   .= ' AND title LIKE %s';
+			$args[] = '%' . $this->db->esc_like( $search ) . '%';
+		}
+
+		return (int) $this->get_var( $sql, $args );
+	}
+
+	/**
+	 * Get a paginated list of shop items.
+	 *
+	 * @param string    $type        Item type or 'all'.
+	 * @param int       $page        1-based page number.
+	 * @param int       $per_page    Items per page.
+	 * @param string    $search      Partial title search.
+	 * @param bool|null $active_only true = active only, false = inactive only, null = all.
+	 * @return array
+	 */
+	public function get_items_paged( $type = 'all', $page = 1, $per_page = 12, $search = '', $active_only = true ) {
+		$table  = $this->table( 'shop_items' );
+		$offset = ( max( 1, (int) $page ) - 1 ) * (int) $per_page;
+		$sql    = "SELECT * FROM {$table} WHERE 1=1";
+		$args   = array();
+
+		if ( null !== $active_only ) {
+			$sql .= $active_only ? ' AND is_active = 1' : ' AND is_active = 0';
+		}
+		if ( $type && 'all' !== $type ) {
+			$sql   .= ' AND item_type = %s';
+			$args[] = sanitize_key( $type );
+		}
+		if ( $search ) {
+			$sql   .= ' AND title LIKE %s';
+			$args[] = '%' . $this->db->esc_like( $search ) . '%';
+		}
+		$sql   .= ' ORDER BY sort_order ASC, price ASC LIMIT %d OFFSET %d';
+		$args[] = (int) $per_page;
+		$args[] = $offset;
+
+		return $this->query( $sql, $args );
+	}
+
+	/**
+	 * Get a single item by ID regardless of active status (admin use).
+	 *
+	 * @param int $item_id Item ID.
+	 * @return object|null
+	 */
+	public function get_item_any( $item_id ) {
+		$table   = $this->table( 'shop_items' );
+		$results = $this->query(
+			"SELECT * FROM {$table} WHERE id = %d LIMIT 1",
+			array( (int) $item_id )
+		);
+		return $results ? $results[0] : null;
+	}
+
+	// ─── Admin CRUD ──────────────────────────────────────────────────────
+
+	/**
+	 * Create a new shop item.
+	 *
+	 * @param array $data Raw item data (unsanitized).
+	 * @return int|WP_Error New item ID or error.
+	 */
+	public function create_item( array $data ) {
+		$sanitized = $this->sanitize_item_data( $data );
+		if ( is_wp_error( $sanitized ) ) {
+			return $sanitized;
+		}
+		$id = $this->insert( 'shop_items', $sanitized );
+		if ( ! $id ) {
+			return new WP_Error( 'db_error', __( 'Failed to create item.', 'xen-levelup' ) );
+		}
+		return $id;
+	}
+
+	/**
+	 * Update an existing shop item.
+	 *
+	 * @param int   $item_id Item ID.
+	 * @param array $data    Raw item data (unsanitized).
+	 * @return true|WP_Error
+	 */
+	public function update_item( $item_id, array $data ) {
+		$sanitized = $this->sanitize_item_data( $data );
+		if ( is_wp_error( $sanitized ) ) {
+			return $sanitized;
+		}
+		$result = $this->update( 'shop_items', $sanitized, array( 'id' => (int) $item_id ) );
+		if ( false === $result ) {
+			return new WP_Error( 'db_error', __( 'Failed to update item.', 'xen-levelup' ) );
+		}
+		return true;
+	}
+
+	/**
+	 * Hard-delete a shop item and its inventory records.
+	 *
+	 * @param int $item_id Item ID.
+	 * @return true|WP_Error
+	 */
+	public function delete_item( $item_id ) {
+		$result = $this->delete( 'shop_items', array( 'id' => (int) $item_id ) );
+		if ( false === $result ) {
+			return new WP_Error( 'db_error', __( 'Failed to delete item.', 'xen-levelup' ) );
+		}
+		$this->delete( 'user_inventory', array( 'item_id' => (int) $item_id ) );
+		return true;
+	}
+
+	/**
+	 * Toggle the is_active flag for a shop item.
+	 *
+	 * @param int $item_id Item ID.
+	 * @return true|WP_Error
+	 */
+	public function toggle_active( $item_id ) {
+		$item = $this->get_item_any( $item_id );
+		if ( ! $item ) {
+			return new WP_Error( 'not_found', __( 'Item not found.', 'xen-levelup' ) );
+		}
+		$this->update( 'shop_items', array( 'is_active' => $item->is_active ? 0 : 1 ), array( 'id' => (int) $item_id ) );
+		return true;
+	}
+
+	/**
+	 * Sanitize and validate item data for insert/update.
+	 *
+	 * @param array $data Raw input.
+	 * @return array|WP_Error
+	 */
+	private function sanitize_item_data( array $data ) {
+		$title = sanitize_text_field( wp_unslash( $data['title'] ?? '' ) );
+		if ( ! $title ) {
+			return new WP_Error( 'missing_title', __( 'Title is required.', 'xen-levelup' ) );
+		}
+
+		$item_type = sanitize_key( $data['item_type'] ?? '' );
+		if ( ! in_array( $item_type, self::ITEM_TYPES, true ) ) {
+			return new WP_Error( 'invalid_type', __( 'Invalid item type.', 'xen-levelup' ) );
+		}
+
+		$item_data_raw = wp_unslash( $data['item_data'] ?? '' );
+		if ( $item_data_raw ) {
+			$decoded = json_decode( $item_data_raw, true );
+			if ( json_last_error() !== JSON_ERROR_NONE ) {
+				return new WP_Error( 'invalid_json', __( 'Item Data must be valid JSON.', 'xen-levelup' ) );
+			}
+			$item_data = wp_json_encode( $decoded );
+		} else {
+			$item_data = null;
+		}
+
+		return array(
+			'title'       => $title,
+			'item_type'   => $item_type,
+			'description' => sanitize_textarea_field( wp_unslash( $data['description'] ?? '' ) ),
+			'price'       => max( 0, (int) ( $data['price'] ?? 0 ) ),
+			'image_url'   => esc_url_raw( wp_unslash( $data['image_url'] ?? '' ) ),
+			'item_data'   => $item_data,
+			'sort_order'  => (int) ( $data['sort_order'] ?? 0 ),
+			'is_premium'  => empty( $data['is_premium'] ) ? 0 : 1,
+			'is_active'   => empty( $data['is_active'] ) ? 0 : 1,
+		);
+	}
 }

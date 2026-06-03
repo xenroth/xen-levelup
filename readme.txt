@@ -8,7 +8,7 @@ Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, 
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,14 @@ Go to **XEN LevelUp → Settings** and assign an existing WordPress page to each
 7. Level-up modal — particle burst effect
 
 == Changelog ==
+
+= 1.2.0 — 2026-06-04 =
+* **New: Custom Shop Items** — Admins can create, edit, activate/deactivate, and delete shop items directly from the admin panel with full control over item type, price, JSON item data, image URL, sort order, and premium flag.
+* **New: Shop Filtering** — Both admin and public shop views support filtering by item type. Admin adds status (active/inactive) filter and title search.
+* **New: Shop Pagination** — Admin shop table is paginated (20 per page, server-side). Public shop grid is paginated (12 per page) with AJAX-powered numbered page controls; filter buttons also trigger AJAX reloads without page refresh.
+* Fixed public shop JS action name mismatches (purchase/equip AJAX actions now correctly map to PHP handlers).
+* Fixed `data-type` → `data-item-type` on shop item cards and `data-id` → `data-item-id` on action buttons.
+* Added `loginUrl`, `buy`, `equip`, `equipped` and other shop i18n strings to `xenData`.
 
 = 1.1.3 — 2026-06-03 =
 * Admin Dashboard redesigned: added Plugin Info card (version, developer, Check for Updates button, GitHub link), Available Shortcodes reference table, Features list, and a 6-step Getting Started guide.

@@ -88,7 +88,65 @@ class Xen_Admin {
 	public function page_quests()       { $this->load_view( 'quests'       ); }
 	public function page_legendary()    { $this->load_view( 'legendary'    ); }
 	public function page_achievements() { $this->load_view( 'achievements' ); }
-	public function page_shop()         { $this->load_view( 'shop'         ); }
+	public function page_shop() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'xen-levelup' ) );
+		}
+		if ( isset( $_POST['xen_shop_action'] ) ) {
+			$this->handle_shop_post();
+		}
+		$this->load_view( 'shop' );
+	}
+
+	private function handle_shop_post() {
+		$posted_action = sanitize_key( $_POST['xen_shop_action'] ?? '' ); // phpcs:ignore
+		$nonce         = sanitize_key( $_POST['xen_shop_nonce'] ?? '' );  // phpcs:ignore
+
+		if ( ! wp_verify_nonce( $nonce, 'xen_shop_' . $posted_action ) ) {
+			add_settings_error( 'xen_shop', 'nonce', __( 'Security check failed.', 'xen-levelup' ), 'error' );
+			return;
+		}
+
+		switch ( $posted_action ) {
+			case 'create':
+				$result = xen_levelup()->shop->create_item( $_POST ); // phpcs:ignore
+				if ( is_wp_error( $result ) ) {
+					add_settings_error( 'xen_shop', 'error', $result->get_error_message(), 'error' );
+				} else {
+					wp_safe_redirect( add_query_arg( 'xen_created', '1', admin_url( 'admin.php?page=xen-levelup-shop' ) ) );
+					exit;
+				}
+				break;
+
+			case 'update':
+				$item_id = absint( $_POST['item_id'] ?? 0 ); // phpcs:ignore
+				$result  = xen_levelup()->shop->update_item( $item_id, $_POST ); // phpcs:ignore
+				if ( is_wp_error( $result ) ) {
+					add_settings_error( 'xen_shop', 'error', $result->get_error_message(), 'error' );
+				} else {
+					wp_safe_redirect( add_query_arg( 'xen_updated', '1', admin_url( 'admin.php?page=xen-levelup-shop' ) ) );
+					exit;
+				}
+				break;
+
+			case 'delete':
+				$item_id = absint( $_POST['item_id'] ?? 0 ); // phpcs:ignore
+				$result  = xen_levelup()->shop->delete_item( $item_id );
+				if ( is_wp_error( $result ) ) {
+					add_settings_error( 'xen_shop', 'error', $result->get_error_message(), 'error' );
+				} else {
+					wp_safe_redirect( add_query_arg( 'xen_deleted', '1', admin_url( 'admin.php?page=xen-levelup-shop' ) ) );
+					exit;
+				}
+				break;
+
+			case 'toggle':
+				$item_id = absint( $_POST['item_id'] ?? 0 ); // phpcs:ignore
+				xen_levelup()->shop->toggle_active( $item_id );
+				wp_safe_redirect( add_query_arg( 'xen_toggled', '1', admin_url( 'admin.php?page=xen-levelup-shop' ) ) );
+				exit;
+		}
+	}
 	public function page_rankings()     { $this->load_view( 'rankings'     ); }
 	public function page_analytics()    { $this->load_view( 'analytics'    ); }
 	public function page_settings()     {

@@ -360,6 +360,13 @@
 .xen-btn-equipped    { background: rgba(34,197,94,.12); border-color: var(--xen-success); color: var(--xen-success); }
 .xen-btn-owned       { background: rgba(0,212,255,.1); border-color: var(--xen-primary); color: var(--xen-primary); }
 .xen-btn-buy         { background: rgba(255,215,0,.1); border-color: var(--xen-gold); color: var(--xen-gold); }
+.xen-shop-pagination { margin-top: 1.5rem; display: flex; justify-content: center; }
+.xen-pager           { display: flex; gap: .35rem; flex-wrap: wrap; justify-content: center; }
+.xen-page-btn        { padding: 6px 12px; border-radius: 6px; background: var(--xen-card2); border: 1px solid var(--xen-border); color: var(--xen-text); font-size: .85rem; cursor: pointer; transition: all .15s; }
+.xen-page-btn:hover:not([disabled]) { background: rgba(0,212,255,.12); border-color: var(--xen-primary); color: var(--xen-primary); }
+.xen-page-btn.xen-page-current { background: var(--xen-primary); border-color: var(--xen-primary); color: #0b1020; font-weight: 700; cursor: default; }
+.xen-page-gap        { padding: 6px 4px; color: var(--xen-muted); line-height: 1.6; }
+.xen-shop-grid.xen-loading { pointer-events: none; }
 
 /* =====================================================
    ACHIEVEMENTS

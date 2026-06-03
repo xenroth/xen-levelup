@@ -5,6 +5,33 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.0] - 2026-06-04
+
+### What's New
+- 🛍️ **Custom Shop Items** — Admins can now create, edit, activate/deactivate, and delete shop items directly from the admin panel. Supports all item types (frame, border, name color, title, theme, badge) with JSON item data, pricing, image URL, sort order, and premium flags.
+- 🔍 **Shop Filtering** — Both admin and public shop views support filtering by item type. Admin also supports filtering by active/inactive status and title search.
+- 📄 **Shop Pagination** — Admin shop table and public shop grid are now paginated (20 per page in admin, 12 per page on the front end) with AJAX-powered navigation in the public shop.
+
+### Added
+- `Xen_Shop::create_item()`, `update_item()`, `delete_item()`, `toggle_active()`, `get_item_any()` — full admin CRUD for shop items.
+- `Xen_Shop::get_items_paged()` — paginated query with type, search, and active/inactive filters.
+- `Xen_Shop::count_items()` — count query for pagination math (supports null `$active_only` for "all statuses").
+- `admin/views/shop.php` rewritten: inline "Add New Item" collapsible form, filter bar (type + status + search), paginated table with Edit / Activate-Deactivate / Delete per row, dedicated edit form view.
+- `admin/class-xen-admin.php` `page_shop()` now handles form POST actions (create, update, delete, toggle) with nonce verification and post–redirect–get pattern.
+- `xen_get_shop_items` AJAX handler updated to accept `page` and `per_page` parameters and return `owned_ids`, `equipped_ids`, `total`, `pages` alongside items.
+- `public/js/xen-shop.js` fully rewritten: AJAX filter buttons, AJAX pagination with numbered page controls, JS item card renderer for dynamic reloads.
+- `xenData` localization gains `loginUrl` and shop i18n strings (`buy`, `equip`, `equipped`, `loginToBuy`, etc.).
+- `[gamified_shop]` shortcode supports `per_page` attribute.
+- Admin CSS: `.xen-type-badge`, `.xen-status-badge`, `.xen-btn-danger`, filter bar styles, pagination styles.
+- Public CSS: `.xen-pager`, `.xen-page-btn`, `.xen-page-current`, `.xen-page-gap`.
+
+### Fixed
+- Public shop JS action names corrected (`xen_purchase_item`, `xen_equip_item` — previously referenced wrong action slugs).
+- Shop item `data-type` attribute renamed to `data-item-type` on item cards to match JS selector expectations.
+- Shop item button `data-id` renamed to `data-item-id` on purchase/equip buttons to match JS `data('item-id')` reads.
+
+---
+
 ## [1.1.3] - 2026-06-03
 
 ### What's New

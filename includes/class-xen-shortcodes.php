@@ -179,12 +179,22 @@ class Xen_Shortcodes {
 
 	/** @param array $atts @return string */
 	public function render_shop( $atts ) {
-		$atts    = shortcode_atts( array( 'type' => 'all' ), $atts, 'gamified_shop' );
-		$user_id = get_current_user_id();
+		$atts     = shortcode_atts( array( 'type' => 'all', 'per_page' => 12 ), $atts, 'gamified_shop' );
+		$user_id  = get_current_user_id();
+		$type     = sanitize_key( $atts['type'] );
+		$per_page = min( 48, max( 4, (int) $atts['per_page'] ) );
+		$total    = xen_levelup()->shop->count_items( $type, true );
+		$pages    = max( 1, (int) ceil( $total / $per_page ) );
+
 		return $this->render( 'shop', $atts, array(
 			'user_id'   => $user_id,
-			'items'     => xen_levelup()->shop->get_items( sanitize_key( $atts['type'] ) ),
+			'items'     => xen_levelup()->shop->get_items_paged( $type, 1, $per_page ),
 			'inventory' => is_user_logged_in() ? xen_levelup()->shop->get_inventory( $user_id ) : array(),
+			'type'      => $type,
+			'page'      => 1,
+			'per_page'  => $per_page,
+			'total'     => $total,
+			'pages'     => $pages,
 		) );
 	}
 

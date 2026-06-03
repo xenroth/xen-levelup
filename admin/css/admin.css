@@ -77,3 +77,23 @@
 .xen-step-num{flex-shrink:0;width:2rem;height:2rem;border-radius:50%;background:var(--xen-primary);color:#0b1020;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
 .xen-step-body strong{display:block;color:#fff;margin-bottom:.2rem;font-size:.9rem;}
 .xen-step-body p{margin:0;color:var(--xen-muted);font-size:.82rem;line-height:1.5;}
+
+/* ─── Shop Admin ─────────────────────────────────────────────────────────── */
+.xen-admin-filter-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0; }
+.xen-admin-filter-bar select,
+.xen-admin-filter-bar input[type=search] { background:#1e2536; border-color:#374151; color:var(--xen-text); border-radius:6px; }
+.xen-item-count { color:var(--xen-muted); font-size:.85rem; }
+.xen-shop-table .xen-row-inactive td { opacity:.55; }
+.xen-row-actions form { margin:0; }
+.xen-type-badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:.78rem; font-weight:600;
+  background:rgba(0,212,255,.12); color:var(--xen-primary); border:1px solid rgba(0,212,255,.3); text-transform:capitalize; }
+.xen-status-badge { display:inline-block; padding:2px 8px; border-radius:12px; font-size:.78rem; font-weight:600; }
+.xen-status-active  { background:rgba(34,197,94,.12);  color:#22c55e; border:1px solid rgba(34,197,94,.3); }
+.xen-status-inactive{ background:rgba(239,68,68,.12);  color:#ef4444; border:1px solid rgba(239,68,68,.3); }
+.xen-btn-danger { color:#ef4444 !important; border-color:#ef4444 !important; }
+.xen-btn-danger:hover { background:#ef4444 !important; color:#fff !important; }
+.xen-shop-form-card { padding:20px; }
+.xen-shop-pagination { margin-top:12px; }
+.xen-shop-pagination .page-numbers { display:inline-block; padding:4px 10px; margin:2px;
+  border-radius:6px; background:#1e2536; color:var(--xen-text); text-decoration:none; }
+.xen-shop-pagination .page-numbers.current { background:var(--xen-primary); color:#0b1020; font-weight:700; }
