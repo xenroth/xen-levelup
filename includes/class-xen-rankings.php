@@ -143,7 +143,7 @@ class Xen_Rankings extends Xen_Database {
 		$u = $wpdb->prefix . 'users';
 
 		return $wpdb->get_results( $wpdb->prepare( // phpcs:ignore
-			"SELECT r.rank_position, r.score, r.level, r.quests_completed, r.tasks_completed,
+			"SELECT r.rank_position, r.score, p.level, r.quests_completed, r.tasks_completed,
 			        u.ID as user_id, u.display_name,
 			        p.rank_title, p.current_title, p.coins
 			 FROM {$r} r

@@ -388,7 +388,7 @@ class Xen_Social extends Xen_Database {
 			return '<p class="xen-login-prompt">' . esc_html__( 'Please log in to view the activity feed.', 'xen-levelup' ) . '</p>';
 		}
 		$atts = shortcode_atts( array(
-			'mode'  => 'friends', // 'friends' or 'global'
+			'mode'  => 'global', // 'global' or 'friends'
 			'limit' => 20,
 		), $atts, 'gamified_feed' );
 

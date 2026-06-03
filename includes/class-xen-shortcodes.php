@@ -177,10 +177,11 @@ class Xen_Shortcodes {
 		}
 		$period = sanitize_key( $atts['period'] );
 
-		// If no rankings exist yet for this period, trigger an immediate recalculation
+		// Recalculate if no entries exist, or if cached data is stale (older than 15 minutes)
 		$entries = xen_levelup()->rankings->get_leaderboard( $period, 'all', (int) $atts['limit'] );
-		if ( empty( $entries ) ) {
+		if ( empty( $entries ) || ! get_transient( 'xen_rankings_fresh' ) ) {
 			xen_levelup()->rankings->recalculate_all();
+			set_transient( 'xen_rankings_fresh', 1, 15 * MINUTE_IN_SECONDS );
 			$entries = xen_levelup()->rankings->get_leaderboard( $period, 'all', (int) $atts['limit'] );
 		}
 

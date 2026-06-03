@@ -684,7 +684,7 @@ class Xen_Ajax {
 
 		// Text search by display_name or user_login
 		$users = get_users( array(
-			'search'         => '*' . esc_attr( $term ) . '*',
+			'search'         => '*' . $term . '*',
 			'search_columns' => array( 'display_name', 'user_login' ),
 			'exclude'        => array( $current_user_id ),
 			'number'         => 10,

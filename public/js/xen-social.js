@@ -209,7 +209,7 @@
 			action: 'xen_get_feed',
 			nonce : nonce,
 			offset: offset,
-			mode  : 'friends'
+			mode  : $feed.data('mode') || 'global'
 		}, function (res) {
 			if (!res.success || !res.data.items.length) {
 				$btn.closest('.xen-feed-loadmore').remove();

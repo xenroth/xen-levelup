@@ -15,7 +15,8 @@ $pending_uids = wp_list_pluck( $pending_requests, 'requester_id' );
 ?>
 <div class="xen-wrap xen-feed-wrap" id="xen-feed"
 	data-nonce="<?php echo esc_attr( $nonce ); ?>"
-	data-uid="<?php echo esc_attr( $user_id ); ?>">
+	data-uid="<?php echo esc_attr( $user_id ); ?>"
+	data-mode="<?php echo esc_attr( $atts['mode'] ); ?>">
 
 	<!-- ── Post Box ───────────────────────────────────────────────────── -->
 	<div class="xen-feed-post-box xen-card">

@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.5.1] - 2026-06-05
+
+### Fixed
+- **Plugin update loop (Bug #1)**: Plugin header `Version` tag was `1.4.2` while the internal constant was `1.5.0`. WordPress compared the header version against the GitHub release tag and perpetually offered an update. Both are now aligned at `1.5.1`.
+- **Wallet user search broken for special-character names (Bug #2)**: `xen_search_users` applied `esc_attr()` to the search term before passing it to `get_users()`. This HTML-escaped characters like `'` → `&#039;` and `&` → `&amp;`, causing names like "O'Brien" or "Tom & Jerry" to return zero results. The redundant `esc_attr()` is removed; the term was already safely sanitized by `sanitize_text_field()`.
+- **Activity stream defaulted to friends-only mode (Bug #3)**: The `[gamified_feed]` shortcode defaulted `mode="friends"`, so users with no friends saw an empty feed. Default changed to `mode="global"` so all activity is visible to everyone by default.
+- **Activity stream "Load More" always fetched friends feed (Bug #3)**: The Load More AJAX call hardcoded `mode: 'friends'` regardless of what mode the shortcode used. The `#xen-feed` container now carries a `data-mode` attribute and the JS reads it dynamically (`$feed.data('mode') || 'global'`).
+- **Rankings showed stale level data (Bug #4)**: `get_leaderboard()` fetched `r.level` from the cached rankings table (set at the last recalculate run). This now uses `p.level` from the live `user_profiles` table so the displayed level always reflects the player's current rank.
+- **Rankings only refreshed when empty (Bug #4)**: On-demand recalculation was skipped if any cached entries existed, meaning data could be hours stale. A 15-minute transient (`xen_rankings_fresh`) now acts as a staleness gate — rankings refresh at most once per 15 minutes on page view, in addition to the scheduled cron job.
+
+---
+
 ## [1.5.0] - 2026-06-04
 
 ### What's New
