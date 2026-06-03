@@ -100,12 +100,13 @@ class Xen_User extends Xen_Database {
 				'level'          => 1,
 				'experience'     => 0,
 				'coins'          => 0,
-				'rank_title'     => 'E-Rank',
+				'rebirth_count'  => 0,
+				'rank_title'     => 'Unranked',
 				'login_streak'   => 1,
 				'last_login'     => current_time( 'Y-m-d' ),
 				'onboarding_done'=> 0,
 			),
-			array( '%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d' )
+			array( '%d', '%d', '%d', '%d', '%d', '%s', '%d', '%s', '%d' )
 		);
 
 		if ( ! $profile_id ) {
@@ -180,7 +181,8 @@ class Xen_User extends Xen_Database {
 	// ─── Rank Title ───────────────────────────────────────────────────────
 
 	/**
-	 * Compute the rank title based on level.
+	 * Compute the rank title based on level (legacy / fallback only).
+	 * Kept for backward compatibility with admin save handler.
 	 *
 	 * @param int $level User level.
 	 * @return string
@@ -199,13 +201,42 @@ class Xen_User extends Xen_Database {
 	}
 
 	/**
-	 * Update the rank title in the profile if the level has crossed a rank boundary.
+	 * Get the rank title for a given rebirth count using the DB rank_definitions table.
+	 * Falls back to level-based lookup if the ranks module isn't loaded yet.
+	 *
+	 * @param int $rebirth_count
+	 * @return string
+	 */
+	public static function rank_title_for_rebirth( $rebirth_count ) {
+		if ( function_exists( 'xen_levelup' ) && isset( xen_levelup()->ranks ) ) {
+			return xen_levelup()->ranks->title_for_rebirth( $rebirth_count );
+		}
+		// Fallback
+		return 'Unranked';
+	}
+
+	/**
+	 * Get a user's current rebirth count.
+	 *
+	 * @param int $user_id
+	 * @return int
+	 */
+	public function get_rebirth_count( $user_id ) {
+		$profile = $this->get_profile( $user_id );
+		return $profile ? (int) $profile->rebirth_count : 0;
+	}
+
+	/**
+	 * Update the rank title in the profile based on the user's rebirth count.
 	 *
 	 * @param int $user_id WP user ID.
-	 * @param int $level   New level.
+	 * @param int $rebirth_count Current rebirth count (leave -1 to read from profile).
 	 */
-	public function sync_rank_title( $user_id, $level ) {
-		$title = self::rank_title_for_level( $level );
+	public function sync_rank_title( $user_id, $rebirth_count = -1 ) {
+		if ( $rebirth_count < 0 ) {
+			$rebirth_count = $this->get_rebirth_count( $user_id );
+		}
+		$title = self::rank_title_for_rebirth( $rebirth_count );
 		$this->update_profile( $user_id, array( 'rank_title' => $title ) );
 	}
 
@@ -248,6 +279,7 @@ class Xen_User extends Xen_Database {
 			'xp_progress'   => $leveling->level_progress_percent( $user_id ),
 			'coins'         => (int) $profile->coins,
 			'rank_title'    => $profile->rank_title,
+			'rebirth_count' => (int) ( $profile->rebirth_count ?? 0 ),
 			'current_title' => $profile->current_title,
 			'profile_frame' => $profile->profile_frame,
 			'name_color'    => $profile->name_color,

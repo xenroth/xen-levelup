@@ -43,6 +43,7 @@ final class Xen_LevelUp {
 	public $daily_checkin;
 	public $overview;
 	public $social;
+	public $ranks;
 
 	/**
 	 * Get or create the singleton instance.
@@ -103,6 +104,7 @@ final class Xen_LevelUp {
 			'includes/class-xen-daily-checkin.php',
 			'includes/class-xen-overview.php',
 			'includes/class-xen-social.php',
+			'includes/class-xen-ranks.php',
 		);
 
 		foreach ( $includes as $file ) {
@@ -150,6 +152,7 @@ final class Xen_LevelUp {
 		$this->daily_checkin     = new Xen_Daily_Checkin();
 		$this->overview          = new Xen_Overview();
 		$this->social            = new Xen_Social();
+		$this->ranks             = new Xen_Ranks();
 
 		if ( is_admin() ) {
 			new Xen_Admin();
@@ -193,6 +196,7 @@ final class Xen_LevelUp {
 		add_action( 'xen_task_completed',  array( $this->social, 'on_task_complete' ),  10, 2 );
 		add_action( 'xen_quest_completed', array( $this->social, 'on_quest_complete' ), 10, 2 );
 		add_action( 'xen_onboarding_complete', array( $this->social, 'on_onboarding_complete' ), 10, 1 );
+		add_action( 'xen_rebirth',             array( $this->social, 'on_rebirth' ),              10, 3 );
 	}
 
 	/**
@@ -292,6 +296,11 @@ final class Xen_LevelUp {
 			'currencyName'   => Xen_Currency::name(),
 			'currencySymbol' => Xen_Currency::symbol(),
 			'whatsNewVersion' => XEN_LEVELUP_VERSION,
+			'currentUser'    => is_user_logged_in() ? array(
+				'id'     => get_current_user_id(),
+				'name'   => wp_get_current_user()->display_name,
+				'avatar' => get_avatar_url( get_current_user_id(), array( 'size' => 48 ) ),
+			) : null,
 			'i18n'           => array(
 				'levelUp'         => esc_html__( 'LEVEL UP!', 'xen-levelup' ),
 				'questComplete'   => esc_html__( 'Quest Complete!', 'xen-levelup' ),

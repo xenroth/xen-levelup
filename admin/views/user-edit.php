@@ -124,6 +124,17 @@ $back_url = add_query_arg( 'page', 'xen-levelup-users', admin_url( 'admin.php' )
 					</td>
 				</tr>
 
+				<tr>
+					<th scope="row"><?php esc_html_e( 'Rebirth Count', 'xen-levelup' ); ?></th>
+					<td>
+						<input type="number" id="xen_edit_rebirth_count" name="xen_rebirth_count"
+							   min="0" step="1"
+							   value="<?php echo esc_attr( $profile->rebirth_count ?? 0 ); ?>"
+							   class="regular-text">
+						<p class="description"><?php esc_html_e( 'Number of times this user has been reborn. Rank title is automatically derived from this value.', 'xen-levelup' ); ?></p>
+					</td>
+				</tr>
+
 			</tbody>
 		</table>
 

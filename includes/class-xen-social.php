@@ -168,6 +168,7 @@ class Xen_Social extends Xen_Database {
 			$row->liked_by_me   = in_array( (int) $row->id, $liked_ids, true );
 			$row->avatar_url    = get_avatar_url( (int) $row->user_id, array( 'size' => 48 ) );
 			$row->meta_data     = $row->meta_data ? json_decode( $row->meta_data, true ) : array();
+			$row->time_diff     = human_time_diff( strtotime( $row->created_at ), current_time( 'timestamp' ) );
 		}
 
 		return $rows;
@@ -483,6 +484,30 @@ class Xen_Social extends Xen_Database {
 				__( '%s joined the system! Welcome, Hunter! 🎮', 'xen-levelup' ),
 				$name
 			)
+		);
+	}
+
+	/**
+	 * Post a rebirth event to the activity feed.
+	 *
+	 * @param int    $user_id
+	 * @param int    $rebirth_count New rebirth count.
+	 * @param string $new_rank      New rank title.
+	 */
+	public function on_rebirth( $user_id, $rebirth_count, $new_rank ) {
+		$user = get_userdata( (int) $user_id );
+		$name = $user ? $user->display_name : __( 'A hunter', 'xen-levelup' );
+		$this->post(
+			$user_id,
+			'rebirth',
+			sprintf(
+				/* translators: 1: name, 2: rebirth number, 3: rank title */
+				__( '🔄 %1$s has been REBORN (#%2$d)! Now a %3$s — Level reset to 1. Arise, Hunter!', 'xen-levelup' ),
+				$name,
+				$rebirth_count,
+				$new_rank
+			),
+			array( 'rebirth_count' => $rebirth_count, 'new_rank' => $new_rank )
 		);
 	}
 }

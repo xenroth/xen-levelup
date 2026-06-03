@@ -21,6 +21,7 @@ class Xen_Admin {
 		add_filter( 'manage_users_custom_column',     array( $this, 'user_column_content'   ), 10, 3 );
 		add_action( 'wp_ajax_xen_admin_dismiss_whats_new', array( $this, 'ajax_dismiss_whats_new' ) );
 		add_action( 'admin_post_xen_admin_save_user_stats', array( $this, 'handle_save_user_stats' ) );
+		add_action( 'admin_post_xen_admin_rank_action',     array( $this, 'handle_rank_post'       ) );
 	}
 
 	// ─── Menu ─────────────────────────────────────────────────────────────
@@ -43,6 +44,7 @@ class Xen_Admin {
 			array( 'xen-levelup-legendary',__( 'Legendary', 'xen-levelup' ),       'page_legendary'       ),
 			array( 'xen-levelup-achievements', __( 'Achievements', 'xen-levelup' ),'page_achievements'    ),
 			array( 'xen-levelup-shop',     __( 'Shop',      'xen-levelup' ),       'page_shop'            ),
+			array( 'xen-levelup-ranks',    __( 'Ranks',     'xen-levelup' ),       'page_ranks'           ),
 			array( 'xen-levelup-rankings', __( 'Rankings',  'xen-levelup' ),       'page_rankings'        ),
 			array( 'xen-levelup-analytics',__( 'Analytics', 'xen-levelup' ),       'page_analytics'       ),
 			array( 'xen-levelup-settings', __( 'Settings',  'xen-levelup' ),       'page_settings'        ),
@@ -180,21 +182,23 @@ class Xen_Admin {
 			wp_die( esc_html__( 'Security check failed.', 'xen-levelup' ) );
 		}
 
-		$level       = max( 1, min( 100, absint( $_POST['xen_level']       ?? 1  ) ) ); // phpcs:ignore
-		$xp          = max( 0, absint( $_POST['xen_xp']          ?? 0  ) ); // phpcs:ignore
-		$coins       = max( 0, absint( $_POST['xen_coins']        ?? 0  ) ); // phpcs:ignore
-		$bonus_xp    = max( 0, absint( $_POST['xen_bonus_xp']    ?? 0  ) ); // phpcs:ignore
-		$bonus_coins = max( 0, absint( $_POST['xen_bonus_coins'] ?? 0  ) ); // phpcs:ignore
+		$level         = max( 1, min( 100, absint( $_POST['xen_level']         ?? 1 ) ) ); // phpcs:ignore
+		$xp            = max( 0, absint( $_POST['xen_xp']            ?? 0 ) ); // phpcs:ignore
+		$coins         = max( 0, absint( $_POST['xen_coins']          ?? 0 ) ); // phpcs:ignore
+		$bonus_xp      = max( 0, absint( $_POST['xen_bonus_xp']      ?? 0 ) ); // phpcs:ignore
+		$bonus_coins   = max( 0, absint( $_POST['xen_bonus_coins']   ?? 0 ) ); // phpcs:ignore
+		$rebirth_count = max( 0, absint( $_POST['xen_rebirth_count'] ?? 0 ) ); // phpcs:ignore
 
 		$final_xp    = $xp    + $bonus_xp;
 		$final_coins = $coins + $bonus_coins;
-		$rank_title  = Xen_User::rank_title_for_level( $level );
+		$rank_title  = xen_levelup()->ranks->title_for_rebirth( $rebirth_count );
 
 		$result = xen_levelup()->user->update_profile( $uid, array(
-			'level'      => $level,
-			'experience' => $final_xp,
-			'coins'      => $final_coins,
-			'rank_title' => $rank_title,
+			'level'         => $level,
+			'experience'    => $final_xp,
+			'coins'         => $final_coins,
+			'rank_title'    => $rank_title,
+			'rebirth_count' => $rebirth_count,
 		) );
 
 		$redirect = add_query_arg(
@@ -223,6 +227,97 @@ class Xen_Admin {
 	}
 
 	public function page_rankings()     { $this->load_view( 'rankings'     ); }
+
+	// ─── Admin: Ranks ─────────────────────────────────────────────────────
+
+	public function page_ranks() {
+		$action  = isset( $_GET['action'] ) ? sanitize_key( $_GET['action'] ) : '';
+		$rank_id = isset( $_GET['rank_id'] ) ? absint( $_GET['rank_id'] ) : 0;
+
+		// Handle flash messages
+		$saved    = isset( $_GET['xen_rank_saved'] );
+		$deleted  = isset( $_GET['xen_rank_deleted'] );
+		$toggled  = isset( $_GET['xen_rank_toggled'] );
+		$error    = isset( $_GET['xen_rank_error'] ) ? sanitize_text_field( urldecode( $_GET['xen_rank_error'] ) ) : '';
+
+		$ranks     = xen_levelup()->ranks->get_all();
+		$edit_rank = ( 'edit' === $action && $rank_id ) ? xen_levelup()->ranks->get_rank( $rank_id ) : null;
+
+		require XEN_LEVELUP_PLUGIN_DIR . 'admin/views/ranks.php';
+	}
+
+	/**
+	 * Handle Rank CRUD POST actions.
+	 */
+	public function handle_rank_post() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'xen-levelup' ) );
+		}
+
+		$nonce = sanitize_key( $_POST['xen_rank_nonce'] ?? '' );
+		if ( ! wp_verify_nonce( $nonce, 'xen_rank_action' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'xen-levelup' ) );
+		}
+
+		$rank_action = sanitize_key( $_POST['rank_action'] ?? '' );
+		$rank_id     = absint( $_POST['rank_id'] ?? 0 );
+		$redirect    = admin_url( 'admin.php?page=xen-levelup-ranks' );
+
+		switch ( $rank_action ) {
+			case 'create':
+				$data = array(
+					'title'            => sanitize_text_field( $_POST['title'] ?? '' ),
+					'icon'             => sanitize_text_field( $_POST['icon'] ?? '' ),
+					'color'            => sanitize_hex_color( $_POST['color'] ?? '' ) ?: '#6b7280',
+					'rebirth_required' => max( 0, absint( $_POST['rebirth_required'] ?? 0 ) ),
+					'description'      => sanitize_textarea_field( $_POST['description'] ?? '' ),
+					'sort_order'       => absint( $_POST['sort_order'] ?? 0 ),
+					'is_active'        => isset( $_POST['is_active'] ) ? 1 : 0,
+				);
+				$result = xen_levelup()->ranks->create_rank( $data );
+				$redirect = add_query_arg( $result ? 'xen_rank_saved' : array( 'xen_rank_error' => urlencode( 'Could not create rank.' ) ), $redirect );
+				break;
+
+			case 'update':
+				if ( ! $rank_id ) {
+					wp_safe_redirect( add_query_arg( 'xen_rank_error', urlencode( 'Missing rank ID.' ), $redirect ) );
+					exit;
+				}
+				$data = array(
+					'title'            => sanitize_text_field( $_POST['title'] ?? '' ),
+					'icon'             => sanitize_text_field( $_POST['icon'] ?? '' ),
+					'color'            => sanitize_hex_color( $_POST['color'] ?? '' ) ?: '#6b7280',
+					'rebirth_required' => max( 0, absint( $_POST['rebirth_required'] ?? 0 ) ),
+					'description'      => sanitize_textarea_field( $_POST['description'] ?? '' ),
+					'sort_order'       => absint( $_POST['sort_order'] ?? 0 ),
+					'is_active'        => isset( $_POST['is_active'] ) ? 1 : 0,
+				);
+				$result = xen_levelup()->ranks->update_rank( $rank_id, $data );
+				$redirect = add_query_arg( $result !== false ? 'xen_rank_saved' : array( 'xen_rank_error' => urlencode( 'Could not update rank.' ) ), $redirect );
+				break;
+
+			case 'delete':
+				if ( ! $rank_id ) {
+					wp_safe_redirect( add_query_arg( 'xen_rank_error', urlencode( 'Missing rank ID.' ), $redirect ) );
+					exit;
+				}
+				xen_levelup()->ranks->delete_rank( $rank_id );
+				$redirect = add_query_arg( 'xen_rank_deleted', '1', $redirect );
+				break;
+
+			case 'toggle':
+				if ( ! $rank_id ) {
+					wp_safe_redirect( add_query_arg( 'xen_rank_error', urlencode( 'Missing rank ID.' ), $redirect ) );
+					exit;
+				}
+				xen_levelup()->ranks->toggle_active( $rank_id );
+				$redirect = add_query_arg( 'xen_rank_toggled', '1', $redirect );
+				break;
+		}
+
+		wp_safe_redirect( $redirect );
+		exit;
+	}
 	public function page_analytics()    { $this->load_view( 'analytics'    ); }
 	public function page_settings()     {
 		// Handle settings save

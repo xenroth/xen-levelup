@@ -8,10 +8,54 @@
 	'use strict';
 
 	if (typeof xenData === 'undefined') return;
+
+	var nonce = xenData.nonce;
+
+	/* ── Avatar Upload ─────────────────────────────────────────────────── */
+	$(document).on('click', '#xen-upload-avatar-btn', function () {
+		var $file   = $('#xen-avatar-file');
+		var file    = $file[0].files[0];
+		var $status = $('#xen-avatar-upload-status');
+
+		if (!file) {
+			$status.text('Please select a file.').css('color', 'var(--xen-error, #ef4444)');
+			return;
+		}
+
+		var formData = new FormData();
+		formData.append('action', 'xen_upload_avatar');
+		formData.append('nonce', nonce);
+		formData.append('avatar', file);
+
+		$status.text(xenData.i18n.processing || 'Uploading…').css('color', '');
+
+		$.ajax({
+			url        : xenData.ajaxUrl,
+			type       : 'POST',
+			data       : formData,
+			contentType: false,
+			processData: false,
+			success    : function (res) {
+				if (res.success) {
+					$('#xen-avatar-preview-img').attr('src', res.data.url);
+					$('.xen-profile-avatar').attr('src', res.data.url);
+					$('.xen-avatar').attr('src', res.data.url);
+					$status.text('✔ Photo updated!').css('color', 'var(--xen-success, #22c55e)');
+				} else {
+					$status.text((res.data && res.data.message) || 'Upload failed.').css('color', 'var(--xen-error, #ef4444)');
+				}
+			},
+			error: function () {
+				$status.text('Upload failed.').css('color', 'var(--xen-error, #ef4444)');
+			}
+		});
+	});
+
+	/* ── Feed-only code ─────────────────────────────────────────────────── */
 	if (!$('#xen-feed').length) return;
 
-	var $feed  = $('#xen-feed');
-	var nonce  = $feed.data('nonce') || xenData.nonce;
+	var $feed = $('#xen-feed');
+	nonce     = $feed.data('nonce') || xenData.nonce;
 
 	/* ── Post Activity ─────────────────────────────────────────────────── */
 	$(document).on('click', '#xen-feed-post-btn', function () {
@@ -36,17 +80,24 @@
 			var $empty = $('#xen-feed-empty');
 			if ($empty.length) $empty.remove();
 
-			var user    = xenData.currentUser || {};
-			var $item   = buildFeedItem({
-				id          : res.data.activity_id,
-				display_name: user.name || '',
-				avatar_url  : user.avatar || '',
-				content     : content,
-				like_count  : 0,
-				comment_count: 0,
-				liked_by_me : false,
-				time_diff   : '0 seconds',
-			});
+			/* Use the enriched item returned by the server when available */
+			var postData;
+			if (res.data.item) {
+				postData = res.data.item;
+			} else {
+				var user = xenData.currentUser || {};
+				postData = {
+					id          : res.data.activity_id,
+					display_name: user.name || '',
+					avatar_url  : user.avatar || '',
+					content     : content,
+					like_count  : 0,
+					comment_count: 0,
+					liked_by_me : false,
+					time_diff   : '0 seconds',
+				};
+			}
+			var $item = buildFeedItem(postData);
 			$('#xen-feed-list').prepend($item);
 			xenToast('Posted!', 'xp');
 		}).always(function () {
@@ -218,46 +269,6 @@
 			} else {
 				xenToast((res.data && res.data.message) || 'Error.', 'error');
 				$btn.prop('disabled', false);
-			}
-		});
-	});
-
-	/* ── Avatar Upload ─────────────────────────────────────────────────── */
-	$(document).on('click', '#xen-upload-avatar-btn', function () {
-		var $file  = $('#xen-avatar-file');
-		var file   = $file[0].files[0];
-		var $status = $('#xen-avatar-upload-status');
-
-		if (!file) {
-			$status.text('Please select a file.').css('color', 'var(--xen-error, #ef4444)');
-			return;
-		}
-
-		var formData = new FormData();
-		formData.append('action', 'xen_upload_avatar');
-		formData.append('nonce', nonce);
-		formData.append('avatar', file);
-
-		$status.text(xenData.i18n.processing || 'Uploading…').css('color', '');
-
-		$.ajax({
-			url        : xenData.ajaxUrl,
-			type       : 'POST',
-			data       : formData,
-			contentType: false,
-			processData: false,
-			success    : function (res) {
-				if (res.success) {
-					$('#xen-avatar-preview-img').attr('src', res.data.url);
-					$('.xen-profile-avatar').attr('src', res.data.url);
-					$('.xen-avatar').attr('src', res.data.url);
-					$status.text('✔ Photo updated!').css('color', 'var(--xen-success, #22c55e)');
-				} else {
-					$status.text((res.data && res.data.message) || 'Upload failed.').css('color', 'var(--xen-error, #ef4444)');
-				}
-			},
-			error: function () {
-				$status.text('Upload failed.').css('color', 'var(--xen-error, #ef4444)');
 			}
 		});
 	});

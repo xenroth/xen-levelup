@@ -24,6 +24,7 @@ class Xen_Installer {
 		self::seed_quest_templates();
 		self::seed_achievements();
 		self::seed_shop_items();
+		self::seed_rank_definitions();
 		self::set_default_options();
 		self::schedule_cron_events();
 
@@ -78,7 +79,8 @@ class Xen_Installer {
 			level           SMALLINT(6)          NOT NULL DEFAULT 1,
 			experience      BIGINT(20)           NOT NULL DEFAULT 0,
 			coins           INT(11)              NOT NULL DEFAULT 0,
-			rank_title      VARCHAR(100)         NOT NULL DEFAULT 'E-Rank',
+			rank_title      VARCHAR(100)         NOT NULL DEFAULT 'Unranked',
+			rebirth_count   SMALLINT(6)          NOT NULL DEFAULT 0,
 			current_title   VARCHAR(100)                  DEFAULT NULL,
 			profile_frame   VARCHAR(100)                  DEFAULT NULL,
 			name_color      VARCHAR(50)                   DEFAULT NULL,
@@ -93,7 +95,8 @@ class Xen_Installer {
 			PRIMARY KEY  (id),
 			UNIQUE KEY   user_id (user_id),
 			KEY          level (level),
-			KEY          experience (experience)
+			KEY          experience (experience),
+			KEY          rebirth_count (rebirth_count)
 		) $charset;" );
 
 		// ── 2. RPG Stats ───────────────────────────────────────────────────
@@ -461,9 +464,66 @@ class Xen_Installer {
 			KEY friend_id (friend_id),
 			KEY status    (status)
 		) $charset;" );
+
+		// ── 23. Rank Definitions ──────────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}rank_definitions (
+			id               BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			title            VARCHAR(100)        NOT NULL,
+			icon             VARCHAR(20)                  DEFAULT NULL,
+			color            VARCHAR(20)                  DEFAULT NULL,
+			rebirth_required SMALLINT(6)         NOT NULL DEFAULT 0,
+			description      TEXT                         DEFAULT NULL,
+			sort_order       INT(11)             NOT NULL DEFAULT 0,
+			is_active        TINYINT(1)          NOT NULL DEFAULT 1,
+			created_at       DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY rebirth_required (rebirth_required),
+			KEY sort_order       (sort_order)
+		) $charset;" );
 	}
 
 	// ─── Default Options ─────────────────────────────────────────────────
+
+	/**
+	 * Seed the default rank definitions (only runs once — skips if rows already exist).
+	 */
+	private static function seed_rank_definitions() {
+		global $wpdb;
+		$table = $wpdb->prefix . 'xen_rank_definitions';
+
+		// Skip if already seeded
+		if ( (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" ) > 0 ) {
+			return;
+		}
+
+		$defaults = array(
+			array( 'Unranked',                '⚫', '#6b7280', 0, 'Starting rank — no rebirths yet.',          0 ),
+			array( 'E-Rank Hunter',           '🟤', '#a16207', 1, 'First rebirth — entered the system.',       10 ),
+			array( 'D-Rank Hunter',           '⚪', '#9ca3af', 2, 'Second rebirth — gaining strength.',        20 ),
+			array( 'C-Rank Hunter',           '🟢', '#16a34a', 3, 'Third rebirth — competent hunter.',         30 ),
+			array( 'B-Rank Hunter',           '🔵', '#2563eb', 4, 'Fourth rebirth — elite combatant.',         40 ),
+			array( 'A-Rank Hunter',           '🟡', '#ca8a04', 5, 'Fifth rebirth — top-class hunter.',         50 ),
+			array( 'S-Rank Hunter',           '🔴', '#dc2626', 6, 'Sixth rebirth — national-class threat.',    60 ),
+			array( 'National-Level Hunter',   '🟣', '#7c3aed', 7, 'Seventh rebirth — world-level power.',      70 ),
+			array( 'Shadow Monarch',          '⭐', '#eab308', 8, 'Eighth rebirth — apex existence.',          80 ),
+		);
+
+		foreach ( $defaults as $r ) {
+			$wpdb->insert(
+				$table,
+				array(
+					'title'            => $r[0],
+					'icon'             => $r[1],
+					'color'            => $r[2],
+					'rebirth_required' => $r[3],
+					'description'      => $r[4],
+					'sort_order'       => $r[5],
+					'is_active'        => 1,
+				),
+				array( '%s', '%s', '%s', '%d', '%s', '%d', '%d' )
+			);
+		}
+	}
 
 	/**
 	 * Set default plugin options on first activation.

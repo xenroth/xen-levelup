@@ -142,6 +142,13 @@ class Xen_Leveling extends Xen_Database {
 		}
 
 		$old_level = (int) $profile->level;
+
+		// ── Rebirth trigger ───────────────────────────────────────────────
+		// A user at max level (100) who earns any additional XP is reborn.
+		if ( $old_level >= XEN_MAX_LEVEL ) {
+			return $this->process_rebirth( $user_id, $xp_amount, $source_type, $source_id, $description );
+		}
+
 		$new_xp    = (int) $profile->experience + $xp_amount;
 
 		// Recalculate level
@@ -155,10 +162,8 @@ class Xen_Leveling extends Xen_Database {
 			'level'      => $new_level,
 		) );
 
-		// Sync rank title on level-up
-		if ( $leveled_up ) {
-			xen_levelup()->user->sync_rank_title( $user_id, $new_level );
-		}
+		// Sync rank title on level-up (no longer changes rank tier, kept for compat)
+		// Rank tier is now solely governed by rebirth_count — so no rank sync needed here.
 
 		// Log the XP transaction
 		$this->insert( 'xp_log', array(
@@ -185,6 +190,90 @@ class Xen_Leveling extends Xen_Database {
 			do_action( 'xen_level_up', $user_id, $old_level, $new_level );
 			$this->on_level_up( $user_id, $old_level, $new_level );
 		}
+
+		return $result;
+	}
+
+	// ─── Rebirth ──────────────────────────────────────────────────────────
+
+	/**
+	 * Process a rebirth event: reset level/XP, increment rebirth count, update rank.
+	 *
+	 * @param int    $user_id
+	 * @param int    $xp_amount      XP that triggered the rebirth (logged).
+	 * @param string $source_type
+	 * @param int    $source_id
+	 * @param string $description
+	 * @return array
+	 */
+	private function process_rebirth( $user_id, $xp_amount, $source_type, $source_id, $description ) {
+		$profile       = xen_levelup()->user->get_profile( $user_id );
+		$old_rebirth   = (int) ( $profile->rebirth_count ?? 0 );
+		$new_rebirth   = $old_rebirth + 1;
+
+		// Reset level and XP, increment rebirth count
+		xen_levelup()->user->update_profile( $user_id, array(
+			'level'         => 1,
+			'experience'    => 0,
+			'rebirth_count' => $new_rebirth,
+		) );
+
+		// Sync rank title from the ranks table
+		xen_levelup()->user->sync_rank_title( $user_id, $new_rebirth );
+
+		// Refresh profile to get new rank_title
+		$profile     = xen_levelup()->user->get_profile( $user_id );
+		$new_rank    = $profile ? $profile->rank_title : '';
+
+		// Log it
+		$this->insert( 'xp_log', array(
+			'user_id'      => $user_id,
+			'xp_amount'    => $xp_amount,
+			'source_type'  => sanitize_text_field( $source_type ),
+			'source_id'    => $source_id ? (int) $source_id : null,
+			'description'  => sanitize_text_field( 'REBIRTH #' . $new_rebirth . ' — ' . $description ),
+			'level_before' => XEN_MAX_LEVEL,
+			'level_after'  => 1,
+		), array( '%d', '%d', '%s', '%d', '%s', '%d', '%d' ) );
+
+		// Coin bonus for rebirth (500 × rebirth_count)
+		$coin_bonus = 500 * $new_rebirth;
+		xen_levelup()->currency->add(
+			$user_id,
+			$coin_bonus,
+			'rebirth',
+			/* translators: %d = rebirth number */
+			sprintf( __( '🔄 Rebirth #%d Bonus', 'xen-levelup' ), $new_rebirth )
+		);
+
+		// Notification
+		xen_levelup()->notifications->add(
+			$user_id,
+			'rebirth',
+			/* translators: %d = rebirth number, %s = rank title */
+			sprintf( __( '🔄 REBIRTH #%1$d — You are now %2$s!', 'xen-levelup' ), $new_rebirth, $new_rank ),
+			sprintf(
+				/* translators: 1: rebirth number, 2: rank title, 3: coin bonus */
+				__( 'You reached Level 100 and have been reborn! Level reset to 1. You are now %2$s and received %3$s bonus coins. Keep rising, Hunter!', 'xen-levelup' ),
+				$new_rebirth,
+				$new_rank,
+				number_format( $coin_bonus )
+			),
+			array( 'rebirth_count' => $new_rebirth, 'new_rank' => $new_rank )
+		);
+
+		$result = array(
+			'reborn'       => true,
+			'leveled_up'   => false,
+			'old_level'    => XEN_MAX_LEVEL,
+			'new_level'    => 1,
+			'new_xp'       => 0,
+			'rebirth_count'=> $new_rebirth,
+			'new_rank'     => $new_rank,
+		);
+
+		do_action( 'xen_xp_added',  $user_id, $result );
+		do_action( 'xen_rebirth',   $user_id, $new_rebirth, $new_rank );
 
 		return $result;
 	}

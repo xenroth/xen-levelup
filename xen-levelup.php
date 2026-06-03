@@ -19,12 +19,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ─── Plugin Constants ───────────────────────────────────────────────────────
-define( 'XEN_LEVELUP_VERSION',    '1.4.2' );
+define( 'XEN_LEVELUP_VERSION',    '1.5.0' );
 define( 'XEN_LEVELUP_PLUGIN_FILE', __FILE__ );
 define( 'XEN_LEVELUP_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'XEN_LEVELUP_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );
 define( 'XEN_LEVELUP_PLUGIN_BASE', plugin_basename( __FILE__ ) );
-define( 'XEN_LEVELUP_DB_VERSION',  '1.4.1' );
+define( 'XEN_LEVELUP_DB_VERSION', '1.5.0' );
 define( 'XEN_MAX_LEVEL',           100 );
 define( 'XEN_MAX_DAILY_TASKS',     10 );
 

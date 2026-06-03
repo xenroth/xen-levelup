@@ -579,9 +579,12 @@ class Xen_Ajax {
 		if ( ! $id ) {
 			wp_send_json_error( array( 'message' => __( 'Could not post activity.', 'xen-levelup' ) ) );
 		}
-		// Return rendered HTML for the new post
-		$feed = xen_levelup()->social->get_global_feed( 1, 0 );
-		wp_send_json_success( array( 'activity_id' => $id ) );
+
+		// Fetch the newly-created enriched item to return full data to JS.
+		$feed  = xen_levelup()->social->get_global_feed( 1, 0 );
+		$item  = ! empty( $feed ) ? $feed[0] : null;
+
+		wp_send_json_success( array( 'activity_id' => $id, 'item' => $item ) );
 	}
 
 	public function xen_get_feed() {

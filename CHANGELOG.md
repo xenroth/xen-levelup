@@ -5,6 +5,27 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.5.0] - 2026-06-04
+
+### What's New
+- **Rebirth System**: When a user reaches Level 100 and earns more XP they are reborn — level resets to 1, rebirth count increments, and their rank tier is promoted automatically.
+- **Custom Rank Definitions**: Admins can now create, edit, delete and toggle rank tiers from a new **Ranks** admin page. Each rank has a title, emoji icon, color, rebirths-required threshold, description and sort order.
+- **Rank seeding**: Plugin activation seeds 9 default ranks from Unranked → Shadow Monarch keyed to rebirth count.
+
+### Fixed
+- **Avatar upload broken**: `xen-social.js` had an early-return guard (`if (!$('#xen-feed').length) return`) that prevented the avatar upload handler from registering on pages without the feed. The guard now only wraps feed-specific code; avatar upload runs on every page.
+- **Activity stream `time_diff` missing**: `enrich_feed()` now populates `time_diff` for every item, so "Load More" items show proper timestamps.
+- **Activity stream `currentUser` missing**: `xenData` now exposes `currentUser` (id, name, avatar) so feed cards render the correct author after posting.
+- **`xen_post_activity` returning only ID**: After posting, the response now includes the full enriched item object (`res.data.item`), which is used directly by `buildFeedItem()`.
+
+### Changed
+- Default `rank_title` for new users is now `'Unranked'` (was `'E-Rank'`).
+- Rank tier is now driven solely by `rebirth_count` (not level). `sync_rank_title()` updated accordingly.
+- Admin → Edit User now has a **Rebirth Count** field; saving recalculates rank from rebirth count.
+- `xen_rebirth` action fires with 3 args: `$user_id, $rebirth_count, $new_rank`.
+
+---
+
 ## [1.4.2] - 2026-06-03
 
 ### What's New
