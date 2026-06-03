@@ -162,3 +162,8 @@
 .xen-edit-table { background: #1e2536; border-radius: 10px; margin-top: 0; }
 .xen-edit-table th, .xen-edit-table td { padding: .85rem 1rem !important; border-bottom: 1px solid #2a3450; }
 .xen-edit-table tr:last-child th, .xen-edit-table tr:last-child td { border-bottom: none; }
+
+/* ── Shop: image upload ─────────────────────────────── */
+.xen-image-upload-wrap { display: flex; flex-direction: column; gap: 8px; }
+.xen-image-upload-wrap .button { width: fit-content; }
+.xen-image-preview img { max-width: 100px; max-height: 100px; border-radius: 6px; display: block; margin-bottom: 6px; border: 1px solid #2a3450; }

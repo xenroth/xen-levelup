@@ -171,19 +171,23 @@ class Xen_Currency extends Xen_Database {
 		}
 
 		// Deduct from sender
-		$new_sender = $sender_balance - $amount;
+		$new_sender     = $sender_balance - $amount;
+		$receiver_user  = get_userdata( $to_id );
+		$receiver_name  = $receiver_user ? $receiver_user->display_name : '#' . $to_id;
 		xen_levelup()->user->update_profile( $from_id, array( 'coins' => $new_sender ) );
 		$this->log_transaction( $from_id, -$amount, 'transfer_out',
-			sprintf( __( 'Sent to user #%d: %s', 'xen-levelup' ), $to_id, sanitize_text_field( $note ) ),
+			sprintf( __( 'Sent to %s%s', 'xen-levelup' ), $receiver_name, $note ? ': ' . sanitize_text_field( $note ) : '' ),
 			$to_id, 'user', $new_sender
 		);
 
 		// Add to receiver
+		$sender_user  = get_userdata( $from_id );
+		$sender_name  = $sender_user ? $sender_user->display_name : '#' . $from_id;
 		$receiver_balance = $this->get_balance( $to_id );
 		$new_receiver     = $receiver_balance + $amount;
 		xen_levelup()->user->update_profile( $to_id, array( 'coins' => $new_receiver ) );
 		$this->log_transaction( $to_id, $amount, 'transfer_in',
-			sprintf( __( 'Received from user #%d: %s', 'xen-levelup' ), $from_id, sanitize_text_field( $note ) ),
+			sprintf( __( 'Received from %s%s', 'xen-levelup' ), $sender_name, $note ? ': ' . sanitize_text_field( $note ) : '' ),
 			$from_id, 'user', $new_receiver
 		);
 

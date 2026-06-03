@@ -49,9 +49,35 @@ function xen_render_shop_item_fields( $item = null ) {
 				value="<?php echo $item ? esc_attr( $item->price ) : '0'; ?>"></td>
 		</tr>
 		<tr>
-			<th><label><?php esc_html_e( 'Image URL', 'xen-levelup' ); ?></label></th>
-			<td><input type="url" name="image_url" class="regular-text"
-				value="<?php echo $item ? esc_attr( $item->image_url ) : ''; ?>"></td>
+			<th><label><?php esc_html_e( 'Item Image', 'xen-levelup' ); ?></label></th>
+			<td>
+				<div class="xen-image-upload-wrap">
+					<?php $img_url = $item ? esc_attr( $item->image_url ) : ''; ?>
+					<div class="xen-image-preview" id="xen-shop-img-preview">
+						<?php if ( $img_url ) : ?>
+						<img src="<?php echo esc_url( $item->image_url ); ?>" style="max-width:100px;max-height:100px;border-radius:6px;display:block;margin-bottom:6px">
+						<?php endif; ?>
+					</div>
+					<input type="url" name="image_url" id="xen-shop-img-url" class="regular-text"
+						value="<?php echo $img_url; ?>"
+						placeholder="<?php esc_attr_e( 'https://… or use Upload button', 'xen-levelup' ); ?>">
+					<button type="button" class="button xen-media-upload-btn" data-target="xen-shop-img-url" data-preview="xen-shop-img-preview">
+						📁 <?php esc_html_e( 'Upload / Select Image', 'xen-levelup' ); ?>
+					</button>
+				</div>
+				<p class="description" style="margin-top:8px">
+					<strong><?php esc_html_e( 'Recommended PNG sizes by item type:', 'xen-levelup' ); ?></strong><br>
+					<span style="font-family:monospace">
+					🖼️ <strong>Frame</strong> — 420 × 420 px (avatar frame overlay, transparent PNG)<br>
+					🔲 <strong>Border</strong> — 420 × 420 px (profile border ring, transparent PNG)<br>
+					🎨 <strong>Name Color</strong> — 100 × 32 px (colour swatch preview)<br>
+					🏷️ <strong>Title</strong> — 200 × 48 px (title badge banner)<br>
+					🎭 <strong>Theme</strong> — 320 × 200 px (theme thumbnail preview)<br>
+					🏅 <strong>Badge</strong> — 80 × 80 px (badge icon, transparent PNG)<br>
+					</span>
+					<?php esc_html_e( 'All images should be PNG format with transparent background where applicable. Max recommended file size: 200 KB.', 'xen-levelup' ); ?>
+				</p>
+			</td>
 		</tr>
 		<tr>
 			<th><label><?php esc_html_e( 'Item Data (JSON)', 'xen-levelup' ); ?></label></th>

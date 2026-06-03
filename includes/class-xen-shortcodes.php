@@ -169,9 +169,24 @@ class Xen_Shortcodes {
 	/** @param array $atts @return string */
 	public function render_rankings( $atts ) {
 		$atts = shortcode_atts( array( 'period' => 'global', 'limit' => 50 ), $atts, 'gamified_rankings' );
+
+		// Allow URL parameter to override shortcode attribute (used by the period tab links)
+		$allowed_periods = array( 'global', 'weekly', 'monthly' );
+		if ( isset( $_GET['period'] ) && in_array( sanitize_key( $_GET['period'] ), $allowed_periods, true ) ) { // phpcs:ignore
+			$atts['period'] = sanitize_key( $_GET['period'] ); // phpcs:ignore
+		}
+		$period = sanitize_key( $atts['period'] );
+
+		// If no rankings exist yet for this period, trigger an immediate recalculation
+		$entries = xen_levelup()->rankings->get_leaderboard( $period, 'all', (int) $atts['limit'] );
+		if ( empty( $entries ) ) {
+			xen_levelup()->rankings->recalculate_all();
+			$entries = xen_levelup()->rankings->get_leaderboard( $period, 'all', (int) $atts['limit'] );
+		}
+
 		return $this->render( 'rankings', $atts, array(
-			'period'  => sanitize_key( $atts['period'] ),
-			'entries' => xen_levelup()->rankings->get_leaderboard( sanitize_key( $atts['period'] ), 'all', (int) $atts['limit'] ),
+			'period'  => $period,
+			'entries' => $entries,
 		), false );
 	}
 

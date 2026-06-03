@@ -45,13 +45,14 @@ $currency_sym  = Xen_Currency::symbol();
 		<div class="xen-wallet-send-form">
 			<h3 class="xen-section-title"><?php esc_html_e( 'Send Coins to Another Hunter', 'xen-levelup' ); ?></h3>
 			<div class="xen-form-row">
-				<label for="xen-send-to"><?php esc_html_e( 'Recipient', 'xen-levelup' ); ?></label>
-				<select id="xen-send-to" class="xen-input">
-					<option value=""><?php esc_html_e( '— Select a hunter —', 'xen-levelup' ); ?></option>
-					<?php foreach ( (array) $users as $u ) : ?>
-					<option value="<?php echo esc_attr( $u->ID ); ?>"><?php echo esc_html( $u->display_name ); ?></option>
-					<?php endforeach; ?>
-				</select>
+			<label for="xen-send-to-search"><?php esc_html_e( 'Recipient', 'xen-levelup' ); ?></label>
+			<div class="xen-user-search-wrap" style="position:relative">
+				<input type="text" id="xen-send-to-search" class="xen-input" autocomplete="off"
+					placeholder="<?php esc_attr_e( 'Search by name, username or ID…', 'xen-levelup' ); ?>" />
+				<input type="hidden" id="xen-send-to" value="" />
+				<div id="xen-user-suggestions" class="xen-user-suggestions" style="display:none"></div>
+			</div>
+			<span class="xen-form-hint" id="xen-send-to-hint"></span>
 			</div>
 			<div class="xen-form-row">
 				<label for="xen-send-amount"><?php esc_html_e( 'Amount', 'xen-levelup' ); ?></label>

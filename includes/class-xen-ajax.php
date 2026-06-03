@@ -53,6 +53,8 @@ class Xen_Ajax {
 			'xen_get_comments',
 			'xen_send_friend_request',
 			'xen_accept_friend_request',
+			// v1.4.2
+			'xen_search_users',
 		);
 
 		// Public-safe (read-only)
@@ -646,5 +648,54 @@ class Xen_Ajax {
 			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
 		}
 		wp_send_json_success();
+	}
+
+	// ── v1.4.2 ────────────────────────────────────────────────────────────
+
+	/**
+	 * Search users by display name, user_login, or numeric ID.
+	 * Returns lightweight list for the wallet recipient autocomplete.
+	 */
+	public function xen_search_users() {
+		$this->require_auth();
+		$current_user_id = get_current_user_id();
+		$term            = sanitize_text_field( $this->post_text( 'term' ) );
+
+		if ( strlen( $term ) < 2 ) {
+			wp_send_json_success( array() );
+		}
+
+		// Numeric ID lookup
+		if ( is_numeric( $term ) ) {
+			$uid  = (int) $term;
+			$user = $uid !== $current_user_id ? get_userdata( $uid ) : false;
+			if ( $user ) {
+				wp_send_json_success( array( array(
+					'id'       => $user->ID,
+					'name'     => $user->display_name,
+					'username' => $user->user_login,
+				) ) );
+			}
+			wp_send_json_success( array() );
+		}
+
+		// Text search by display_name or user_login
+		$users = get_users( array(
+			'search'         => '*' . esc_attr( $term ) . '*',
+			'search_columns' => array( 'display_name', 'user_login' ),
+			'exclude'        => array( $current_user_id ),
+			'number'         => 10,
+			'fields'         => array( 'ID', 'display_name', 'user_login' ),
+		) );
+
+		$results = array();
+		foreach ( $users as $u ) {
+			$results[] = array(
+				'id'       => $u->ID,
+				'name'     => $u->display_name,
+				'username' => $u->user_login,
+			);
+		}
+		wp_send_json_success( $results );
 	}
 }

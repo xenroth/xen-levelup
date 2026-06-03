@@ -427,3 +427,73 @@ color: var(--xen-muted);
 .xen-convert-task-btn { font-size: .75rem; padding: .2rem .65rem; border: 1px solid var(--xen-accent, #f59e0b); color: var(--xen-accent, #f59e0b); background: none; border-radius: 999px; cursor: pointer; transition: background .15s; }
 .xen-convert-task-btn:hover:not(:disabled) { background: rgba(245,158,11,.12); }
 .xen-convert-task-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ======================================================================
+   NOTIFICATION BELL DROPDOWN
+   ====================================================================== */
+.xen-notif-wrap { position: relative; display: inline-block; }
+.xen-notif-btn {
+  background: none; border: none; cursor: pointer; font-size: 1.25rem;
+  padding: .25rem .4rem; border-radius: 8px; position: relative;
+  color: var(--xen-text); transition: background .15s;
+}
+.xen-notif-btn:hover { background: var(--xen-surface-2, rgba(255,255,255,.08)); }
+.xen-notif-count {
+  position: absolute; top: -4px; right: -4px;
+  background: #ef4444; color: #fff; font-size: .65rem; font-weight: 700;
+  border-radius: 999px; min-width: 16px; height: 16px; line-height: 16px;
+  text-align: center; padding: 0 3px;
+}
+.xen-notif-panel {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  width: 320px; max-height: 420px;
+  background: var(--xen-surface, #1a1a2e); border: 1px solid var(--xen-border);
+  border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.45);
+  display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+}
+.xen-notif-panel.xen-notif-open { display: flex; }
+.xen-notif-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .65rem 1rem; border-bottom: 1px solid var(--xen-border);
+  font-weight: 700; font-size: .85rem;
+}
+.xen-notif-mark-all { font-size: .72rem; color: var(--xen-primary); }
+.xen-notif-list { overflow-y: auto; max-height: 360px; }
+.xen-notif-loading { padding: 1.5rem; text-align: center; }
+.xen-notif-empty { padding: 1.5rem; text-align: center; color: var(--xen-muted); font-size: .85rem; }
+.xen-notif-item {
+  display: flex; gap: .65rem; align-items: flex-start;
+  padding: .7rem 1rem; border-bottom: 1px solid var(--xen-border, rgba(255,255,255,.06));
+  cursor: pointer; transition: background .15s;
+}
+.xen-notif-item:last-child { border-bottom: none; }
+.xen-notif-item:hover { background: var(--xen-surface-2, rgba(255,255,255,.04)); }
+.xen-notif-item.xen-notif-unread { background: rgba(139,92,246,.08); }
+.xen-notif-item.xen-notif-unread::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--xen-primary); flex-shrink: 0; margin-top: .45rem;
+}
+.xen-notif-icon { font-size: 1.1rem; flex-shrink: 0; }
+.xen-notif-body { flex: 1; min-width: 0; }
+.xen-notif-title { font-weight: 600; font-size: .84rem; }
+.xen-notif-msg { font-size: .78rem; color: var(--xen-muted); margin-top: .15rem; }
+
+/* ======================================================================
+   WALLET USER SEARCH AUTOCOMPLETE
+   ====================================================================== */
+.xen-user-search-wrap { position: relative; }
+.xen-user-suggestions {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 999;
+  background: var(--xen-surface, #1a1a2e); border: 1px solid var(--xen-border);
+  border-top: none; border-radius: 0 0 8px 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4); max-height: 220px; overflow-y: auto;
+}
+.xen-sug-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .5rem .75rem; cursor: pointer; gap: .5rem;
+  transition: background .12s;
+}
+.xen-sug-item:hover { background: var(--xen-primary-dim, rgba(139,92,246,.15)); }
+.xen-sug-name { font-weight: 600; font-size: .85rem; }
+.xen-sug-login { font-size: .75rem; color: var(--xen-muted); }
+.xen-sug-empty { padding: .75rem; font-size: .82rem; color: var(--xen-muted); }

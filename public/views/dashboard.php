@@ -67,11 +67,31 @@ $checkin_data   = array(
 				<?php echo esc_html( $curr_sym ); ?> <strong><?php echo esc_html( number_format( $coins ) ); ?></strong>
 				<span class="xen-coin-label"><?php echo esc_html( $curr_name ); ?></span>
 			</div>
-			<?php if ( $notif_count > 0 ) : ?>
-			<div class="xen-notif-badge">
-				🔔 <span><?php echo esc_html( $notif_count ); ?></span>
+			<div class="xen-notif-wrap" id="xen-notif-wrap">
+				<button class="xen-notif-btn" id="xen-notif-btn"
+					aria-label="<?php esc_attr_e( 'Notifications', 'xen-levelup' ); ?>"
+					aria-expanded="false" aria-haspopup="true">
+					🔔
+					<?php if ( $notif_count > 0 ) : ?>
+					<span class="xen-notif-count" id="xen-notif-count"><?php echo esc_html( $notif_count ); ?></span>
+					<?php else : ?>
+					<span class="xen-notif-count xen-notif-hidden" id="xen-notif-count" style="display:none">0</span>
+					<?php endif; ?>
+				</button>
+				<div class="xen-notif-panel" id="xen-notif-panel" aria-hidden="true">
+					<div class="xen-notif-panel-header">
+						<span><?php esc_html_e( 'Notifications', 'xen-levelup' ); ?></span>
+						<button class="xen-notif-mark-all xen-btn-ghost xen-btn-xs" id="xen-notif-mark-all">
+							<?php esc_html_e( 'Mark all read', 'xen-levelup' ); ?>
+						</button>
+					</div>
+					<div class="xen-notif-list" id="xen-notif-list">
+						<div class="xen-notif-loading">
+							<span class="xen-spinner"></span>
+						</div>
+					</div>
+				</div>
 			</div>
-			<?php endif; ?>
 		</div>
 	</div>
 

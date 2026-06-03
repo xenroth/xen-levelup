@@ -34,4 +34,48 @@
 		});
 	});
 
+	// ── Shop: WP Media Library image picker ───────────────────────────────
+	var mediaFrame = null;
+
+	$(document).on('click', '.xen-media-upload-btn', function (e) {
+		e.preventDefault();
+		var targetId  = $(this).data('target');
+		var previewId = $(this).data('preview');
+
+		if (typeof wp === 'undefined' || !wp.media) return;
+
+		if (mediaFrame) {
+			mediaFrame.open();
+			return;
+		}
+
+		mediaFrame = wp.media({
+			title   : 'Select or Upload Item Image',
+			button  : { text: 'Use this image' },
+			library : { type: 'image' },
+			multiple: false
+		});
+
+		mediaFrame.on('select', function () {
+			var attachment = mediaFrame.state().get('selection').first().toJSON();
+			var url = attachment.url;
+			$('#' + targetId).val(url);
+			var $preview = $('#' + previewId);
+			$preview.html('<img src="' + url + '" style="max-width:100px;max-height:100px;border-radius:6px;display:block;margin-bottom:6px">');
+		});
+
+		mediaFrame.open();
+	});
+
+	// Preview image URL typed manually
+	$(document).on('change blur', '#xen-shop-img-url', function () {
+		var url = $(this).val().trim();
+		var $preview = $('#xen-shop-img-preview');
+		if (url) {
+			$preview.html('<img src="' + url + '" style="max-width:100px;max-height:100px;border-radius:6px;display:block;margin-bottom:6px">');
+		} else {
+			$preview.empty();
+		}
+	});
+
 }(jQuery));

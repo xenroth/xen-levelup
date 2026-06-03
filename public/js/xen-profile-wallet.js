@@ -98,6 +98,60 @@
 	if ($wallet.length) {
 		var walletNonce = $wallet.data('nonce');
 
+		/* ── Recipient live search ─────────────────────────────────── */
+		var searchTimer = null;
+
+		$(document).on('input', '#xen-send-to-search', function () {
+			var term = $(this).val().trim();
+			$('#xen-send-to').val('');
+			$('#xen-send-to-hint').text('');
+
+			if (searchTimer) clearTimeout(searchTimer);
+			if (term.length < 2) {
+				$('#xen-user-suggestions').hide().empty();
+				return;
+			}
+
+			searchTimer = setTimeout(function () {
+				$.post(xenData.ajaxUrl, {
+					action: 'xen_search_users',
+					nonce : walletNonce,
+					term  : term
+				}, function (res) {
+					var $sug = $('#xen-user-suggestions').empty();
+					if (!res.success || !res.data.length) {
+						$sug.html('<div class="xen-sug-empty">No hunters found.</div>').show();
+						return;
+					}
+					$.each(res.data, function (i, u) {
+						$sug.append(
+							$('<div class="xen-sug-item" data-id="' + u.id + '">' +
+							  '<span class="xen-sug-name">' + esc(u.name) + '</span>' +
+							  '<span class="xen-sug-login">@' + esc(u.username) + '</span>' +
+							  '</div>')
+						);
+					});
+					$sug.show();
+				});
+			}, 300);
+		});
+
+		$(document).on('click', '.xen-sug-item', function () {
+			var id   = $(this).data('id');
+			var name = $(this).find('.xen-sug-name').text();
+			$('#xen-send-to').val(id);
+			$('#xen-send-to-search').val(name);
+			$('#xen-send-to-hint').text('Recipient: ' + name + ' (#' + id + ')');
+			$('#xen-user-suggestions').hide().empty();
+		});
+
+		// Close suggestions on outside click
+		$(document).on('click', function (e) {
+			if (!$(e.target).closest('.xen-user-search-wrap').length) {
+				$('#xen-user-suggestions').hide();
+			}
+		});
+
 		$('#xen-send-btn').on('click', function () {
 			var $btn      = $(this);
 			var toUserId  = parseInt($('#xen-send-to').val(), 10);
@@ -106,7 +160,7 @@
 			var $result   = $('#xen-send-result');
 
 			if (!toUserId) {
-				$result.removeClass('success').addClass('error').text('Please select a recipient.').show();
+				$result.removeClass('success').addClass('error').text('Please search and select a recipient.').show();
 				return;
 			}
 			if (!amount || amount < 1) {
@@ -124,10 +178,10 @@
 				note:       note
 			}).done(function (res) {
 				if (!res.success) {
-					var msg = res.data && res.data.message ? res.data.message : 'Transfer failed.';
-					$result.removeClass('success').addClass('error').text(msg).show();
-					$btn.prop('disabled', false).text('📤 Send Coins');
-					return;
+				   var msg = res.data && res.data.message ? res.data.message : 'Transfer failed.';
+				   $result.removeClass('success').addClass('error').text(msg).show();
+				   $btn.prop('disabled', false).text('📤 Send Coins');
+				   return;
 				}
 
 				/* Update balance display */
@@ -146,6 +200,8 @@
 				$result.removeClass('error').addClass('success')
 					.text('Sent ' + amount + ' coins successfully!').show();
 				$('#xen-send-to').val('');
+				$('#xen-send-to-search').val('');
+				$('#xen-send-to-hint').text('');
 				$('#xen-send-amount').val('');
 				$('#xen-send-note').val('');
 				$btn.prop('disabled', false).text('📤 Send Coins');
@@ -155,6 +211,7 @@
 				$btn.prop('disabled', false).text('📤 Send Coins');
 			});
 		});
-	}
 
-}(jQuery));
+		function esc(str) {
+			return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+		}

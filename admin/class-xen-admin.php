@@ -72,6 +72,12 @@ class Xen_Admin {
 			XEN_LEVELUP_VERSION,
 			true
 		);
+
+		// Enqueue WP media library for the shop page image uploader
+		if ( strpos( $hook, 'xen-levelup-shop' ) !== false ) {
+			wp_enqueue_media();
+		}
+
 		wp_localize_script( 'xen-admin-js', 'xenAdmin', array(
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 			'nonce'   => wp_create_nonce( 'xen_admin_nonce' ),

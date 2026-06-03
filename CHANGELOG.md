@@ -5,6 +5,34 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.2] - 2026-06-03
+
+### What's New
+- 🔍 **Wallet: Live User Search** — The "Send Coins" recipient field now has a live search input. Type a player's display name, username, or numeric ID and matching hunters appear instantly in a suggestion dropdown — no more scrolling through a long select list.
+- 📛 **Wallet: Display Names in History** — Transfer and transaction history now shows actual player names ("Sent to Xenroth") instead of raw user ID numbers.
+- 🔔 **Notification Bell: Fully Functional** — The 🔔 bell on the dashboard is now a clickable button that opens a notification panel. Shows recent notifications with unread highlights, single-notification mark-read on click, and a "Mark all read" button. Count badge hides when all are read.
+- 🏅 **Rankings: Period Tabs Now Work** — The All-Time / Weekly / Monthly tabs on the `[gamified_rankings]` page now actually switch the leaderboard data (the `?period=` URL parameter is now read correctly by the shortcode). Rankings are also auto-calculated on first page load if the table is empty (no need to wait for cron).
+- 🖼️ **Admin Shop: Image Upload** — Admins can now click "Upload / Select Image" to open the WordPress Media Library and pick or upload a PNG image for each shop item. Includes size recommendations per item type: Frame (420×420), Border (420×420), Name Color (100×32), Title (200×48), Theme (320×200), Badge (80×80). Image preview shows live in the form.
+
+### Added
+- `xen_search_users` AJAX action — searches users by display name, username, or numeric ID; returns up to 10 matches for the wallet autocomplete.
+- Notification dropdown panel in dashboard view with full open/close, lazy-load, mark-read, mark-all-read.
+- WP Media Library integration on Admin → Shop page (`wp_enqueue_media()` scoped to shop hook).
+
+### Changed
+- `public/views/wallet.php` — Replaced `<select>` recipient dropdown with text search input + hidden ID field + suggestion dropdown.
+- `public/js/xen-profile-wallet.js` — Added live search with 300ms debounce, suggestion click to select, outside-click close.
+- `includes/class-xen-currency.php` — `transfer()` now resolves display names via `get_userdata()` for transaction log descriptions instead of storing raw `#ID`.
+- `public/views/dashboard.php` — Notification bell changed from static `<div>` to accessible `<button>` with ARIA attributes; panel HTML added.
+- `public/js/xen-dashboard.js` — Bell click handler, notification panel toggle, lazy-load notifications, single/all mark-read.
+- `public/css/xen-components.css` — Added `.xen-notif-*` (bell, panel, items) and `.xen-user-search-wrap` / `.xen-sug-*` (wallet autocomplete) styles.
+- `includes/class-xen-shortcodes.php` — `render_rankings()` now reads `$_GET['period']` to support tab navigation; triggers `recalculate_all()` when rankings table is empty.
+- `admin/views/shop.php` — "Image URL" field replaced with upload button + URL input + live preview + size hints per item type.
+- `admin/js/admin.js` — Added WP media frame handler for `.xen-media-upload-btn`; live URL preview on manual input.
+- `admin/class-xen-admin.php` — `enqueue_assets()` calls `wp_enqueue_media()` on the shop admin page.
+
+---
+
 ## [1.4.1] - 2026-06-04
 
 ### What's New
