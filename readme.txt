@@ -1,5 +1,9 @@
 === XEN LevelUp ===
-Contributors: xendev
+Contributors: xenroth
+Author: Richard C. Cupal, LPT (Xenroth)
+Author URI: https://xenroth.com
+Company: Xenroth Digital Innovations
+Contact: +639150388448 | me@xenroth.com
 Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, personal development
 Requires at least: 5.8
 Tested up to: 6.6

@@ -3,9 +3,9 @@
  * Plugin Name: XEN LevelUp
  * Plugin URI:  https://github.com/xenroth/xen-levelup
  * Description: Solo-Leveling Inspired Personal Development & Gamification System. Level up your real life through quests, habits, and achievements.
- * Version:     1.0.0
- * Author:      XEN Coders
- * Author URI:  https://xencoders.com
+ * Version:     1.0.1
+ * Author:      Richard C. Cupal, LPT (Xenroth)
+ * Author URI:  https://xenroth.com
  * License:     GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: xen-levelup
@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // ─── Plugin Constants ───────────────────────────────────────────────────────
-define( 'XEN_LEVELUP_VERSION',    '1.0.0' );
+define( 'XEN_LEVELUP_VERSION',    '1.0.1' );
 define( 'XEN_LEVELUP_PLUGIN_FILE', __FILE__ );
 define( 'XEN_LEVELUP_PLUGIN_DIR',  plugin_dir_path( __FILE__ ) );
 define( 'XEN_LEVELUP_PLUGIN_URL',  plugin_dir_url( __FILE__ ) );

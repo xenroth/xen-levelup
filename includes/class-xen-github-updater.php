@@ -126,7 +126,7 @@ class Xen_GitHub_Updater {
 		$info->name          = 'XEN LevelUp';
 		$info->slug          = $dir_slug;
 		$info->version       = $remote_version;
-		$info->author        = '<a href="https://github.com/' . self::GITHUB_USER . '">XEN Coders</a>';
+		$info->author        = '<a href="https://xenroth.com">Richard C. Cupal, LPT (Xenroth) — Xenroth Digital Innovations</a>';
 		$info->homepage      = 'https://github.com/' . self::GITHUB_USER . '/' . self::GITHUB_REPO;
 		$info->requires      = '5.8';
 		$info->requires_php  = '7.4';
