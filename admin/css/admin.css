@@ -47,3 +47,33 @@
 .xen-diff-very_hard  { color: #ef4444; }
 .xen-diff-extreme    { color: #dc2626; }
 .xen-diff-legendary  { color: var(--xen-accent); font-weight: 700; }
+
+/* -- Plugin Info Card ---------------------------------------- */
+.xen-plugin-info-card{display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem;background:linear-gradient(135deg,rgba(0,212,255,.07) 0%,rgba(123,97,255,.07) 100%);border:1px solid var(--xen-primary);border-radius:10px;padding:1.1rem 1.5rem;margin-bottom:1.75rem;}
+.xen-plugin-brand{display:flex;align-items:center;gap:.75rem;}
+.xen-plugin-logo{font-size:2.2rem;line-height:1;}
+.xen-plugin-name{font-size:1.2rem;font-weight:700;color:var(--xen-primary);}
+.xen-plugin-version{font-size:.82rem;color:var(--xen-muted);margin-top:.15rem;}
+.xen-plugin-version a{color:var(--xen-primary);text-decoration:none;}
+.xen-plugin-meta{display:flex;flex-direction:column;gap:.2rem;font-size:.85rem;color:var(--xen-muted);flex:1;}
+.xen-plugin-meta strong{color:#e5e7eb;}
+.xen-plugin-links a{color:var(--xen-primary);text-decoration:none;}
+.xen-plugin-links a:hover{text-decoration:underline;}
+.xen-plugin-actions{display:flex;gap:.6rem;flex-wrap:wrap;}
+/* -- Info Grid ------------------------------------------------------- */
+.xen-admin-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem;}
+@media(max-width:1024px){.xen-admin-info-grid{grid-template-columns:1fr;}}
+.xen-admin-info-box{background:#1e2536;border:1px solid #2a3450;border-radius:10px;padding:1.5rem;}
+.xen-admin-info-box h2{margin:0 0 .75rem;font-size:1rem;color:var(--xen-primary);border-bottom:1px solid #2a3450;padding-bottom:.6rem;}
+.xen-admin-info-box .description{margin-bottom:.75rem;color:var(--xen-muted);font-size:.85rem;}
+/* -- Feature List --------------------------------------------------- */
+.xen-feature-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.55rem;}
+.xen-feature-list li{font-size:.88rem;color:#c9d1d9;line-height:1.5;}
+.xen-feature-list strong{color:#fff;}
+/* -- Getting Started ------------------------------------------------ */
+.xen-getting-started{margin-top:1.5rem;}
+.xen-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-top:.5rem;}
+.xen-step{display:flex;gap:.85rem;align-items:flex-start;}
+.xen-step-num{flex-shrink:0;width:2rem;height:2rem;border-radius:50%;background:var(--xen-primary);color:#0b1020;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.xen-step-body strong{display:block;color:#fff;margin-bottom:.2rem;font-size:.9rem;}
+.xen-step-body p{margin:0;color:var(--xen-muted);font-size:.82rem;line-height:1.5;}

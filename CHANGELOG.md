@@ -5,6 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.3] - 2026-06-03
+
+### What's New
+- 🖥️ **Improved Admin Dashboard** — Plugin info card (version, developer, Check for Updates), shortcodes reference, features list, and a 6-step Getting Started guide are now displayed on the main admin dashboard.
+
+### Changed
+- Admin Dashboard now shows: plugin version, author (Richard C. Cupal, LPT / Xenroth Digital Innovations), GitHub link, and a "Check for Updates" button.
+- Added Available Shortcodes table, Features overview, and Getting Started steps to the admin dashboard.
+- Coin stat card uses the configured currency name and symbol instead of a hardcoded emoji.
+
+### Fixed
+- None.
+
+---
+
 ## [1.1.2] - 2026-06-03
 
 ### Fixed
