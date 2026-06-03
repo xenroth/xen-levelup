@@ -5,6 +5,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.2] - 2026-06-03
+
+### Fixed
+- **Critical error on Admin → Legendary tab**: `get_all()` was called with no arguments but required `$user_id`. Made `$user_id` optional (default `0`); when omitted the method returns all legendary quests across all users (for the admin view); when a user ID is supplied it scopes the result to that user.
+
+---
+
 ## [1.1.1] - 2026-06-03
 
 ### What's New

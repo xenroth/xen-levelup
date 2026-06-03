@@ -8,7 +8,7 @@ Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, 
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,9 @@ Go to **XEN LevelUp → Settings** and assign an existing WordPress page to each
 7. Level-up modal — particle burst effect
 
 == Changelog ==
+
+= 1.1.2 — 2026-06-03 =
+* Fixed critical error on Admin → Legendary tab: `get_all()` was called without the required `$user_id` argument. The method now defaults to `$user_id = 0` and returns all legendary quests across all users when called without an argument (admin view), or a single user's quests when a user ID is supplied.
 
 = 1.1.1 — 2026-06-03 =
 * Added `CHANGELOG.md` to the plugin root following Keep a Changelog format.
