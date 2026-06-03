@@ -5,6 +5,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.0] - 2026-06-05
+
+### What's New
+- 🗺️ **Quest Hub** — Unified `[gamified_quest_hub]` shortcode with four tabs: Daily, Side Quests, Legendary, and History. Quests now have a `pending → active → completed` lifecycle; players must explicitly accept side and legendary quests before they become active.
+- ✏️ **Profile Editing** — Logged-in users can now edit their display name, bio, and hunter title directly on their profile page (game-style character sheet). Changes are saved via AJAX without a page reload.
+- 💰 **Currency Wallet** — New `[gamified_wallet]` shortcode provides a currency wallet with balance overview, peer-to-peer coin transfers, transfer history, and transaction history.
+- 🏆 **Legendary Quest Fix** — Legendary quests are now assigned with `pending` status and appear immediately in the Quest Hub. Users must accept them before the timer starts, fixing the issue where quests weren't visible to users on fresh installs.
+- 🎨 **Profile v2** — Public profile page redesigned as a Solo Leveling-style character sheet: avatar with level orb, RPG stat bars, equipment grid, achievement grid, and inline edit panel.
+
+### Added
+- `xen_accept_quest` AJAX action — transitions a quest from `pending` to `active`.
+- `xen_get_quest_hub` AJAX action — returns daily, special, and legendary quest data.
+- `xen_update_profile` AJAX action — saves display name, bio, and hunter title.
+- `xen_transfer_currency` AJAX action — peer-to-peer coin transfer with validation.
+- `xen_get_wallet` AJAX action — returns balance, transactions, and transfer history.
+- `Xen_Currency::transfer()` — atomic deduct-and-add with full transaction logging.
+- `Xen_Currency::admin_send()` — admin reward helper.
+- `Xen_Currency::get_transfer_history()` — queries the new `currency_transfers` table.
+- `Xen_Quests::accept_quest()` — validates and promotes a pending quest to active.
+- New DB table `{prefix}xen_currency_transfers` (auto-created/upgraded via `dbDelta`).
+- New views: `public/views/quest-hub.php`, `public/views/wallet.php`.
+- New JS: `public/js/xen-quest-hub.js`, `public/js/xen-profile-wallet.js`.
+- New CSS: quest hub cards, profile v2 character sheet, wallet components.
+
+### Fixed
+- Legendary quest assignment skips users who already have a `pending` OR `active` legendary quest (previously only checked `active`).
+- Special quest generation likewise respects `pending` status to avoid duplicates.
+- `expire_stale_quests()` now expires both `active` and `pending` quests past their deadline.
+
+---
+
 ## [1.2.1] - 2026-06-04
 
 ### What's New

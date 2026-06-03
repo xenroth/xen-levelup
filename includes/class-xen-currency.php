@@ -145,6 +145,117 @@ class Xen_Currency extends Xen_Database {
 
 	// ─── Currency Identity ────────────────────────────────────────────────
 
+	// ─── Transfers ────────────────────────────────────────────────────────
+
+	/**
+	 * Transfer coins from one user to another atomically.
+	 *
+	 * @param int    $from_id   Sender user ID.
+	 * @param int    $to_id     Receiver user ID.
+	 * @param int    $amount    Positive coin amount.
+	 * @param string $note      Optional message.
+	 * @return array|WP_Error
+	 */
+	public function transfer( $from_id, $to_id, $amount, $note = '' ) {
+		$from_id = (int) $from_id;
+		$to_id   = (int) $to_id;
+		$amount  = (int) $amount;
+
+		if ( $amount <= 0 ) {
+			return new WP_Error( 'invalid_amount', __( 'Transfer amount must be positive.', 'xen-levelup' ) );
+		}
+
+		$sender_balance = $this->get_balance( $from_id );
+		if ( $sender_balance < $amount ) {
+			return new WP_Error( 'insufficient_funds', __( 'Insufficient coins.', 'xen-levelup' ) );
+		}
+
+		// Deduct from sender
+		$new_sender = $sender_balance - $amount;
+		xen_levelup()->user->update_profile( $from_id, array( 'coins' => $new_sender ) );
+		$this->log_transaction( $from_id, -$amount, 'transfer_out',
+			sprintf( __( 'Sent to user #%d: %s', 'xen-levelup' ), $to_id, sanitize_text_field( $note ) ),
+			$to_id, 'user', $new_sender
+		);
+
+		// Add to receiver
+		$receiver_balance = $this->get_balance( $to_id );
+		$new_receiver     = $receiver_balance + $amount;
+		xen_levelup()->user->update_profile( $to_id, array( 'coins' => $new_receiver ) );
+		$this->log_transaction( $to_id, $amount, 'transfer_in',
+			sprintf( __( 'Received from user #%d: %s', 'xen-levelup' ), $from_id, sanitize_text_field( $note ) ),
+			$from_id, 'user', $new_receiver
+		);
+
+		// Log transfer record
+		$this->insert(
+			'currency_transfers',
+			array(
+				'sender_id'   => $from_id,
+				'receiver_id' => $to_id,
+				'amount'      => $amount,
+				'note'        => sanitize_text_field( $note ),
+				'type'        => 'transfer',
+			),
+			array( '%d', '%d', '%d', '%s', '%s' )
+		);
+
+		xen_levelup()->user->flush_profile_cache( $from_id );
+		xen_levelup()->user->flush_profile_cache( $to_id );
+
+		return array(
+			'success'         => true,
+			'sender_balance'  => $new_sender,
+			'amount'          => $amount,
+		);
+	}
+
+	/**
+	 * Admin reward: send coins to a user without deducting from anyone.
+	 *
+	 * @param int    $to_id  Receiver user ID.
+	 * @param int    $amount Positive coin amount.
+	 * @param string $note   Optional message.
+	 * @return int New balance.
+	 */
+	public function admin_send( $to_id, $amount, $note = '' ) {
+		$to_id  = (int) $to_id;
+		$amount = max( 0, (int) $amount );
+
+		$new_balance = $this->add( $to_id, $amount, 'admin_reward', $note );
+
+		$this->insert(
+			'currency_transfers',
+			array(
+				'sender_id'   => 0,
+				'receiver_id' => $to_id,
+				'amount'      => $amount,
+				'note'        => sanitize_text_field( $note ),
+				'type'        => 'admin_reward',
+			),
+			array( '%d', '%d', '%d', '%s', '%s' )
+		);
+
+		return $new_balance;
+	}
+
+	/**
+	 * Get transfer history for a user (sent and received).
+	 *
+	 * @param int $user_id WP user ID.
+	 * @param int $limit   Max rows.
+	 * @return array
+	 */
+	public function get_transfer_history( $user_id, $limit = 20 ) {
+		$t = $this->table( 'currency_transfers' );
+		return $this->query(
+			"SELECT * FROM {$t} WHERE sender_id = %d OR receiver_id = %d ORDER BY created_at DESC LIMIT %d",
+			array( (int) $user_id, (int) $user_id, (int) $limit )
+		);
+	}
+
+	// ─── Currency Identity ────────────────────────────────────────────────
+
 	/**
 	 * The configured currency name (admin-customisable).
 	 *

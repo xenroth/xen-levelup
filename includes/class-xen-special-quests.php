@@ -31,9 +31,10 @@ class Xen_Special_Quests extends Xen_Database {
 	public function generate_for_user( $user_id ) {
 		$user_id = (int) $user_id;
 
-		// Skip if already has a special quest active
-		$active = xen_levelup()->quests->get_user_quests( $user_id, 'special', 'active' );
-		if ( ! empty( $active ) ) {
+		// Skip if already has a special quest active or pending
+		$active  = xen_levelup()->quests->get_user_quests( $user_id, 'special', 'active' );
+		$pending = xen_levelup()->quests->get_user_quests( $user_id, 'special', 'pending' );
+		if ( ! empty( $active ) || ! empty( $pending ) ) {
 			return false;
 		}
 
@@ -58,6 +59,7 @@ class Xen_Special_Quests extends Xen_Database {
 			'xp_reward'   => (int) $tmpl->xp_reward,
 			'coin_reward' => (int) $tmpl->coin_reward,
 			'stat_rewards'=> $tmpl->stat_rewards ? json_decode( $tmpl->stat_rewards, true ) : array(),
+			'status'      => 'pending',
 			'quest_date'  => current_time( 'Y-m-d' ),
 			'expires_at'  => $end_of_week,
 		) );
@@ -99,6 +101,11 @@ class Xen_Special_Quests extends Xen_Database {
 	 * @return array
 	 */
 	public function get_active( $user_id ) {
-		return xen_levelup()->quests->get_user_quests( $user_id, 'special', 'active' );
+		$t   = $this->table( 'user_quests' );
+		$uid = (int) $user_id;
+		return $this->query(
+			"SELECT * FROM {$t} WHERE user_id = %d AND quest_type = 'special' AND status IN ('pending','active') ORDER BY assigned_at DESC",
+			array( $uid )
+		);
 	}
 }

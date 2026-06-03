@@ -19,6 +19,7 @@ class Xen_Shortcodes {
 			'gamified_dashboard'        => 'render_dashboard',
 			'gamified_profile'          => 'render_profile',
 			'gamified_quests'           => 'render_quests',
+			'gamified_quest_hub'        => 'render_quest_hub',
 			'gamified_tasks'            => 'render_tasks',
 			'gamified_habits'           => 'render_habits',
 			'gamified_rankings'         => 'render_rankings',
@@ -31,6 +32,7 @@ class Xen_Shortcodes {
 			'gamified_special_quests'   => 'render_special_quests',
 			'gamified_legendary_quests' => 'render_legendary_quests',
 			'gamified_leaderboard'      => 'render_leaderboard',
+			'gamified_wallet'           => 'render_wallet',
 		);
 
 		foreach ( $tags as $tag => $method ) {
@@ -225,6 +227,32 @@ class Xen_Shortcodes {
 		return $this->render( 'character', $atts, array(
 			'user_data' => xen_levelup()->user->get_full_data( $user_id ),
 			'stats'     => xen_levelup()->stats->get_all_stats( $user_id ),
+		) );
+	}
+
+	/** @param array $atts @return string */
+	public function render_quest_hub( $atts ) {
+		$atts    = shortcode_atts( array(), $atts, 'gamified_quest_hub' );
+		$user_id = get_current_user_id();
+		return $this->render( 'quest-hub', $atts, array(
+			'user_id'   => $user_id,
+			'daily'     => xen_levelup()->daily_quests->get_today( $user_id ),
+			'special'   => xen_levelup()->special_quests->get_active( $user_id ),
+			'legendary' => xen_levelup()->legendary_quests->get_active( $user_id ),
+		) );
+	}
+
+	/** @param array $atts @return string */
+	public function render_wallet( $atts ) {
+		$atts    = shortcode_atts( array(), $atts, 'gamified_wallet' );
+		$user_id = get_current_user_id();
+		$users   = get_users( array( 'exclude' => array( $user_id ), 'fields' => array( 'ID', 'display_name' ) ) );
+		return $this->render( 'wallet', $atts, array(
+			'user_id'      => $user_id,
+			'balance'      => xen_levelup()->currency->get_balance( $user_id ),
+			'transactions' => xen_levelup()->currency->get_transactions( $user_id, 20 ),
+			'transfers'    => xen_levelup()->currency->get_transfer_history( $user_id, 20 ),
+			'users'        => $users,
 		) );
 	}
 

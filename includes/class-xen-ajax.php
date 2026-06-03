@@ -19,6 +19,7 @@ class Xen_Ajax {
 	public function __construct() {
 		$logged_in_actions = array(
 			'xen_complete_quest',
+			'xen_accept_quest',
 			'xen_complete_task',
 			'xen_log_habit',
 			'xen_purchase_item',
@@ -38,6 +39,10 @@ class Xen_Ajax {
 			'xen_get_daily_quests',
 			'xen_daily_checkin',
 			'xen_dismiss_whats_new',
+			'xen_update_profile',
+			'xen_transfer_currency',
+			'xen_get_wallet',
+			'xen_get_quest_hub',
 		);
 
 		// Public-safe (read-only)
@@ -110,6 +115,28 @@ class Xen_Ajax {
 		$user_id = get_current_user_id();
 		$quests  = xen_levelup()->daily_quests->get_today( $user_id );
 		wp_send_json_success( array( 'quests' => $quests ) );
+	}
+
+	public function xen_accept_quest() {
+		$this->require_auth();
+		$user_id  = get_current_user_id();
+		$quest_id = $this->post_int( 'quest_id' );
+
+		$result = xen_levelup()->quests->accept_quest( $quest_id, $user_id );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+		wp_send_json_success( array( 'quest_id' => $quest_id ) );
+	}
+
+	public function xen_get_quest_hub() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		wp_send_json_success( array(
+			'daily'     => xen_levelup()->daily_quests->get_today( $user_id ),
+			'special'   => xen_levelup()->special_quests->get_active( $user_id ),
+			'legendary' => xen_levelup()->legendary_quests->get_active( $user_id ),
+		) );
 	}
 
 	// ─── Task Handlers ────────────────────────────────────────────────────
@@ -369,4 +396,77 @@ class Xen_Ajax {
 		xen_levelup()->overview->dismiss( get_current_user_id(), XEN_LEVELUP_VERSION );
 		wp_send_json_success();
 	}
-}
+	// ─── Profile Update Handler ─────────────────────────────────────────────────────
+
+	public function xen_update_profile() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+
+		$display_name = $this->post_text( 'display_name' );
+		$bio          = $this->post_textarea( 'bio' );
+		$title        = $this->post_text( 'title' );
+
+		// Update WP display name
+		if ( $display_name !== '' ) {
+			$result = wp_update_user( array(
+				'ID'           => $user_id,
+				'display_name' => $display_name,
+			) );
+			if ( is_wp_error( $result ) ) {
+				wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+			}
+		}
+
+		// Update bio in user meta
+		update_user_meta( $user_id, 'xen_bio', $bio );
+
+		// Update current title in profile (validate it's non-empty)
+		if ( $title !== '' ) {
+			xen_levelup()->user->update_profile( $user_id, array( 'current_title' => $title ) );
+		}
+
+		xen_levelup()->user->flush_profile_cache( $user_id );
+
+		wp_send_json_success( array(
+			'display_name' => get_userdata( $user_id )->display_name,
+			'bio'          => get_user_meta( $user_id, 'xen_bio', true ),
+			'title'        => $title,
+		) );
+	}
+
+	// ─── Currency Transfer Handlers ────────────────────────────────────────────────
+
+	public function xen_transfer_currency() {
+		$this->require_auth();
+		$sender_id   = get_current_user_id();
+		$receiver_id = $this->post_int( 'to_user_id' );
+		$amount      = $this->post_int( 'amount' );
+		$note        = $this->post_text( 'note' );
+
+		if ( $receiver_id <= 0 || $amount <= 0 ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid transfer details.', 'xen-levelup' ) ) );
+		}
+		if ( $receiver_id === $sender_id ) {
+			wp_send_json_error( array( 'message' => __( 'You cannot transfer coins to yourself.', 'xen-levelup' ) ) );
+		}
+		if ( ! get_userdata( $receiver_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Recipient not found.', 'xen-levelup' ) ) );
+		}
+
+		$result = xen_levelup()->currency->transfer( $sender_id, $receiver_id, $amount, $note );
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+		wp_send_json_success( $result );
+	}
+
+	public function xen_get_wallet() {
+		$this->require_auth();
+		$user_id = get_current_user_id();
+		$page    = max( 1, $this->post_int( 'page', 1 ) );
+		wp_send_json_success( array(
+			'balance'      => xen_levelup()->currency->get_balance( $user_id ),
+			'transactions' => xen_levelup()->currency->get_transactions( $user_id, 20 ),
+			'transfers'    => xen_levelup()->currency->get_transfer_history( $user_id, 20 ),
+		) );
+	}}

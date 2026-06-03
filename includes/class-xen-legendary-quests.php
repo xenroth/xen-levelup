@@ -39,9 +39,10 @@ class Xen_Legendary_Quests extends Xen_Database {
 		$end_of_week = gmdate( 'Y-m-d H:i:s', strtotime( 'next monday midnight' ) - 1 );
 
 		foreach ( $chosen as $user_id ) {
-			// Skip users who already have an active legendary quest
-			$active = xen_levelup()->quests->get_user_quests( $user_id, 'legendary', 'active' );
-			if ( ! empty( $active ) ) {
+			// Skip users who already have an active or pending legendary quest
+			$existing = xen_levelup()->quests->get_user_quests( $user_id, 'legendary', 'active' );
+			$pending  = xen_levelup()->quests->get_user_quests( $user_id, 'legendary', 'pending' );
+			if ( ! empty( $existing ) || ! empty( $pending ) ) {
 				continue;
 			}
 
@@ -58,6 +59,7 @@ class Xen_Legendary_Quests extends Xen_Database {
 				'xp_reward'   => (int) $tmpl->xp_reward,
 				'coin_reward' => (int) $tmpl->coin_reward,
 				'stat_rewards'=> $tmpl->stat_rewards ? json_decode( $tmpl->stat_rewards, true ) : array(),
+				'status'      => 'pending',
 				'quest_date'  => current_time( 'Y-m-d' ),
 				'expires_at'  => $end_of_week,
 			) );
@@ -116,7 +118,12 @@ class Xen_Legendary_Quests extends Xen_Database {
 	 * @return array
 	 */
 	public function get_active( $user_id ) {
-		return xen_levelup()->quests->get_user_quests( $user_id, 'legendary', 'active' );
+		$t      = $this->table( 'user_quests' );
+		$uid    = (int) $user_id;
+		return $this->query(
+			"SELECT * FROM {$t} WHERE user_id = %d AND quest_type = 'legendary' AND status IN ('pending','active') ORDER BY assigned_at DESC",
+			array( $uid )
+		);
 	}
 
 	/**

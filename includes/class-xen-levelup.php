@@ -210,9 +210,11 @@ final class Xen_LevelUp {
 		wp_enqueue_script( 'xen-main',       $url . 'public/js/xen-main.js',       array( 'jquery', 'xen-animations' ), $ver, true );
 		wp_enqueue_script( 'xen-onboarding', $url . 'public/js/xen-onboarding.js', array( 'jquery', 'xen-main' ), $ver, true );
 		wp_enqueue_script( 'xen-dashboard',  $url . 'public/js/xen-dashboard.js',  array( 'jquery', 'xen-main' ), $ver, true );
-		wp_enqueue_script( 'xen-quests',     $url . 'public/js/xen-quests.js',     array( 'jquery', 'xen-main' ), $ver, true );
-		wp_enqueue_script( 'xen-habits',     $url . 'public/js/xen-habits.js',     array( 'jquery', 'xen-main' ), $ver, true );
-		wp_enqueue_script( 'xen-shop',       $url . 'public/js/xen-shop.js',       array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-quests',         $url . 'public/js/xen-quests.js',         array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-habits',         $url . 'public/js/xen-habits.js',         array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-shop',           $url . 'public/js/xen-shop.js',           array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-quest-hub',      $url . 'public/js/xen-quest-hub.js',      array( 'jquery', 'xen-main' ), $ver, true );
+		wp_enqueue_script( 'xen-profile-wallet', $url . 'public/js/xen-profile-wallet.js', array( 'jquery', 'xen-main' ), $ver, true );
 
 		// Localise AJAX data
 		wp_localize_script( 'xen-main', 'xenData', array(

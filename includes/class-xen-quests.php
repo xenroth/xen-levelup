@@ -153,6 +153,11 @@ class Xen_Quests extends Xen_Database {
 		$base_xp  = (int) ( $quest_data['xp_reward'] ?? self::DIFFICULTY_XP[ $quest_data['difficulty'] ?? 'easy' ] ?? 50 );
 		$xp       = xen_levelup()->leveling->scale_xp( $base_xp, $level );
 
+		$allowed_statuses = array( 'active', 'pending' );
+		$status           = isset( $quest_data['status'] ) && in_array( $quest_data['status'], $allowed_statuses, true )
+			? $quest_data['status']
+			: 'active';
+
 		$data = array(
 			'user_id'      => (int) $user_id,
 			'template_id'  => isset( $quest_data['template_id'] ) ? (int) $quest_data['template_id'] : null,
@@ -164,12 +169,40 @@ class Xen_Quests extends Xen_Database {
 			'xp_reward'    => $xp,
 			'coin_reward'  => (int) ( $quest_data['coin_reward'] ?? self::DIFFICULTY_COINS[ $quest_data['difficulty'] ?? 'easy' ] ?? 10 ),
 			'stat_rewards' => isset( $quest_data['stat_rewards'] ) ? wp_json_encode( $quest_data['stat_rewards'] ) : null,
-			'status'       => 'active',
+			'status'       => $status,
 			'quest_date'   => $quest_data['quest_date'] ?? current_time( 'Y-m-d' ),
 			'expires_at'   => $quest_data['expires_at'] ?? null,
 		);
 
 		return $this->insert( 'user_quests', $data );
+	}
+
+	// ─── Accept Quest ─────────────────────────────────────────────────────
+
+	/**
+	 * Accept a pending quest, transitioning it to active status.
+	 *
+	 * @param int $quest_id User quest ID.
+	 * @param int $user_id  WP user ID.
+	 * @return true|WP_Error
+	 */
+	public function accept_quest( $quest_id, $user_id ) {
+		$quest = $this->get_user_quest( $quest_id, $user_id );
+
+		if ( ! $quest ) {
+			return new WP_Error( 'not_found', __( 'Quest not found.', 'xen-levelup' ) );
+		}
+		if ( 'pending' !== $quest->status ) {
+			return new WP_Error( 'invalid_status', __( 'Only pending quests can be accepted.', 'xen-levelup' ) );
+		}
+
+		$this->update(
+			'user_quests',
+			array( 'status' => 'active' ),
+			array( 'id' => (int) $quest_id, 'user_id' => (int) $user_id )
+		);
+
+		return true;
 	}
 
 	// ─── Complete Quest ───────────────────────────────────────────────────
@@ -263,7 +296,7 @@ class Xen_Quests extends Xen_Database {
 		global $wpdb;
 		$table = $wpdb->prefix . 'xen_user_quests';
 		$wpdb->query( $wpdb->prepare(
-			"UPDATE {$table} SET status = 'expired' WHERE status = 'active' AND expires_at IS NOT NULL AND expires_at < %s",
+			"UPDATE {$table} SET status = 'expired' WHERE status IN ('active','pending') AND expires_at IS NOT NULL AND expires_at < %s",
 			current_time( 'mysql' )
 		) );
 	}

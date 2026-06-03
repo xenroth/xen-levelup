@@ -297,6 +297,21 @@ class Xen_Installer {
 			KEY created_at (created_at)
 		) $charset;" );
 
+		// ── 12b. Currency Transfers ───────────────────────────────────────
+		dbDelta( "CREATE TABLE {$p}currency_transfers (
+			id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+			sender_id   BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
+			receiver_id BIGINT(20) UNSIGNED NOT NULL,
+			amount      INT(11)             NOT NULL,
+			note        VARCHAR(255)                 DEFAULT NULL,
+			type        VARCHAR(30)         NOT NULL DEFAULT 'transfer',
+			created_at  DATETIME            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY sender_id   (sender_id),
+			KEY receiver_id (receiver_id),
+			KEY created_at  (created_at)
+		) $charset;" );
+
 		// ── 13. Shop Items ────────────────────────────────────────────────
 		dbDelta( "CREATE TABLE {$p}shop_items (
 			id          BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
