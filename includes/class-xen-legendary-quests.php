@@ -120,16 +120,24 @@ class Xen_Legendary_Quests extends Xen_Database {
 	}
 
 	/**
-	 * Get all legendary quests ever assigned to a user.
+	 * Get all legendary quests ever assigned.
 	 *
-	 * @param int $user_id WP user ID.
+	 * @param int $user_id Optional. When provided, returns only that user's quests.
+	 *                     When 0 (default), returns all legendary quests (admin use).
 	 * @return array
 	 */
-	public function get_all( $user_id ) {
+	public function get_all( $user_id = 0 ) {
 		$t = $this->table( 'user_quests' );
+
+		if ( $user_id ) {
+			return $this->query(
+				"SELECT * FROM {$t} WHERE user_id = %d AND quest_type = 'legendary' ORDER BY assigned_at DESC",
+				array( (int) $user_id )
+			);
+		}
+
 		return $this->query(
-			"SELECT * FROM {$t} WHERE user_id = %d AND quest_type = 'legendary' ORDER BY assigned_at DESC",
-			array( (int) $user_id )
+			"SELECT * FROM {$t} WHERE quest_type = 'legendary' ORDER BY assigned_at DESC"
 		);
 	}
 }
