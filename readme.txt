@@ -8,7 +8,7 @@ Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, 
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,23 +110,86 @@ Go to **XEN LevelUp → Settings** and assign an existing WordPress page to each
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release
-* 10 Life Development Trees + 8 RPG Stats
-* Full quest system: Daily, Random, Special, Legendary
-* Task manager with priority system
-* Habit tracker with streak bonuses
-* 22 built-in achievements
-* Global, weekly, monthly rankings
-* Item shop with 23 seeded items
-* 3-step onboarding wizard
-* In-app notifications with dropdown
-* Full admin panel (9 views)
-* REST API namespace `xen/v1`
+= 1.0.1 — 2026-06-03 =
+* Updated plugin author to Richard C. Cupal, LPT (Xenroth) — Xenroth Digital Innovations
+* Added GitHub auto-updater: WordPress will now detect and apply updates automatically when a new release tag is pushed to https://github.com/xenroth/xen-levelup
+* Updated Plugin URI and Author URI to https://xenroth.com
+* Optional GitHub token support via `XEN_LEVELUP_GITHUB_TOKEN` constant or `xen_levelup_github_token` WP option
+
+= 1.0.0 — 2026-06-03 =
+Initial public release.
+
+**Core**
+* Singleton plugin architecture with `spl_autoload_register` class loader
+* 17 custom database tables via `dbDelta()` — no CPTs required
+* XP formula: `floor(100 × level^1.9 × (1 + level × 0.005))` — ~100 XP at L1, ~2 000 XP at L10
+* Activation, deactivation, and full uninstall routines
+
+**Hunter Profile & Progression**
+* Level 1–100 with rank titles: Unranked → E-Rank → D-Rank → C-Rank → B-Rank → A-Rank → S-Rank → National-Level → Shadow Monarch
+* 8 RPG stats: Strength, Intelligence, Discipline, Endurance, Wisdom, Charisma, Focus, Vitality
+* 10 Life Development Trees: Physique, Intelligence, Knowledge, Discipline, Wealth, Communication, Leadership, Relationships, Spirituality, Longevity
+* Custom title, profile frame, name colour, and badge equip system
+
+**Onboarding**
+* 3-step wizard: personality sliders, interest ratings, drag-and-drop priority ordering
+* Stats auto-generated from personality × interests × priorities algorithm with random ±4 variance
+* Completion awards 100 coins and generates the first daily quest set
+
+**Quest System**
+* Daily quests — 5 main + 2 secondary, auto-generated at midnight via WP-Cron
+* Random quests — up to 2 active, 30 % spawn chance per hourly cron run, 3-hour expiry
+* Special / weekly quests — expire next Monday midnight
+* Legendary quests — awarded to 10 chosen hunters per week
+* 50 seeded quest templates across 7 difficulty tiers (Very Easy → Legendary)
+
+**Tasks**
+* Personal task list with Critical / High / Medium / Low priority
+* 10 tasks per day cap, optional due dates
+* Priority-aware display order via `ORDER BY FIELD()`
+
+**Habits**
+* Daily and weekly habit tracking with streak counters
+* 7-day streak bonus XP; duplicate-log protection
+* Deactivate without deleting history
+
+**Achievements**
+* 22 built-in achievements across level, quest, task, habit, and legendary categories
+* Idempotent award system — achievements can never be double-granted
+
+**Rankings**
+* Global, weekly, and monthly leaderboards
+* Recalculated twice daily via cron using `ON DUPLICATE KEY UPDATE`
+
+**Shop & Currency**
+* 23 seeded shop items: frames, borders, name colours, titles, themes, badges
+* Coin economy: earn from quests and level-ups, spend in the shop
+* Equip / unequip with automatic slot management per item type
+
+**Notifications**
+* In-app notification system with dropdown bell widget
+* Automatic 30-day pruning via daily cron
+
+**Admin Panel**
+* 9 admin views: Dashboard, Users, Quests, Legendary, Shop, Achievements, Rankings, Analytics, Settings
+* Custom columns on WP Users list (Level, Rank, XP)
+* Toggleable feature flags and page assignments in Settings
+
+**Developer API**
+* REST API namespace `xen/v1` — 20 endpoints (GET/PATCH profile, stats, quests, tasks, habits, achievements, rankings, shop, notifications, onboarding)
+* WordPress AJAX handlers for all interactive frontend actions
+* All queries use `$wpdb->prepare()`; all output escaped; AJAX nonce-verified
+
+**Frontend**
 * 15 shortcodes
-* Solo Leveling dark theme with animations
+* Solo Leveling dark theme — Primary `#00D4FF`, Accent `#7B61FF`, Background `#0B1020`
+* Neon glow, glassmorphism cards, animated XP bars, level-up particle burst (canvas)
+* Responsive down to 480 px
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Author and branding update; adds GitHub auto-updater. Safe to update — no database changes.
 
 = 1.0.0 =
 Initial release. No upgrade path required.
