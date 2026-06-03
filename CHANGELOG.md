@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.1.1] - 2026-06-03
+
+### What's New
+- 📋 **Changelog File** — A full `CHANGELOG.md` is now included in the plugin. The dashboard "What's New" card reads feature highlights directly from it — no PHP changes needed for future releases.
+
+### Added
+- `CHANGELOG.md` at the plugin root with complete version history.
+
+### Changed
+- `Xen_Overview::whats_new()` now parses `CHANGELOG.md` to extract feature highlights instead of using a hardcoded array. Add a `### What's New` section under any `## [x.x.x]` heading to populate the dashboard card for that version.
+
+---
+
 ## [1.1.0] - 2026-06-10
 
 ### What's New
