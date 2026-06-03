@@ -25,7 +25,6 @@ $notif_count    = xen_levelup()->notifications->unread_count( get_current_user_i
 $user_id        = get_current_user_id();
 $curr_sym       = Xen_Currency::symbol();
 $curr_name      = Xen_Currency::name();
-$overview_stats = xen_levelup()->overview->get_stats();
 $whats_new      = Xen_Overview::whats_new();
 $show_whats_new = ! empty( $whats_new ) && ! xen_levelup()->overview->is_dismissed( $user_id );
 $checkin_data   = array(
@@ -56,42 +55,6 @@ $checkin_data   = array(
 		</div>
 	</div>
 	<?php endif; ?>
-
-	<!-- Overview Stats -->
-	<div class="xen-overview-stats">
-		<div class="xen-stat-item">
-			<span class="xen-stat-icon">⚔️</span>
-			<span class="xen-stat-value"><?php echo esc_html( number_format( $overview_stats['total_hunters'] ) ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Hunters', 'xen-levelup' ); ?></span>
-		</div>
-		<div class="xen-stat-item">
-			<span class="xen-stat-icon">⭐</span>
-			<span class="xen-stat-value"><?php echo esc_html( number_format( $overview_stats['total_xp'] ) ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Total XP', 'xen-levelup' ); ?></span>
-		</div>
-		<div class="xen-stat-item">
-			<span class="xen-stat-icon">📜</span>
-			<span class="xen-stat-value"><?php echo esc_html( number_format( $overview_stats['total_quests'] ) ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Quests Done', 'xen-levelup' ); ?></span>
-		</div>
-		<div class="xen-stat-item">
-			<span class="xen-stat-icon">✅</span>
-			<span class="xen-stat-value"><?php echo esc_html( number_format( $overview_stats['total_tasks'] ) ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Tasks Done', 'xen-levelup' ); ?></span>
-		</div>
-		<div class="xen-stat-item">
-			<span class="xen-stat-icon">🔥</span>
-			<span class="xen-stat-value"><?php echo esc_html( $overview_stats['active_today'] ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Active Today', 'xen-levelup' ); ?></span>
-		</div>
-		<?php if ( $overview_stats['top_hunter_name'] ) : ?>
-		<div class="xen-stat-item xen-stat-top">
-			<span class="xen-stat-icon">👑</span>
-			<span class="xen-stat-value xen-stat-name"><?php echo esc_html( $overview_stats['top_hunter_name'] ); ?></span>
-			<span class="xen-stat-label"><?php esc_html_e( 'Top Hunter', 'xen-levelup' ); ?></span>
-		</div>
-		<?php endif; ?>
-	</div>
 
 	<!-- Header -->
 	<div class="xen-hero-card">

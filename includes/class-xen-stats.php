@@ -229,9 +229,12 @@ class Xen_Stats extends Xen_Database {
 		$rpg        = $this->get_user_stats( $user_id );
 		$life_trees = $this->get_user_life_trees( $user_id );
 
+		$tree_keys  = array_flip( self::LIFE_TREES );
+		$rpg_keys   = array_flip( self::RPG_STATS );
+
 		return array(
-			'rpg'        => $rpg ? (array) $rpg : array_fill_keys( self::RPG_STATS, 5 ),
-			'life_trees' => $life_trees ? (array) $life_trees : array_fill_keys( self::LIFE_TREES, 5 ),
+			'rpg'        => $rpg        ? array_intersect_key( (array) $rpg,        $rpg_keys  ) : array_fill_keys( self::RPG_STATS,   5 ),
+			'life_trees' => $life_trees ? array_intersect_key( (array) $life_trees,  $tree_keys ) : array_fill_keys( self::LIFE_TREES, 5 ),
 			'icons'      => self::LIFE_TREE_ICONS,
 		);
 	}

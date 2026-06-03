@@ -5,6 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.2.1] - 2026-06-04
+
+### What's New
+- 🐛 **Dashboard Critical Error Fixed** — A PHP TypeError on PHP 8+ caused a white-screen crash when loading the dashboard. Stats and life trees now render correctly for all users.
+- 🧹 **Cleaner Dashboard** — Removed the redundant system-wide overview stats strip (total hunters, total XP, quests done, etc.). The dashboard now focuses entirely on your personal stats.
+
+### Fixed
+- `Xen_User::get_full_data()` now returns a properly structured `stats` array (via `get_all_stats()`) instead of a raw `stdClass` DB row, eliminating the TypeError when the view accessed `$stats['life_trees']` on PHP 8+.
+- Added missing `xp` key to `get_full_data()` return — the dashboard XP display was always showing 0 because the view read `$user_data['xp']` but the method only returned `experience`.
+- `Xen_Stats::get_all_stats()` now strips DB-only columns (`id`, `user_id`, `updated_at`) from the returned `rpg` and `life_trees` arrays, preventing phantom "user_id" entries from appearing in life tree lists.
+- Removed the system-wide overview stats block from the public dashboard view (was showing redundant system totals from "Total Hunters" to "Top Hunter" alongside personal stats).
+
+---
+
 ## [1.2.0] - 2026-06-04
 
 ### What's New

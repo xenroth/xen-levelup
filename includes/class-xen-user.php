@@ -224,19 +224,16 @@ class Xen_User extends Xen_Database {
 			return null;
 		}
 
-		$profile    = $this->get_profile( $user_id );
-		$stats      = $this->get_user_stats( $user_id );
-		$life_trees = $this->get_user_life_trees( $user_id );
+		$profile   = $this->get_profile( $user_id );
 
 		if ( ! $profile ) {
 			$this->create_profile( $user_id );
-			$profile    = $this->get_profile( $user_id );
-			$stats      = $this->get_user_stats( $user_id );
-			$life_trees = $this->get_user_life_trees( $user_id );
+			$profile = $this->get_profile( $user_id );
 		}
 
-		$level   = (int) $profile->level;
+		$level    = (int) $profile->level;
 		$leveling = xen_levelup()->leveling;
+		$stats    = xen_levelup()->stats->get_all_stats( $user_id );
 
 		return array(
 			'user_id'       => $user_id,
@@ -244,8 +241,8 @@ class Xen_User extends Xen_Database {
 			'avatar_url'    => get_avatar_url( $user_id, array( 'size' => 120 ) ),
 			'profile'       => $profile,
 			'stats'         => $stats,
-			'life_trees'    => $life_trees,
 			'level'         => $level,
+			'xp'            => (int) $profile->experience,
 			'experience'    => (int) $profile->experience,
 			'xp_next_level' => $leveling->xp_for_next_level( $level ),
 			'xp_progress'   => $leveling->level_progress_percent( $user_id ),

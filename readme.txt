@@ -8,7 +8,7 @@ Tags: gamification, rpg, leveling, quests, habits, productivity, solo leveling, 
 Requires at least: 5.8
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,12 @@ Go to **XEN LevelUp → Settings** and assign an existing WordPress page to each
 7. Level-up modal — particle burst effect
 
 == Changelog ==
+
+= 1.2.1 — 2026-06-04 =
+* Fixed PHP TypeError (critical error on PHP 8+): `Xen_User::get_full_data()` was returning the raw `user_stats` DB object as the `stats` key; the dashboard view then tried to access it as an array (`$stats['life_trees']`), causing a fatal crash. Now correctly returns the structured array from `Xen_Stats::get_all_stats()`.
+* Fixed: dashboard XP bar always showed 0 because `get_full_data()` returned `experience` but the view read `xp`. Added `xp` as an explicit key.
+* Fixed: `get_all_stats()` now strips DB-only columns (`id`, `user_id`, `updated_at`) from `life_trees` and `rpg` arrays via `array_intersect_key`, preventing phantom entries in life tree displays.
+* Removed the system-wide overview stats strip from the public dashboard (total hunters, total XP, quests done, tasks done, active today, top hunter). The dashboard now shows only personal stats.
 
 = 1.2.0 — 2026-06-04 =
 * **New: Custom Shop Items** — Admins can create, edit, activate/deactivate, and delete shop items directly from the admin panel with full control over item type, price, JSON item data, image URL, sort order, and premium flag.
