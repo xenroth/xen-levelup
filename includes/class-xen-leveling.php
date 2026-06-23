@@ -162,8 +162,13 @@ class Xen_Leveling extends Xen_Database {
 			'level'      => $new_level,
 		) );
 
-		// Sync rank title on level-up (no longer changes rank tier, kept for compat)
-		// Rank tier is now solely governed by rebirth_count — so no rank sync needed here.
+		// Ensure stored `rank_title` stays in sync for non-rebirthed users.
+		// Rebirths remain the canonical tier change; for users with zero
+		// rebirths we keep the legacy behavior and derive the title from level.
+		$profile = xen_levelup()->user->get_profile( $user_id );
+		if ( $profile && (int) ( $profile->rebirth_count ?? 0 ) === 0 ) {
+			xen_levelup()->user->sync_rank_title( $user_id, 0 );
+		}
 
 		// Log the XP transaction
 		$this->insert( 'xp_log', array(
