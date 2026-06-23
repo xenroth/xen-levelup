@@ -456,18 +456,22 @@ class Xen_Ajax {
 		$note        = $this->post_text( 'note' );
 
 		if ( $receiver_id <= 0 || $amount <= 0 ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid transfer details.', 'xen-levelup' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid transfer details.', 'xen-levelup' ), 'code' => 'invalid_details' ) );
 		}
 		if ( $receiver_id === $sender_id ) {
-			wp_send_json_error( array( 'message' => __( 'You cannot transfer coins to yourself.', 'xen-levelup' ) ) );
+			wp_send_json_error( array( 'message' => __( 'You cannot transfer coins to yourself.', 'xen-levelup' ), 'code' => 'self_transfer' ) );
 		}
 		if ( ! get_userdata( $receiver_id ) ) {
-			wp_send_json_error( array( 'message' => __( 'Recipient not found.', 'xen-levelup' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Recipient not found.', 'xen-levelup' ), 'code' => 'recipient_not_found' ) );
 		}
 
 		$result = xen_levelup()->currency->transfer( $sender_id, $receiver_id, $amount, $note );
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+			// Log failure details for debugging (non-sensitive)
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( sprintf( "xen_transfer_currency failed: from=%d to=%d amount=%d code=%s msg=%s", $sender_id, $receiver_id, $amount, $result->get_error_code(), $result->get_error_message() ) );
+			}
+			wp_send_json_error( array( 'message' => $result->get_error_message(), 'code' => $result->get_error_code() ) );
 		}
 		wp_send_json_success( $result );
 	}

@@ -35,6 +35,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - This release entry documents the current staged fixes; final details will be updated once testing completes and server-side patches (if any) are applied.
 
 
+## [1.5.9] - 2026-06-23
+
+### Fixed
+- **Wallet: transfer error handling** — Server now returns explicit error `code` values for common transfer failures (`invalid_details`, `self_transfer`, `recipient_not_found`) and logs WP_Error details when transfers fail (debug-only). The client displays the error code alongside the message and logs network/server responses for faster diagnosis.
+
+### Changed
+- Improved client-side logging for `xen_transfer_currency` failures and added defensive UI messaging.
+
+
 ## [1.5.3] - 2026-06-23
 
 ### Fixed

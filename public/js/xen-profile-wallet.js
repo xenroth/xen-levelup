@@ -235,7 +235,10 @@
 				console && console.debug && console.debug('xen_transfer_currency response', res);
 				if (!res.success) {
 				   var msg = res.data && res.data.message ? res.data.message : 'Transfer failed.';
-				   $result.removeClass('success').addClass('error').text(msg).show();
+				   $result.removeClass('success').addClass('error').text(msg + (res.data && res.data.code ? ' (' + res.data.code + ')' : '') ).show();
+				   if (res.data && res.data.code) {
+						console && console.warn && console.warn('xen_transfer_currency error code:', res.data.code);
+				   }
 				   $btn.prop('disabled', false).text('📤 Send Coins');
 				   return;
 				}
@@ -264,6 +267,7 @@
 				xenToast('Sent ' + amount + ' coins!', 'success', 'Transfer Complete');
 			}).fail(function () {
 				$result.removeClass('success').addClass('error').text('Request failed. Try again.').show();
+				console && console.debug && console.debug('xen_transfer_currency ajax fail', arguments);
 				$btn.prop('disabled', false).text('📤 Send Coins');
 			});
 		});
