@@ -17,6 +17,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Bumped plugin version to `1.5.3` for this follow-up release.
 
 
+## [1.5.4] - 2026-06-23
+
+### Added
+- **Admin: Rank Sync tool** — New maintenance controls on the Admin → Settings page to run rank synchronization across user profiles. Two actions are available: sync only users with `rebirth_count == 0`, or sync all users. Useful for repairing stale `rank_title` values after updates or imports.
+
+### Changed
+- Bumped plugin version to `1.5.4`.
+
+
 ## [1.5.2] - 2026-06-23
 
 ### Fixed

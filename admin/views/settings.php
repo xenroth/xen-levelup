@@ -8,6 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 settings_errors( 'xen_settings' );
 
+// Show sync completion notice if redirected back
+if ( isset( $_GET['xen_sync_done'] ) ) {
+	$scope = sanitize_text_field( $_GET['xen_sync_scope'] ?? 'all' );
+	$count = absint( $_GET['xen_sync_count'] ?? 0 );
+	$scope_label = 'all users' === $scope ? 'all users' : ( 'rebirth_zero' === $scope ? 'users with zero rebirths' : esc_html( $scope ) );
+	echo '<div class="updated notice"><p>' . esc_html( sprintf( 'Rank sync completed for %d %s.', $count, $scope_label ) ) . '</p></div>';
+}
+
 // Helper to get page options list
 $pages = get_pages();
 $page_options = array( '' => __( '— Select page —', 'xen-levelup' ) );
@@ -117,4 +125,16 @@ $fields = array(
 
 		<?php submit_button( __( 'Save Settings', 'xen-levelup' ) ); ?>
 	</form>
+
+	<div class="xen-admin-maintenance">
+		<h2><?php esc_html_e( 'Maintenance', 'xen-levelup' ); ?></h2>
+		<p class="description"><?php esc_html_e( 'Run rank synchronization tasks for user profiles.', 'xen-levelup' ); ?></p>
+		<form method="post" action="admin-post.php" onsubmit="return confirm('Are you sure you want to run the rank sync? This may take a while on large sites.');">
+			<?php wp_nonce_field( 'xen_run_sync', 'xen_run_sync_nonce' ); ?>
+			<input type="hidden" name="action" value="xen_admin_run_sync">
+			<button type="submit" name="xen_sync_scope" value="rebirth_zero" class="button button-secondary"><?php esc_html_e( 'Sync ranks (rebirth_count == 0)', 'xen-levelup' ); ?></button>
+			&nbsp;
+			<button type="submit" name="xen_sync_scope" value="all" class="button button-primary"><?php esc_html_e( 'Sync ranks (all users)', 'xen-levelup' ); ?></button>
+		</form>
+	</div>
 </div>

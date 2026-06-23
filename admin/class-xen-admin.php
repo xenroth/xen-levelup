@@ -21,7 +21,45 @@ class Xen_Admin {
 		add_filter( 'manage_users_custom_column',     array( $this, 'user_column_content'   ), 10, 3 );
 		add_action( 'wp_ajax_xen_admin_dismiss_whats_new', array( $this, 'ajax_dismiss_whats_new' ) );
 		add_action( 'admin_post_xen_admin_save_user_stats', array( $this, 'handle_save_user_stats' ) );
+		add_action( 'admin_post_xen_admin_run_sync', array( $this, 'handle_run_sync' ) );
 		add_action( 'admin_post_xen_admin_rank_action',     array( $this, 'handle_rank_post'       ) );
+	}
+
+	/**
+	 * Admin-post handler: Run rank sync maintenance tasks.
+	 */
+	public function handle_run_sync() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'Permission denied.', 'xen-levelup' ) );
+		}
+
+		$nonce = sanitize_key( $_POST['xen_run_sync_nonce'] ?? '' ); // phpcs:ignore
+		if ( ! wp_verify_nonce( $nonce, 'xen_run_sync' ) ) {
+			wp_die( esc_html__( 'Security check failed.', 'xen-levelup' ) );
+		}
+
+		$scope = isset( $_POST['xen_sync_scope'] ) ? sanitize_key( $_POST['xen_sync_scope'] ) : 'all'; // phpcs:ignore
+
+		$users = get_users( array( 'fields' => array( 'ID' ) ) );
+		$count = 0;
+		foreach ( $users as $u ) {
+			$uid = absint( $u->ID );
+			if ( 'rebirth_zero' === $scope ) {
+				$profile = xen_levelup()->user->get_profile( $uid );
+				if ( ! $profile || (int) ( $profile->rebirth_count ?? 0 ) !== 0 ) {
+					continue;
+				}
+				xen_levelup()->user->sync_rank_title( $uid );
+				$count++;
+			} else {
+				xen_levelup()->user->sync_rank_title( $uid );
+				$count++;
+			}
+		}
+
+		$redirect = add_query_arg( array( 'page' => 'xen-levelup-settings', 'xen_sync_done' => 1, 'xen_sync_scope' => $scope, 'xen_sync_count' => $count ), admin_url( 'admin.php' ) );
+		wp_safe_redirect( $redirect );
+		exit;
 	}
 
 	// ─── Menu ─────────────────────────────────────────────────────────────
