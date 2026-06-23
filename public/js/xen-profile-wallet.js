@@ -112,9 +112,10 @@
 		var walletNonce = $wallet.data('nonce');
 
 		// Defensive: ensure wallet controls are clickable even if an overlay exists
-		$wallet.css({ 'pointer-events': 'auto', 'z-index': 100002, 'position': 'relative' });
+		// Raise wallet above most overlays; use very high z-index defensively
+		$wallet.css({ 'pointer-events': 'auto', 'z-index': 100010, 'position': 'relative' });
 		$wallet.find('.xen-hub-tab, .xen-hub-panel, #xen-send-btn, #xen-send-amount, #xen-send-to-search').each(function () {
-			$(this).css({ 'pointer-events': 'auto', 'z-index': 100003, 'position': 'relative' });
+			$(this).css({ 'pointer-events': 'auto', 'z-index': 100011, 'position': 'relative' });
 		});
 
 		// Ensure profile edit toggle and panel are clickable (defensive inline styles)
