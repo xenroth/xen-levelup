@@ -445,11 +445,12 @@ color: var(--xen-muted);
   text-align: center; padding: 0 3px;
 }
 .xen-notif-panel {
-  position: absolute; top: calc(100% + 8px); right: 0;
-  width: 320px; max-height: 420px;
-  background: var(--xen-surface, #1a1a2e); border: 1px solid var(--xen-border);
-  border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.45);
-  display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+   /* Use fixed positioning so the notifications panel can overlap any page content */
+   position: fixed; top: 1.25rem; right: 1.25rem;
+   width: 320px; max-height: 420px;
+   background: var(--xen-surface, #1a1a2e); border: 1px solid var(--xen-border);
+   border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,.45);
+   display: none; flex-direction: column; z-index: 100000; overflow: hidden;
 }
 .xen-notif-panel.xen-notif-open { display: flex; }
 .xen-notif-panel-header {
@@ -483,11 +484,15 @@ color: var(--xen-muted);
    ====================================================================== */
 .xen-user-search-wrap { position: relative; }
 .xen-user-suggestions {
-  position: absolute; top: 100%; left: 0; right: 0; z-index: 999;
+   position: absolute; top: 100%; left: 0; right: 0; z-index: 10001;
   background: var(--xen-surface, #1a1a2e); border: 1px solid var(--xen-border);
   border-top: none; border-radius: 0 0 8px 8px;
   box-shadow: 0 6px 20px rgba(0,0,0,.4); max-height: 220px; overflow-y: auto;
 }
+
+/* Ensure wallet form controls remain interactive and above nearby UI elements */
+.xen-wallet-send-form { position: relative; z-index: 2; pointer-events: auto; }
+.xen-hub-panel { position: relative; z-index: 1; }
 .xen-sug-item {
   display: flex; align-items: center; justify-content: space-between;
   padding: .5rem .75rem; cursor: pointer; gap: .5rem;
