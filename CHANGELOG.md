@@ -7,6 +7,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.5.1] - 2026-06-05
 
+## [1.5.2] - 2026-06-23
+
+### Fixed
+- **Wallet: buttons not clickable / suggestions blocked** — Wallet send form controls and suggestion list could be made non-interactive when other page overlays or elements were present. The wallet send form and suggestions now ensure pointer-events are enabled and their z-index is raised so inputs and the `Send Coins` button are reliably clickable.
+- **Notifications: panel overlapped by other elements** — The dashboard notification panel now uses fixed positioning and a much higher z-index so it overlaps other page content and displays all updates in full when opened.
+
+### Changed
+- Bumped plugin version to `1.5.2` for this release.
+
+
 ### Fixed
 - **Plugin update loop (Bug #1)**: Plugin header `Version` tag was `1.4.2` while the internal constant was `1.5.0`. WordPress compared the header version against the GitHub release tag and perpetually offered an update. Both are now aligned at `1.5.1`.
 - **Wallet user search broken for special-character names (Bug #2)**: `xen_search_users` applied `esc_attr()` to the search term before passing it to `get_users()`. This HTML-escaped characters like `'` → `&#039;` and `&` → `&amp;`, causing names like "O'Brien" or "Tom & Jerry" to return zero results. The redundant `esc_attr()` is removed; the term was already safely sanitized by `sanitize_text_field()`.
