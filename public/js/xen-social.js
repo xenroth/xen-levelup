@@ -84,9 +84,9 @@
 			if (!res.success) {
 				xenToast((res.data && res.data.message) || 'Error posting.', 'error');
 				return;
-			}
-			$textarea.val('');
-			/* Prepend the new post at the top */
+			});
+
+		})(jQuery);
 			var $empty = $('#xen-feed-empty');
 			if ($empty.length) $empty.remove();
 
@@ -342,4 +342,4 @@
 
 	function escAttr(str) { return esc(str); }
 
-}(jQuery));
+})(jQuery);
