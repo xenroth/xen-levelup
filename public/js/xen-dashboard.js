@@ -146,18 +146,30 @@
 			var $panel = $('#xen-notif-panel');
 			var isOpen = $panel.hasClass('xen-notif-open');
 
-			// When opening, position the panel next to the bell using fixed coords
+			// When opening, append to body and position the panel next to the bell.
 			if (!isOpen) {
 				var rect = this.getBoundingClientRect();
-				var top = Math.round(rect.bottom + 8);
-				// prefer aligning right edge of panel with bell's right edge
 				var panelW = $panel.outerWidth() || 320;
-				var left = Math.round(rect.right - panelW);
-				// ensure panel stays inside viewport
-				left = Math.max(8, Math.min(left, window.innerWidth - panelW - 8));
-				$panel.css({ position: 'fixed', top: top + 'px', left: left + 'px', zIndex: 100000 });
+				var left = Math.round(rect.right - panelW + window.scrollX);
+				var top = Math.round(rect.bottom + window.scrollY + 8);
+				// ensure panel stays inside viewport horizontally
+				left = Math.max(8 + window.scrollX, Math.min(left, window.scrollX + window.innerWidth - panelW - 8));
+				$panel.appendTo('body').css({ position: 'absolute', top: top + 'px', left: left + 'px', zIndex: 100000 });
+
+				// Reposition on scroll/resize so it follows the bell
+				$(window).on('scroll.xenNotif resize.xenNotif', function () {
+					var bell = document.getElementById('xen-notif-btn');
+					if (!bell) return;
+					var bellRect = bell.getBoundingClientRect();
+					var newLeft = Math.round(bellRect.right - panelW + window.scrollX);
+					var newTop  = Math.round(bellRect.bottom + window.scrollY + 8);
+					newLeft = Math.max(8 + window.scrollX, Math.min(newLeft, window.scrollX + window.innerWidth - panelW - 8));
+					$panel.css({ left: newLeft + 'px', top: newTop + 'px' });
+				});
 			} else {
 				$panel.removeAttr('style');
+				// remove scroll/resize handlers
+				$(window).off('scroll.xenNotif resize.xenNotif');
 			}
 
 			$panel.toggleClass('xen-notif-open', !isOpen);

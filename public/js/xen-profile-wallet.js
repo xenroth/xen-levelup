@@ -98,6 +98,12 @@
 	if ($wallet.length) {
 		var walletNonce = $wallet.data('nonce');
 
+		// Ensure suggestion container is appended to body to avoid being clipped by parent containers
+		var $existingSug = $('#xen-user-suggestions');
+		if ($existingSug.length && !$existingSug.parent().is('body')) {
+			$existingSug.appendTo('body');
+		}
+
 		/* ── Recipient live search ─────────────────────────────────── */
 		var searchTimer = null;
 
@@ -163,11 +169,12 @@
 			$('#xen-user-suggestions').hide().empty();
 		});
 
-		// Close suggestions on outside click
+		// Close suggestions on outside click (ignore clicks inside the suggestion box itself)
 		$(document).on('click', function (e) {
-			if (!$(e.target).closest('.xen-user-search-wrap').length) {
-				$('#xen-user-suggestions').hide();
+			if ( $(e.target).closest('.xen-user-search-wrap').length || $(e.target).closest('#xen-user-suggestions').length ) {
+				return;
 			}
+			$('#xen-user-suggestions').hide();
 		});
 
 		$('#xen-send-btn').on('click', function () {

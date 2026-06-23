@@ -78,6 +78,14 @@
    pointer-events: auto;
 }
 
+/* Ensure wallet tabs and panels are clickable above overlays */
+.xen-wallet-tabs .xen-hub-tab,
+.xen-hub-panel {
+   position: relative;
+   z-index: 100002;
+   pointer-events: auto;
+}
+
 /* =====================================================
    SPECIAL QUEST CARDS (weekly)
    ===================================================== */

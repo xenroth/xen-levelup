@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ---
 
 
+## [1.5.6] - 2026-06-23
+
+### Fixed
+- **Wallet tabs & Send** — `Transfers` and `History` tabs are now reliably clickable; wallet panels and tab buttons were raised above transient overlays and pointer-events issues fixed. The Send flow's suggestion dropdown is always appended to `body` (preventing clipping) and outside-click handling was improved to avoid accidental closures.
+- **Edit Profile** — The Edit Profile toggle and save flow are restored by ensuring the edit controls receive pointer events above overlays.
+- **Notifications positioning** — Notification panel now positions adjacent to the bell and follows it during scroll/resize so it appears where expected instead of sticking in a stale viewport location.
+
+### Changed
+- Bumped plugin version to `1.5.6`.
+
+
 ## [1.5.3] - 2026-06-23
 
 ### Fixed
