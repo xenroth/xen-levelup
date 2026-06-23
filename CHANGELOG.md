@@ -47,6 +47,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved client-side logging for `xen_transfer_currency` failures and added defensive UI messaging.
 
 
+## [1.5.10] - 2026-06-23
+
+### Fixed
+- **Frontend initialization** — Scripts now tolerate missing localized `xenData` so core utilities (`xenRequest`, `xenToast`, `xenEscape`) initialize even when localization is absent or delayed. This prevents silent early-returns that left UI controls (Edit Profile, Wallet send, Feed) non-functional when `xenData` was not present at script execution time.
+
+### Changed
+- Defensive JS changes: `xen-main.js` ensures a `window.xenData` object exists and exposes global helpers so other modules can attach event handlers reliably; further fixes applied to `xen-profile-wallet.js` to close an IIFE that caused a parse error.
+
+
 ## [1.5.3] - 2026-06-23
 
 ### Fixed

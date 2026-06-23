@@ -6,10 +6,13 @@
 (function ($) {
 	'use strict';
 
-	/* -----------------------------------------------------------------
-	   Guard: abort if localised data missing
-	   ----------------------------------------------------------------- */
-	if (typeof xenData === 'undefined') return;
+	 /* -----------------------------------------------------------------
+		 Guard: ensure localized data object exists. Don't abort — make
+		 the runtime tolerant so other frontend modules can initialize
+		 (they may still no-op if required fields are missing).
+		 ----------------------------------------------------------------- */
+	 if (typeof window.xenData === 'undefined') window.xenData = {};
+	 var xenData = window.xenData;
 
 	/* -----------------------------------------------------------------
 	   Ensure toast container exists
