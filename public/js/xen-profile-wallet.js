@@ -98,6 +98,19 @@
 	if ($wallet.length) {
 		var walletNonce = $wallet.data('nonce');
 
+		// Defensive: ensure wallet controls are clickable even if an overlay exists
+		$wallet.css({ 'pointer-events': 'auto', 'z-index': 100002, 'position': 'relative' });
+		$wallet.find('.xen-hub-tab, .xen-hub-panel, #xen-send-btn, #xen-send-amount, #xen-send-to-search').each(function () {
+			$(this).css({ 'pointer-events': 'auto', 'z-index': 100003, 'position': 'relative' });
+		});
+
+		// Ensure profile edit toggle and panel are clickable (defensive inline styles)
+		$('#xen-profile-edit-toggle, #xen-profile-save-btn, #xen-profile-cancel-btn, #xen-profile-edit-panel').css({
+			'pointer-events': 'auto',
+			'z-index': 100005,
+			'position': 'relative'
+		});
+
 		// Ensure suggestion container is appended to body to avoid being clipped by parent containers
 		var $existingSug = $('#xen-user-suggestions');
 		if ($existingSug.length && !$existingSug.parent().is('body')) {
@@ -196,12 +209,16 @@
 			$btn.prop('disabled', true).text('Sending…');
 			$result.hide();
 
+			// Debug: log request payload to console for faster diagnosis
+			console && console.debug && console.debug('xen_transfer_currency: to', toUserId, 'amount', amount);
+
 			xenRequest('xen_transfer_currency', {
 				nonce:      walletNonce,
 				to_user_id: toUserId,
 				amount:     amount,
 				note:       note
 			}).done(function (res) {
+				console && console.debug && console.debug('xen_transfer_currency response', res);
 				if (!res.success) {
 				   var msg = res.data && res.data.message ? res.data.message : 'Transfer failed.';
 				   $result.removeClass('success').addClass('error').text(msg).show();
