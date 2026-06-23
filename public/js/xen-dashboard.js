@@ -142,17 +142,31 @@
 	var notifLoaded = false;
 
 	$(document).on('click', '#xen-notif-btn', function (e) {
-		e.stopPropagation();
-		var $panel = $('#xen-notif-panel');
-		var isOpen = $panel.hasClass('xen-notif-open');
+			e.stopPropagation();
+			var $panel = $('#xen-notif-panel');
+			var isOpen = $panel.hasClass('xen-notif-open');
 
-		$panel.toggleClass('xen-notif-open', !isOpen);
-		$(this).attr('aria-expanded', !isOpen);
-		$panel.attr('aria-hidden', isOpen);
+			// When opening, position the panel next to the bell using fixed coords
+			if (!isOpen) {
+				var rect = this.getBoundingClientRect();
+				var top = Math.round(rect.bottom + 8);
+				// prefer aligning right edge of panel with bell's right edge
+				var panelW = $panel.outerWidth() || 320;
+				var left = Math.round(rect.right - panelW);
+				// ensure panel stays inside viewport
+				left = Math.max(8, Math.min(left, window.innerWidth - panelW - 8));
+				$panel.css({ position: 'fixed', top: top + 'px', left: left + 'px', zIndex: 100000 });
+			} else {
+				$panel.removeAttr('style');
+			}
 
-		if (!isOpen && !notifLoaded) {
-			loadNotifications();
-		}
+			$panel.toggleClass('xen-notif-open', !isOpen);
+			$(this).attr('aria-expanded', !isOpen);
+			$panel.attr('aria-hidden', isOpen);
+
+			if (!isOpen && !notifLoaded) {
+				loadNotifications();
+			}
 	});
 
 	// Close on outside click

@@ -236,7 +236,14 @@ class Xen_User extends Xen_Database {
 		if ( $rebirth_count < 0 ) {
 			$rebirth_count = $this->get_rebirth_count( $user_id );
 		}
-		$title = self::rank_title_for_rebirth( $rebirth_count );
+		// If user has never rebirthed, maintain legacy behavior: derive rank from level
+		if ( (int) $rebirth_count === 0 ) {
+			$profile = $this->get_profile( $user_id );
+			$level = $profile ? (int) $profile->level : 1;
+			$title = self::rank_title_for_level( $level );
+		} else {
+			$title = self::rank_title_for_rebirth( $rebirth_count );
+		}
 		$this->update_profile( $user_id, array( 'rank_title' => $title ) );
 	}
 

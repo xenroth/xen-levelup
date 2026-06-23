@@ -118,9 +118,15 @@
 					nonce : walletNonce,
 					term  : term
 				}, function (res) {
-					var $sug = $('#xen-user-suggestions').empty();
+					var $sug = $('#xen-user-suggestions');
+					// Create suggestion container appended to body if missing
+					if (!$sug.length) {
+						$sug = $('<div id="xen-user-suggestions" class="xen-user-suggestions" style="display:none;position:fixed;"></div>').appendTo('body');
+					}
+					$sug.empty();
 					if (!res.success || !res.data.length) {
 						$sug.html('<div class="xen-sug-empty">No hunters found.</div>').show();
+						positionSuggestions();
 						return;
 					}
 					$.each(res.data, function (i, u) {
@@ -131,10 +137,22 @@
 							  '</div>')
 						);
 					});
+					positionSuggestions();
 					$sug.show();
 				});
 			}, 300);
 		});
+
+		function positionSuggestions() {
+			var $input = $('#xen-send-to-search');
+			var $sug = $('#xen-user-suggestions');
+			if (!$input.length || !$sug.length) return;
+			var rect = $input[0].getBoundingClientRect();
+			var top = Math.round(rect.bottom + window.scrollY + 2);
+			var left = Math.round(rect.left + window.scrollX);
+			var maxW = Math.min(Math.round(rect.width), 520);
+			$sug.css({ top: top + 'px', left: left + 'px', width: Math.max(240, maxW) + 'px' });
+		}
 
 		$(document).on('click', '.xen-sug-item', function () {
 			var id   = $(this).data('id');
