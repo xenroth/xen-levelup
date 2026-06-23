@@ -6,6 +6,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ---
 
 
+## [1.5.3] - 2026-06-23
+
+### Fixed
+- **Notifications placement** — Notification panel now appears adjacent to the notification bell rather than pinned to the viewport corner; positioning is computed from the bell element and keeps a high z-index to ensure visibility.
+- **Wallet autocomplete** — Recipient suggestions are appended to `body` and positioned under the input to avoid being blocked by overlays; selecting a recipient reliably populates the hidden recipient id and restores the `Send Coins` flow.
+- **Rank sync fallback** — Users with zero rebirths now receive a rank title derived from their current level (legacy behavior). Rebirth-based ranks still take precedence once `rebirth_count > 0`.
+
+### Changed
+- Bumped plugin version to `1.5.3` for this follow-up release.
+
+
 ## [1.5.2] - 2026-06-23
 
 ### Fixed
