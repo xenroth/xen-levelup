@@ -37,6 +37,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [1.5.9] - 2026-06-23
 
+### What's New
+- Enhanced wallet transfer diagnostics: transfers now return structured error `code` values for common failures and include debug logging on the server when `WP_DEBUG` is enabled. The client displays the error code inline and logs network/server responses to aid debugging.
+
 ### Fixed
 - **Wallet: transfer error handling** — Server now returns explicit error `code` values for common transfer failures (`invalid_details`, `self_transfer`, `recipient_not_found`) and logs WP_Error details when transfers fail (debug-only). The client displays the error code alongside the message and logs network/server responses for faster diagnosis.
 
