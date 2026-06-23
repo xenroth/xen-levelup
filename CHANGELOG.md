@@ -17,6 +17,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Bumped plugin version to `1.5.6`.
 
 
+## [1.5.7] - 2026-06-23
+
+### Fixed
+- **Profile photo upload** — Avatar upload flow is now more robust: upload button is disabled while uploading, upload status messages are clearer, and the in-memory `xenData.currentUser.avatar` is updated so UI components reflect the new photo immediately.
+
+### Changed
+- Minor front-end robustness improvements to avatar upload and UX.
+
+
 ## [1.5.3] - 2026-06-23
 
 ### Fixed

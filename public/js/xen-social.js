@@ -16,6 +16,7 @@
 		var $file   = $('#xen-avatar-file');
 		var file    = $file[0].files[0];
 		var $status = $('#xen-avatar-upload-status');
+        var $btn    = $(this);
 
 		if (!file) {
 			$status.text('Please select a file.').css('color', 'var(--xen-error, #ef4444)');
@@ -29,27 +30,36 @@
 
 		$status.text(xenData.i18n.processing || 'Uploading…').css('color', '');
 
-		$.ajax({
+			$btn.prop('disabled', true).text(xenData.i18n.processing || 'Uploading…');
+
+			$.ajax({
 			url        : xenData.ajaxUrl,
 			type       : 'POST',
 			data       : formData,
 			contentType: false,
 			processData: false,
 			success    : function (res) {
-				if (res.success) {
-					$('#xen-avatar-preview-img').attr('src', res.data.url);
-					$('.xen-profile-avatar').attr('src', res.data.url);
-					$('.xen-avatar').attr('src', res.data.url);
-					$status.text('✔ Photo updated!').css('color', 'var(--xen-success, #22c55e)');
-				} else {
-					$status.text((res.data && res.data.message) || 'Upload failed.').css('color', 'var(--xen-error, #ef4444)');
-				}
+					if (res.success) {
+						$('#xen-avatar-preview-img').attr('src', res.data.url);
+						$('.xen-profile-avatar').attr('src', res.data.url);
+						$('.xen-avatar').attr('src', res.data.url);
+						// Update xenData current user avatar for other UI bits
+						if (window.xenData && xenData.currentUser) xenData.currentUser.avatar = res.data.url;
+						$status.text('✔ Photo updated!').css('color', 'var(--xen-success, #22c55e)');
+					} else {
+						$status.text((res.data && res.data.message) || 'Upload failed.').css('color', 'var(--xen-error, #ef4444)');
+						console && console.debug && console.debug('xen_upload_avatar response', res);
+					}
 			},
-			error: function () {
-				$status.text('Upload failed.').css('color', 'var(--xen-error, #ef4444)');
-			}
+				error: function () {
+					$status.text('Upload failed.').css('color', 'var(--xen-error, #ef4444)');
+					console && console.debug && console.debug('xen_upload_avatar ajax error');
+				},
+				complete: function () {
+					$btn.prop('disabled', false).text('📷 ' + (xenData.i18n.uploadPhoto || 'Upload Photo'));
+				}
 		});
-	});
+		});
 
 	/* ── Feed-only code ─────────────────────────────────────────────────── */
 	if (!$('#xen-feed').length) return;
