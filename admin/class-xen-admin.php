@@ -57,6 +57,16 @@ class Xen_Admin {
 			}
 		}
 
+		// Persist last-run info for admin notice
+		$last = array(
+			'time'     => time(),
+			'time_str' => current_time( 'mysql' ),
+			'count'    => $count,
+			'scope'    => $scope,
+			'user'     => get_current_user_id(),
+		);
+		update_option( 'xen_last_rank_sync', $last );
+
 		$redirect = add_query_arg( array( 'page' => 'xen-levelup-settings', 'xen_sync_done' => 1, 'xen_sync_scope' => $scope, 'xen_sync_count' => $count ), admin_url( 'admin.php' ) );
 		wp_safe_redirect( $redirect );
 		exit;

@@ -26,6 +26,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Bumped plugin version to `1.5.4`.
 
 
+## [1.5.5] - 2026-06-23
+
+### Added
+- **Admin: Persistent Rank Sync Notice** — The Settings page now displays the time, scope, and count of the last rank synchronization run and who initiated it. The Rank Sync maintenance actions still appear as buttons for one-off runs.
+
+### Changed
+- Bumped plugin version to `1.5.5`.
+
+
 ## [1.5.2] - 2026-06-23
 
 ### Fixed

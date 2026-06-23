@@ -136,5 +136,20 @@ $fields = array(
 			&nbsp;
 			<button type="submit" name="xen_sync_scope" value="all" class="button button-primary"><?php esc_html_e( 'Sync ranks (all users)', 'xen-levelup' ); ?></button>
 		</form>
+
+		<?php
+		$last = get_option( 'xen_last_rank_sync' );
+		if ( $last && is_array( $last ) ) :
+			$time = isset( $last['time'] ) ? intval( $last['time'] ) : 0;
+			$count = isset( $last['count'] ) ? absint( $last['count'] ) : 0;
+			$scope = isset( $last['scope'] ) ? esc_html( $last['scope'] ) : 'all';
+			$user_id = isset( $last['user'] ) ? absint( $last['user'] ) : 0;
+			$user_name = $user_id ? esc_html( get_userdata( $user_id )->display_name ) : '—';
+			$when = $time ? date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $time ) : '—';
+		?>
+		<div class="notice notice-info inline">
+			<p><?php echo esc_html( sprintf( 'Last rank sync: %s — %d profiles (%s). Run by %s.', $when, $count, $scope, $user_name ) ); ?></p>
+		</div>
+		<?php endif; ?>
 	</div>
 </div>
