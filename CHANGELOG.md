@@ -26,6 +26,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Minor front-end robustness improvements to avatar upload and UX.
 
 
+## [1.5.8] - 2026-06-23
+
+### In Progress
+- **Wallet: Transfer & History** — Ongoing work to fully resolve `Send`/`Transfers`/`History` tab reliability and end-to-end AJAX transfer flow. Debugging server responses, improving client-side error handling, and adding tests.
+
+### Notes
+- This release entry documents the current staged fixes; final details will be updated once testing completes and server-side patches (if any) are applied.
+
+
 ## [1.5.3] - 2026-06-23
 
 ### Fixed
