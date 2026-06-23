@@ -74,6 +74,19 @@
 				$btn.prop('disabled', false).text('Save Changes');
 			});
 		});
+
+		// Delegated fallback handlers to ensure clicks are handled even if the direct binding misses
+		$(document).on('click', '#xen-profile-edit-toggle', function (e) {
+			e.preventDefault();
+			$('#xen-profile-edit-panel').slideDown(200);
+			$(this).hide();
+		});
+
+		$(document).on('click', '#xen-profile-cancel-btn', function (e) {
+			e.preventDefault();
+			$('#xen-profile-edit-panel').slideUp(200);
+			$('#xen-profile-edit-toggle').show();
+		});
 	}
 
 	/* ================================================================
