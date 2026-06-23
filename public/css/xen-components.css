@@ -42,6 +42,42 @@
 .xen-notif-time  { font-size: .7rem; color: var(--xen-muted); margin-top: 3px; }
 .xen-notif-empty { padding: 1.25rem 1rem; text-align: center; color: var(--xen-muted); font-size: .82rem; }
 
+/* ======================================================================
+   Clickability / overlay fixes
+   Ensure critical interactive elements are not blocked by nearby overlays
+   ====================================================================== */
+.xen-user-suggestions {
+   position: fixed;
+   pointer-events: auto;
+   z-index: 100001;
+   box-shadow: 0 8px 30px rgba(0,0,0,.45);
+   background: var(--xen-card);
+   border: 1px solid var(--xen-border);
+   border-radius: 8px;
+}
+.xen-sug-item { cursor: pointer; padding: .5rem .75rem; }
+.xen-sug-item:hover { background: rgba(0,212,255,.03); }
+
+/* Make sure profile edit controls remain clickable */
+#xen-profile-edit-toggle,
+.xen-profile-edit-btn,
+.xen-profile-edit-panel .xen-btn {
+   position: relative;
+   z-index: 100001;
+   pointer-events: auto;
+}
+
+/* Wallet send form buttons and inputs should receive pointer events */
+.xen-wallet-send-form,
+#xen-send-btn,
+#xen-send-amount,
+#xen-send-note,
+#xen-send-to-search {
+   position: relative;
+   z-index: 100001;
+   pointer-events: auto;
+}
+
 /* =====================================================
    SPECIAL QUEST CARDS (weekly)
    ===================================================== */
